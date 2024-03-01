@@ -10,7 +10,6 @@ export class Game {
     constructor(canvasid = 'morsequest') {
         this.initCanvas(canvasid);
 
-
         this.loop();
     }
 
@@ -22,6 +21,8 @@ export class Game {
             return;
         }
 
+        window.onresize = () => { this.resize(); };
+
         this.ctx = this.canvas.getContext("2d");
         if (!this.ctx) {
             console.log('2d context setup error');
@@ -29,6 +30,8 @@ export class Game {
         }
 
         this.gameMap = new GameMap(this.ctx, this.canvas);
+
+        this.resize();
     }
 
     private loop() {
@@ -37,6 +40,12 @@ export class Game {
         this.gameMap.display();
 
         requestAnimationFrame(() => {this.loop();});
+    }
+
+    private resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.gameMap.resize();
     }
 }
 

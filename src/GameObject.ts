@@ -6,7 +6,13 @@ export abstract class GameObject {
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.ctx = ctx;
         this.canvas = canvas;
+
+        this.init();
     }
 
+    public abstract init();
+
     public abstract display();
+
+    public abstract resize();
 }
