@@ -1,5 +1,6 @@
+
 export abstract class GameObject {
-    
+
     protected ctx: CanvasRenderingContext2D;
     protected canvas: HTMLCanvasElement;
 
@@ -10,9 +11,25 @@ export abstract class GameObject {
         this.init();
     }
 
-    public abstract init();
+    /**
+     * At end of GameObject constructor
+     */
+    public init() {}
 
+    /**
+     * Each loop
+     */
     public abstract display();
 
-    public abstract resize();
+    /**
+     * Each resize event
+     */
+    public resize() {}
+
+    /**
+     * Each keypress event
+     * @param orientation 
+     */
+    public keyPressed(orientation: number) {}
+
 }

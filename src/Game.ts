@@ -1,4 +1,8 @@
-import { GameMap } from "./GameMap";
+import { Camera } from "./system/Camera";
+import { Controller } from "./system/Controller";
+import { GameMap } from "./system/GameMap";
+import { GameObject } from "./system/GameObject";
+import { Player } from "./system/Player";
 
 export class Game {
 
@@ -6,10 +10,14 @@ export class Game {
     private canvas: HTMLCanvasElement;
 
     private gameMap: GameMap;
+    private player: Player;
+    private camera: Camera;
+
+    private gameObjects: GameObject[];
 
     constructor(canvasid = 'morsequest') {
         this.initCanvas(canvasid);
-
+        window.addEventListener('keydown', (e) => {this.keyPressed(e); });
         this.loop();
     }
 
@@ -29,23 +37,48 @@ export class Game {
             return;
         }
 
+        this.gameObjects = [];
+
         this.gameMap = new GameMap(this.ctx, this.canvas);
+        this.player = new Player(this.ctx, this.canvas);
+        this.camera = new Camera(this.ctx, this.canvas);
+
+        this.gameObjects.push(this.gameMap);
+        this.gameObjects.push(this.player);
+        this.gameObjects.push(this.camera);
+        
+        this.player.teleport(this.gameMap.getRandomSpawnPoint());
 
         this.resize();
+
+        this.camera.snap();
     }
 
     private loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.gameMap.display();
+        this.ctx.fillStyle = 'lightgrey';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        for (const go of this.gameObjects) {
+            go.display();
+        }
 
         requestAnimationFrame(() => {this.loop();});
     }
 
     private resize() {
+        console.log('resize event');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.gameMap.resize();
+        for (const go of this.gameObjects) {
+            go.resize();
+        }
+    }
+
+    private keyPressed(e: KeyboardEvent) {
+        for (const go of this.gameObjects) {
+            go.keyPressed(Controller.KeyMapping[e.key]);
+        }
     }
 }
 

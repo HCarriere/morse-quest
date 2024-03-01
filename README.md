@@ -20,11 +20,15 @@ TODO
 - Player is assigned a name & can chose between few class at startup
 
 # TODO
-- [ ] Simple Map
-- [ ] Player sprite
-- [ ] Moving on map (collision, etc)
-- [ ] Menu & Saves
+- [x] Simple Map
+- [x] Simple Player
+- [x] Moving on map (collision, camera)
+- [ ] Interface: buttons
+- [ ] Interface: popin
+- [ ] Interface: Menu & Saves
 - [ ] Player stats
+- [ ] Player movements economy
+- [ ] Sprites
 - [ ] Basic inventory
 - [ ] Treasures
 - [ ] Monsters
