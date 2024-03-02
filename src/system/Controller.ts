@@ -1,11 +1,11 @@
 export class Controller {
     
-    static KEY_UP = 1;
-    static KEY_DOWN = 2;
-    static KEY_LEFT = 3;
-    static KEY_RIGHT = 4;
+    public static KEY_UP = 1;
+    public static KEY_DOWN = 2;
+    public static KEY_LEFT = 3;
+    public static KEY_RIGHT = 4;
 
-    static KeyMapping = {
+    public static KeyMapping = {
         'z': Controller.KEY_UP,
         's': Controller.KEY_DOWN,
         'q': Controller.KEY_LEFT,
@@ -16,4 +16,7 @@ export class Controller {
         'ArrowLeft': Controller.KEY_LEFT,
         'ArrowRight': Controller.KEY_RIGHT,
     };
+
+    public static mouseX: number;
+    public static mouseY: number;
 }

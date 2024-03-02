@@ -2,6 +2,8 @@ import { Camera } from "./Camera";
 import { Controller } from "./Controller";
 import { Coordinates, GameMap } from "./GameMap";
 import { GameObject } from "./GameObject";
+import { GameEvents } from "./GameEvents";
+import { GameInterface } from "@game/interface/GameInterface";
 
 /**
  * Represents the player
@@ -26,6 +28,11 @@ export class Player extends GameObject {
      * @param orientation 
      */
     private move(orientation: number) {
+        // not allowed to move
+        if (GameInterface.getInstance().freezeControls) {
+            return;
+        }
+
         let newCoordModifier: Coordinates = {x: 0, y: 0};
         if (orientation == Controller.KEY_UP) newCoordModifier.y -= 1;
         if (orientation == Controller.KEY_DOWN) newCoordModifier.y += 1;
@@ -33,11 +40,19 @@ export class Player extends GameObject {
         if (orientation == Controller.KEY_RIGHT) newCoordModifier.x += 1;
 
         // test collision
-        const collision = GameMap.getCollision({x: this.location.x + newCoordModifier.x, y: this.location.y + newCoordModifier.y});
-        if (collision == GameMap.COLLISION_WALL) {
+        if (this.location.x + newCoordModifier.x < 0 ||
+            this.location.x + newCoordModifier.x >= GameMap.MapWidth ||
+            this.location.y + newCoordModifier.y < 0 || 
+            this.location.y + newCoordModifier.y >= GameMap.MapHeight) {
+            return;
+        }
+        const tile = GameMap.getCollision({x: this.location.x + newCoordModifier.x, y: this.location.y + newCoordModifier.y});
+        if (tile.solid) {
             // cancel movement
             return;
         }
+
+        GameEvents.processGameEvent(tile);
 
         // process movement
         this.location.x += newCoordModifier.x;
@@ -45,6 +60,8 @@ export class Player extends GameObject {
 
         Camera.targetCoordinates = this.location;
     }
+
+    
 
     public display() {
         this.ctx.fillStyle = 'darkgrey';

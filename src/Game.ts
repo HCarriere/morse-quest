@@ -1,3 +1,4 @@
+import { GameInterface } from "./interface/GameInterface";
 import { Camera } from "./system/Camera";
 import { Controller } from "./system/Controller";
 import { GameMap } from "./system/GameMap";
@@ -17,7 +18,7 @@ export class Game {
 
     constructor(canvasid = 'morsequest') {
         this.initCanvas(canvasid);
-        window.addEventListener('keydown', (e) => {this.keyPressed(e); });
+        
         this.loop();
     }
 
@@ -29,7 +30,11 @@ export class Game {
             return;
         }
 
-        window.onresize = () => { this.resize(); };
+        window.addEventListener('resize', () => { this.resize(); }, false);
+        window.addEventListener('keydown', (e) => {this.keyPressed(e); });
+        window.addEventListener('mousemove', (e) => {this.mouseMove(e)})
+        this.canvas.addEventListener('mousedown', (e) => {this.mousePressed(e); });
+
 
         this.ctx = this.canvas.getContext("2d");
         if (!this.ctx) {
@@ -43,9 +48,12 @@ export class Game {
         this.player = new Player(this.ctx, this.canvas);
         this.camera = new Camera(this.ctx, this.canvas);
 
+        GameInterface.setInstance(new GameInterface(this.ctx, this.canvas));
+
         this.gameObjects.push(this.gameMap);
         this.gameObjects.push(this.player);
         this.gameObjects.push(this.camera);
+        this.gameObjects.push(GameInterface.getInstance());
         
         this.player.teleport(this.gameMap.getRandomSpawnPoint());
 
@@ -59,26 +67,42 @@ export class Game {
         this.ctx.fillStyle = 'lightgrey';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
-        for (const go of this.gameObjects) {
-            go.display();
+        for (const obj of this.gameObjects) {
+            obj.display();
         }
 
         requestAnimationFrame(() => {this.loop();});
     }
 
     private resize() {
-        console.log('resize event');
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        for (const go of this.gameObjects) {
-            go.resize();
+        console.log('resize event', this.canvas.parentElement);
+        this.canvas.width = this.canvas.parentElement.clientWidth;
+        this.canvas.height = this.canvas.parentElement.clientHeight;
+        for (const obj of this.gameObjects) {
+            obj.resize();
         }
     }
 
     private keyPressed(e: KeyboardEvent) {
-        for (const go of this.gameObjects) {
-            go.keyPressed(Controller.KeyMapping[e.key]);
+        for (const obj of this.gameObjects) {
+            obj.keyPressed(Controller.KeyMapping[e.key]);
         }
+    }
+
+    private mousePressed(e: MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        for (const obj of this.gameObjects) {
+            // obj.mousePressed(e.offsetX, e.offsetY);
+            obj.mousePressed(x, y);
+        }
+    }
+
+    private mouseMove(e: MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        Controller.mouseX = e.clientX - rect.left;
+        Controller.mouseY = e.clientY - rect.top;
     }
 }
 

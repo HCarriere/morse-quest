@@ -5,7 +5,7 @@
         "lib": ["es5", "es6", "dom"],
         "baseUrl": "./",
         "paths": {
-            "@game": ["src"]
+            "@game/*": ["src/*"]
           }
     },
 }

@@ -23,9 +23,10 @@ TODO
 - [x] Simple Map
 - [x] Simple Player
 - [x] Moving on map (collision, camera)
-- [ ] Interface: buttons
-- [ ] Interface: popin
-- [ ] Interface: Menu & Saves
+- [x] Interface: buttons
+- [x] Interface: Dialogues
+- [ ] Interface: Character sheet
+- [ ] Saves
 - [ ] Player stats
 - [ ] Player movements economy
 - [ ] Sprites

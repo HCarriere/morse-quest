@@ -2,11 +2,27 @@
 <html>
   <head>
     <title>Morse Quest</title>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+      .wrapper {
+        height: 600px;
+      }
+      #morsequest {
+        width: 100%;
+      }
+    </style>
   </head>
   <body>
     <script src="../build/morsequest-bundle.js"></script>
 
-    <canvas id="morsequest" style="height:800px;"></canvas>
+    <div class="wrapper">
+      <canvas id="morsequest"></canvas>
+    </div>
 
     <script>new MorseQuest.Game();</script>
   </body>

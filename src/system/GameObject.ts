@@ -32,4 +32,10 @@ export abstract class GameObject {
      */
     public keyPressed(orientation: number) {}
 
+    /**
+     * Each mouse pressed event
+     * @param x 
+     * @param y 
+     */
+    public mousePressed(x: number, y: number) {}
 }

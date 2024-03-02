@@ -6,12 +6,26 @@ export interface Coordinates {
     y: number;
 }
 
+export interface TileSettings {
+    solid?: boolean;
+    respawn?: boolean;
+    visible?: boolean;
+    color?: string;
+
+    debug?: "dialogue"
+}
+
 export class GameMap extends GameObject {
     
     static MAX_BLOCK_WIDTH_VIEW = 10;
     static MAX_BLOCK_HEIGHT_VIEW = 30;
-    static COLLISION_WALL = 1;
-    static COLLISION_RESPAWN = 2;
+
+    // Map Values
+    private static MapValues = new Map<number, TileSettings>([
+        [1, {solid: true, visible: true, color: 'blue'}],
+        [2, {respawn: true, visible: true, color: 'green'}],
+        [900, {color: 'red', visible: true, debug: 'dialogue'}],
+    ]);
     
     
     static MapInfo: number[][];
@@ -31,7 +45,7 @@ export class GameMap extends GameObject {
             for (let j = 0; j < cells.length; j++) {
                 GameMap.MapInfo[i][j] = parseInt(cells[j]);
                 
-                if (GameMap.MapInfo[i][j] == 2) {
+                if (GameMap.getTileSetting(GameMap.MapInfo[i][j]).respawn) {
                     // spawn
                     GameMap.SpawnPoints.push({x: j, y: i});
                 }
@@ -50,16 +64,10 @@ export class GameMap extends GameObject {
         for (let x = startx; x < Math.min(startx + lenx + 2, GameMap.MapWidth); x++) {
             for (let y = starty; y < Math.min(starty + leny + 2, GameMap.MapHeight); y++) {
                 const cell = GameMap.MapInfo[y][x];
+                const tile = GameMap.getTileSetting(cell);
 
-                if (cell == GameMap.COLLISION_WALL) {
-                    this.ctx.fillStyle = 'blue';
-                    this.ctx.fillRect(
-                        Math.floor(x * Camera.cellSize - Camera.offsetX), 
-                        Math.floor(y * Camera.cellSize - Camera.offsetY), 
-                        Camera.cellSize, Camera.cellSize);
-                }
-                else if (cell == GameMap.COLLISION_RESPAWN) {
-                    this.ctx.fillStyle = 'green';
+                if (tile.visible && tile.color) {
+                    this.ctx.fillStyle = tile.color;
                     this.ctx.fillRect(
                         Math.floor(x * Camera.cellSize - Camera.offsetX), 
                         Math.floor(y * Camera.cellSize - Camera.offsetY), 
@@ -75,8 +83,15 @@ export class GameMap extends GameObject {
         return GameMap.SpawnPoints[rand];
     }
 
-    static getCollision(coordinates: Coordinates): number {
-        return GameMap.MapInfo[coordinates.y][coordinates.x];
+    private static getTileSetting(id: number): TileSettings {
+        if (GameMap.MapValues.has(id)) {
+            return GameMap.MapValues.get(id);
+        }
+        return {};
+    }
+
+    static getCollision(coordinates: Coordinates): TileSettings {
+        return GameMap.getTileSetting(GameMap.MapInfo[coordinates.y][coordinates.x]);
     }
 
 }
@@ -87,24 +102,24 @@ export class GameMap extends GameObject {
  * CSV tab separated
  */
 const mapRaw = 
-`1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+`1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1		1	1	1	1	1	1	1		1	1	1	1	1	1	1	1	1	1	1
 1				1																																		1
-1		2		1		1																																1
-1				1																																		1
+1		1		1		1																																1
+1				1									2		900																							1
 1				1							1																											1
 1				1																																		1
-1							1																															1
-1																																						1
-1																		1															1	1	1	1	1	1
-1				1														1																				1
-1		2		1														1												2								1
-1				1												1	1	1	1	1																		1
-1	1	1	1	1	1		1											1																				1
-1																		1																				1
-1																		1																				1
-1																																						1
+1							1								1	1	1	1	1	1																		1
+																				1																		
+1														1	1			1		1													1	1	1	1	1	1
+1				1									1					1		1																		1
+1				1									1				1			1																		1
+1				1									1		1	1	1		1	1	1																	1
+1	1	1	1	1	1		1						1				1		1																			1
+1														1			1	1	1																			1
+1															1			1																				1
+1																1																						1
 1																												1										1
-1																													1					2				1
+1																													1									1
 1																														1								1
 1																															1							1
 1																																1						1
@@ -114,5 +129,4 @@ const mapRaw =
 1																																	1					1
 1																																	1					1
 1																																	1					1
-1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-`;
+1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1		1	1		1	1	1	1`;
