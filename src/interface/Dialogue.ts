@@ -3,14 +3,16 @@ import { GameObject } from "@game/system/GameObject";
 import { GameInterface } from "./GameInterface";
 
 export interface DialoguePiece {
-    id: number,
+    id: number;
     textLines: string[];
     answers?: DialogueAnswer[];
+    onDialog?: () => void;
 }
 
 export interface DialogueAnswer {
     text: string;
     goto: number;
+    onAnswer?: () => void;
 }
 
 export class Dialogue extends GameObject {
@@ -98,6 +100,10 @@ export class Dialogue extends GameObject {
         for (let i = this.currentDialoguePiece.answers.length - 1; i >= 0; i--) {
             // this.x + 20, this.y + this.height - 20 - Dialogue.INTERLINE * i
             if (this.isCoordsInsideAnswer(x, y, i)) {
+                // trigger answer event
+                if (this.currentDialoguePiece.answers[i].onAnswer) {
+                    this.currentDialoguePiece.answers[i].onAnswer();
+                }
                 // move to next dialogue piece
                 this.selectDialoguePiece(this.currentDialoguePiece.answers[i].goto);
             }
@@ -172,8 +178,10 @@ export class Dialogue extends GameObject {
                 text: 'Fin',
             })
         }
-
-        // this.currentDialoguePiece.answers.reverse();
+        // trigger dialog event
+        if (this.currentDialoguePiece.onDialog) {
+            this.currentDialoguePiece.onDialog();
+        }
 
         this.answerUnlocked = false;
     }

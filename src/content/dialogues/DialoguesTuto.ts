@@ -9,6 +9,7 @@ export class DialoguesTuto {
             {
                 text: "Bonjour",
                 goto: 1,
+                onAnswer: () => {console.log('bonjour is selected !')}
             },
             {
                 text: "Bye",
@@ -18,6 +19,7 @@ export class DialoguesTuto {
     },{
         id: 1,
         textLines: ["Ravie de te connaitre."],
+        onDialog: () => { console.log('il est ravie !')}
     }];
 
 }

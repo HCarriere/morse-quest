@@ -12,7 +12,7 @@ TODO
 
 - RPG
 - 2D, above view
-- Player can move X round per day, stackable when not playing
+- Player can move X round per day, stackable when not playing ?
 - There are enemies, treasures, merchants
 - Map is handcrafted
 - Other players can be seen on the map, as ghosts
@@ -26,13 +26,12 @@ TODO
 - [x] Interface: buttons
 - [x] Interface: Dialogues
 - [x] Multiple maps and teleports
-- [ ] Animations
 - [ ] Monsters
 - [ ] Simple fight
 - [ ] Treasures
 - [ ] Interface: Character sheet
 - [ ] Classes & skills
-- [ ] Player movements economy
+- [ ] Player movements economy ?
 - [ ] Saves
 - [ ] Sprites
 - [ ] Build real map
