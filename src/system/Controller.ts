@@ -1,3 +1,5 @@
+import { Camera } from "./Camera";
+
 export class Controller {
     
     public static KEY_UP = 1;
@@ -19,4 +21,12 @@ export class Controller {
 
     public static mouseX: number;
     public static mouseY: number;
+
+    public static get mouseTileX(): number {
+        return Math.floor((Controller.mouseX + Camera.offsetX) / Camera.cellSize);
+    }
+
+    public static get mouseTileY(): number {
+        return Math.floor((Controller.mouseY + Camera.offsetY) / Camera.cellSize);
+    }
 }

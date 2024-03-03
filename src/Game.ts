@@ -72,6 +72,8 @@ export class Game {
             obj.display();
         }
 
+        this.writeDebug();
+
         requestAnimationFrame(() => {this.loop();});
     }
 
@@ -103,6 +105,22 @@ export class Game {
         const rect = this.canvas.getBoundingClientRect();
         Controller.mouseX = e.clientX - rect.left;
         Controller.mouseY = e.clientY - rect.top;
+    }
+
+    private writeDebug() {
+        this.ctx.font = '12px Arial';
+        this.ctx.fillStyle = 'grey';
+        this.ctx.textAlign = 'left'
+        this.ctx.textBaseline = 'top';
+        this.ctx.fillText('offsetX: ' + Camera.offsetX, 5, this.canvas.height - 80);
+        this.ctx.fillText('offsetY: ' + Camera.offsetY, 5, this.canvas.height - 60);
+        this.ctx.fillText('playerX: ' + Player.x, 5, this.canvas.height - 40);
+        this.ctx.fillText('playerY: ' + Player.y, 5, this.canvas.height - 20);
+
+        this.ctx.fillText('mouseX: ' + Controller.mouseX, 80, this.canvas.height - 80);
+        this.ctx.fillText('mouseY: ' + Controller.mouseY, 80, this.canvas.height - 60);
+        this.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, this.canvas.height - 40);
+        this.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, this.canvas.height - 20);
     }
 }
 

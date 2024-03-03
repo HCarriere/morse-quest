@@ -9,6 +9,8 @@ export class GameInterface extends GameObject {
      */
     private static instance: GameInterface;
 
+    public static frame = 0;
+
     private elements: GameObject[];
     private dialogues: Dialogue[];
 
@@ -16,12 +18,12 @@ export class GameInterface extends GameObject {
         this.elements = [];
         this.dialogues = [];
 
-        this.elements.push(new Button(this.ctx, this.canvas, 5, 5, 200, 50, () => {
+        this.elements.push(new Button(this.ctx, this.canvas, 5, 5, 60, 60, () => {
             console.log('menu click')
         }, {
             text: 'MENU',
-            color: 'red',
-            textColor: 'yellow'
+            color: 'lightgrey',
+            textColor: 'black'
         }));
 
         for (const obj of this.elements) {
@@ -40,6 +42,8 @@ export class GameInterface extends GameObject {
         // debug TODO REMOVE ME
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(Controller.mouseX-5, Controller.mouseY-5, 10, 10);
+
+        GameInterface.frame++;
     }
 
     public keyPressed(orientation: number): void {

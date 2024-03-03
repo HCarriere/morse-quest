@@ -1,6 +1,7 @@
 import { MapInfo, MapObject, Maps, TileSettings } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { GameObject } from "./GameObject";
+import { Graphics } from "./Graphics";
 
 export interface Coordinates {
     x: number;
@@ -12,17 +13,15 @@ export class GameMap extends GameObject {
     static MAX_BLOCK_WIDTH_VIEW = 30;
     static MAX_BLOCK_HEIGHT_VIEW = 30;
 
-    // Map Values
-    
-    
-    private static currentMapInfo: MapInfo;
-
     static MapTiles: number[][];
     static MapWidth: number;
     static MapHeight: number;
     static SpawnPoints: Coordinates[];
+    private static currentMapInfo: MapInfo;
 
+    
     public init() {
+        // 1st map to be loaded
         GameMap.loadMap('tuto');
     }
 
@@ -67,18 +66,15 @@ export class GameMap extends GameObject {
         const starty = Math.max(Math.floor(Camera.offsetY / Camera.cellSize), 0);
         const lenx = Math.floor(this.canvas.width / Camera.cellSize);
         const leny = Math.floor(this.canvas.height / Camera.cellSize);
+
         for (let x = startx; x < Math.min(startx + lenx + 2, GameMap.MapWidth); x++) {
             for (let y = starty; y < Math.min(starty + leny + 2, GameMap.MapHeight); y++) {
 
                 const tile = GameMap.getCollision({x, y});
+                if (tile) Graphics.displayTile(this.ctx, tile, x, y);
 
-                if (tile.visible && tile.color) {
-                    this.ctx.fillStyle = tile.color;
-                    this.ctx.fillRect(
-                        Math.floor(x * Camera.cellSize - Camera.offsetX), 
-                        Math.floor(y * Camera.cellSize - Camera.offsetY), 
-                        Camera.cellSize, Camera.cellSize);
-                }
+                const obj = GameMap.getMapObject({x, y});
+                if (obj) Graphics.displayObject(this.ctx, obj, x, y);
             }
         }
     }
@@ -97,7 +93,9 @@ export class GameMap extends GameObject {
     }
 
     public static getCollision(coordinates: Coordinates): TileSettings {
-        return GameMap.getTileSetting(GameMap.MapTiles[coordinates.y][coordinates.x]);
+        if (coordinates.x >= 0 && coordinates.y >= 0) {
+            return GameMap.getTileSetting(GameMap.MapTiles[coordinates.y][coordinates.x]);
+        }
     }
 
     public static getMapObject(coordinates: Coordinates): MapObject {
