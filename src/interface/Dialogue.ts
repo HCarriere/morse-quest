@@ -91,7 +91,10 @@ export class Dialogue extends GameObject {
     }
 
     public mousePressed(x: number, y: number): void {
-        if (!this.answerUnlocked) return;
+        if (!this.answerUnlocked) {
+            this.currentTextAnimation += 2000;
+            return;
+        }
         for (let i = this.currentDialoguePiece.answers.length - 1; i >= 0; i--) {
             // this.x + 20, this.y + this.height - 20 - Dialogue.INTERLINE * i
             if (this.isCoordsInsideAnswer(x, y, i)) {
@@ -170,7 +173,7 @@ export class Dialogue extends GameObject {
             })
         }
 
-        this.currentDialoguePiece.answers.reverse();
+        // this.currentDialoguePiece.answers.reverse();
 
         this.answerUnlocked = false;
     }

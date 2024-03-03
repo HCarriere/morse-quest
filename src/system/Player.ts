@@ -2,7 +2,7 @@ import { Camera } from "./Camera";
 import { Controller } from "./Controller";
 import { Coordinates, GameMap } from "./GameMap";
 import { GameObject } from "./GameObject";
-import { GameEvents } from "./GameEvents";
+import { GameEvents } from "../content/GameEvents";
 import { GameInterface } from "@game/interface/GameInterface";
 
 /**
@@ -10,14 +10,19 @@ import { GameInterface } from "@game/interface/GameInterface";
  */
 export class Player extends GameObject {
 
-    public location: Coordinates;
+    public static location: Coordinates;
 
     /**
      * Teleport on coordinates
      * @param x 
      * @param y 
+     * @param mapId optional, specify it to teleport on another map
      */
-    public teleport(coordinates: Coordinates) {
+    public static teleport(coordinates: Coordinates, mapId?: string) {
+        if (mapId) {
+            GameMap.loadMap(mapId);
+        }
+
         this.location = coordinates;
 
         Camera.targetCoordinates = this.location;
@@ -27,7 +32,7 @@ export class Player extends GameObject {
      * Tries to move in the designed orientation
      * @param orientation 
      */
-    private move(orientation: number) {
+    private static move(orientation: number) {
         // not allowed to move
         if (GameInterface.getInstance().freezeControls) {
             return;
@@ -52,7 +57,8 @@ export class Player extends GameObject {
             return;
         }
 
-        GameEvents.processGameEvent(tile);
+        // process walk tile event
+        GameEvents.processGameEvent(GameMap.getMapObject({x: this.location.x + newCoordModifier.x, y: this.location.y + newCoordModifier.y}));
 
         // process movement
         this.location.x += newCoordModifier.x;
@@ -61,17 +67,15 @@ export class Player extends GameObject {
         Camera.targetCoordinates = this.location;
     }
 
-    
-
     public display() {
         this.ctx.fillStyle = 'darkgrey';
         this.ctx.fillRect(
-            Math.floor(this.location.x * Camera.cellSize - Camera.offsetX + 3), 
-            Math.floor(this.location.y * Camera.cellSize - Camera.offsetY + 3), 
+            Math.floor(Player.location.x * Camera.cellSize - Camera.offsetX + 3), 
+            Math.floor(Player.location.y * Camera.cellSize - Camera.offsetY + 3), 
             Camera.cellSize - 6, Camera.cellSize - 6);
     }
     
     public keyPressed(orientation: number): void {
-        this.move(orientation);    
+        Player.move(orientation);    
     }
 }

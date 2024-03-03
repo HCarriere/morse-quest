@@ -25,17 +25,16 @@ TODO
 - [x] Moving on map (collision, camera)
 - [x] Interface: buttons
 - [x] Interface: Dialogues
-- [ ] Interface: Character sheet
-- [ ] Saves
-- [ ] Player stats
-- [ ] Player movements economy
-- [ ] Sprites
-- [ ] Basic inventory
-- [ ] Treasures
+- [x] Multiple maps and teleports
+- [ ] Animations
 - [ ] Monsters
 - [ ] Simple fight
-- [ ] Skills
-- [ ] Classes
+- [ ] Treasures
+- [ ] Interface: Character sheet
+- [ ] Classes & skills
+- [ ] Player movements economy
+- [ ] Saves
+- [ ] Sprites
 - [ ] Build real map
 - [ ] Cool animated splashscreen (with particles)
 - [ ] Display other players

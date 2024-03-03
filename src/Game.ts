@@ -55,7 +55,7 @@ export class Game {
         this.gameObjects.push(this.camera);
         this.gameObjects.push(GameInterface.getInstance());
         
-        this.player.teleport(this.gameMap.getRandomSpawnPoint());
+        Player.teleport(this.gameMap.getRandomSpawnPoint());
 
         this.resize();
 
@@ -64,7 +64,8 @@ export class Game {
 
     private loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = 'lightgrey';
+        // background test
+        this.ctx.fillStyle = '#111';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         for (const obj of this.gameObjects) {
@@ -75,7 +76,6 @@ export class Game {
     }
 
     private resize() {
-        console.log('resize event', this.canvas.parentElement);
         this.canvas.width = this.canvas.parentElement.clientWidth;
         this.canvas.height = this.canvas.parentElement.clientHeight;
         for (const obj of this.gameObjects) {

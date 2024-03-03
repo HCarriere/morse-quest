@@ -1,3 +1,4 @@
+import { MapInfo, MapObject, Maps, TileSettings } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { GameObject } from "./GameObject";
 
@@ -6,46 +7,49 @@ export interface Coordinates {
     y: number;
 }
 
-export interface TileSettings {
-    solid?: boolean;
-    respawn?: boolean;
-    visible?: boolean;
-    color?: string;
-
-    debug?: "dialogue"
-}
-
 export class GameMap extends GameObject {
     
-    static MAX_BLOCK_WIDTH_VIEW = 10;
+    static MAX_BLOCK_WIDTH_VIEW = 30;
     static MAX_BLOCK_HEIGHT_VIEW = 30;
 
     // Map Values
-    private static MapValues = new Map<number, TileSettings>([
-        [1, {solid: true, visible: true, color: 'blue'}],
-        [2, {respawn: true, visible: true, color: 'green'}],
-        [900, {color: 'red', visible: true, debug: 'dialogue'}],
-    ]);
     
     
-    static MapInfo: number[][];
+    private static currentMapInfo: MapInfo;
+
+    static MapTiles: number[][];
     static MapWidth: number;
     static MapHeight: number;
     static SpawnPoints: Coordinates[];
-    
 
     public init() {
-        GameMap.MapInfo = [];
+        GameMap.loadMap('tuto');
+    }
+
+    public static loadMap(mapId: string) {
+        console.log(`loading map <${mapId}>`)
+        GameMap.MapTiles = [];
         GameMap.SpawnPoints = [];
-        const lines = mapRaw.split('\n');
+        GameMap.MapWidth = 0;
+        GameMap.MapHeight = 0;
+        GameMap.currentMapInfo = null;
+        
+        if (!Maps.MapIDS[mapId]) {
+            console.log(`can't find map <${mapId}>, loading <main>`);
+            mapId = 'main';
+        }
+
+        GameMap.currentMapInfo = Maps.MapIDS[mapId];
+
+        const lines = GameMap.currentMapInfo.raw.split('\n');
         for (let i = 0; i < lines.length; i++) {
             const cells = lines[i].split('\t');
-            GameMap.MapWidth ? null : GameMap.MapWidth = cells.length;
-            GameMap.MapInfo[i] = [];
+            GameMap.MapWidth >= cells.length ? null : GameMap.MapWidth = cells.length;
+            GameMap.MapTiles[i] = [];
             for (let j = 0; j < cells.length; j++) {
-                GameMap.MapInfo[i][j] = parseInt(cells[j]);
+                GameMap.MapTiles[i][j] = parseInt(cells[j]);
                 
-                if (GameMap.getTileSetting(GameMap.MapInfo[i][j]).respawn) {
+                if (GameMap.getTileSetting(GameMap.MapTiles[i][j]).respawn) {
                     // spawn
                     GameMap.SpawnPoints.push({x: j, y: i});
                 }
@@ -57,14 +61,16 @@ export class GameMap extends GameObject {
     }
 
     public display() {
+        if (!GameMap.MapTiles) return;
+
         const startx = Math.max(Math.floor(Camera.offsetX / Camera.cellSize), 0);
         const starty = Math.max(Math.floor(Camera.offsetY / Camera.cellSize), 0);
         const lenx = Math.floor(this.canvas.width / Camera.cellSize);
         const leny = Math.floor(this.canvas.height / Camera.cellSize);
         for (let x = startx; x < Math.min(startx + lenx + 2, GameMap.MapWidth); x++) {
             for (let y = starty; y < Math.min(starty + leny + 2, GameMap.MapHeight); y++) {
-                const cell = GameMap.MapInfo[y][x];
-                const tile = GameMap.getTileSetting(cell);
+
+                const tile = GameMap.getCollision({x, y});
 
                 if (tile.visible && tile.color) {
                     this.ctx.fillStyle = tile.color;
@@ -84,49 +90,23 @@ export class GameMap extends GameObject {
     }
 
     private static getTileSetting(id: number): TileSettings {
-        if (GameMap.MapValues.has(id)) {
-            return GameMap.MapValues.get(id);
+        if (Maps.TilesInfo.has(id)) {
+            return Maps.TilesInfo.get(id);
         }
         return {};
     }
 
-    static getCollision(coordinates: Coordinates): TileSettings {
-        return GameMap.getTileSetting(GameMap.MapInfo[coordinates.y][coordinates.x]);
+    public static getCollision(coordinates: Coordinates): TileSettings {
+        return GameMap.getTileSetting(GameMap.MapTiles[coordinates.y][coordinates.x]);
+    }
+
+    public static getMapObject(coordinates: Coordinates): MapObject {
+        const n = GameMap.MapTiles[coordinates.y][coordinates.x];
+        if (n <= 1 || !GameMap.currentMapInfo.objects) return;
+        if (GameMap.currentMapInfo.objects.has(n)) {
+            return GameMap.currentMapInfo.objects.get(n);
+        }
+        return null;
     }
 
 }
-
-
-
-/**
- * CSV tab separated
- */
-const mapRaw = 
-`1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1		1	1	1	1	1	1	1		1	1	1	1	1	1	1	1	1	1	1
-1				1																																		1
-1		1		1		1																																1
-1				1									2		900																							1
-1				1							1																											1
-1				1																																		1
-1							1								1	1	1	1	1	1																		1
-																				1																		
-1														1	1			1		1													1	1	1	1	1	1
-1				1									1					1		1																		1
-1				1									1				1			1																		1
-1				1									1		1	1	1		1	1	1																	1
-1	1	1	1	1	1		1						1				1		1																			1
-1														1			1	1	1																			1
-1															1			1																				1
-1																1																						1
-1																												1										1
-1																													1									1
-1																														1								1
-1																															1							1
-1																																1						1
-1																																	1					1
-1																																	1					1
-1																																	1					1
-1																																	1					1
-1																																	1					1
-1																																	1					1
-1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1		1	1		1	1	1	1`;
