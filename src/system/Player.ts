@@ -4,6 +4,7 @@ import { Coordinates, GameMap, MapObject } from "./GameMap";
 import { GameObject } from "./GameObject";
 import { GameInterface } from "@game/interface/GameInterface";
 import { Graphics } from "./Graphics";
+import { GameStats } from "@game/content/GameStats";
 
 /**
  * Represents the player
@@ -13,6 +14,12 @@ export class Player extends GameObject {
     // public static location: Coordinates;
     public static x: number;
     public static y: number;
+
+    public static stats: GameStats;
+
+    public init() {
+        Player.stats = new GameStats();
+    }
 
     /**
      * Teleport on coordinates
@@ -39,10 +46,10 @@ export class Player extends GameObject {
         
         let newCoordModifier: Coordinates = {x: 0, y: 0};
         if (orientation == Controller.KEY_UP) newCoordModifier.y -= 1;
-        if (orientation == Controller.KEY_DOWN) newCoordModifier.y += 1;
-        if (orientation == Controller.KEY_LEFT) newCoordModifier.x -= 1;
-        if (orientation == Controller.KEY_RIGHT) newCoordModifier.x += 1;
-
+        else if (orientation == Controller.KEY_DOWN) newCoordModifier.y += 1;
+        else if (orientation == Controller.KEY_LEFT) newCoordModifier.x -= 1;
+        else if (orientation == Controller.KEY_RIGHT) newCoordModifier.x += 1;
+        else return; // not a moving key
         Player.move({x: newCoordModifier.x + Player.x, y: newCoordModifier.y + Player.y});
     }
 
@@ -115,8 +122,8 @@ export class Player extends GameObject {
         return true;
     }
     
-    public keyPressed(orientation: number): void {
-        Player.moveByOrientation(orientation);    
+    public keyPressed(key: number): void {
+        Player.moveByOrientation(key);
     }
 
     public mousePressed(x: number, y: number): void {

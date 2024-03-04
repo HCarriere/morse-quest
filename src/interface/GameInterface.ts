@@ -50,16 +50,26 @@ export class GameInterface extends GameObject {
         GameInterface.frame++;
     }
 
-    public keyPressed(orientation: number): void {
-        for (const obj of GameInterface.hudElements) {
-            obj.keyPressed(orientation);
+    public keyPressed(key: number): void {
+        // Combat
+        if (GameInterface.combat) {
+            GameInterface.combat.keyPressed(key);
         }
 
-        if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].keyPressed(orientation);
+        for (const obj of GameInterface.hudElements) {
+            obj.keyPressed(key);
+        }
+
+        if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].keyPressed(key);
         
     }
 
     public mousePressed(x: number, y: number): void {
+        // Combat
+        if (GameInterface.combat) {
+            GameInterface.combat.mousePressed(x, y);
+        }
+
         for (const obj of GameInterface.hudElements) {
             obj.mousePressed(x, y);
         }
@@ -68,6 +78,11 @@ export class GameInterface extends GameObject {
     }
 
     public resize(): void {
+        // Combat
+        if (GameInterface.combat) {
+            GameInterface.combat.resize();
+        }
+
         for (const obj of GameInterface.hudElements) {
             obj.resize();
         }
@@ -80,7 +95,8 @@ export class GameInterface extends GameObject {
      * dialogue, interface, combat ... 
      */
     public static get freezeControls(): boolean {
-        return GameInterface.dialogues.length > 0;
+        return GameInterface.dialogues.length > 0 ||
+            GameInterface.combat != null;
     }
 
     public static addDialogue(pieces: DialoguePiece[]) {
@@ -89,5 +105,9 @@ export class GameInterface extends GameObject {
 
     public static removeCurrentDialogue() {
         GameInterface.dialogues.shift();
+    }
+
+    public static setCombat(combat: Combat) {
+        GameInterface.combat = combat;
     }
 }

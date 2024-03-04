@@ -3,6 +3,8 @@ import { Player } from "@game/system/Player";
 import { SkinType } from "@game/system/Graphics";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
 import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
+import { Combat } from "@game/interface/Combat";
+import { Enemy, EnemySkin } from "./Enemy";
 
 
 export enum Biome {
@@ -73,6 +75,10 @@ export class Maps {
             [901, {
                 onWalk: () => {Player.teleport({x:5, y: 5}, 'main')},
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
+            }],
+            [902, {
+                onWalk: () => {GameInterface.setCombat(new Combat([new Enemy('Mr. Test', EnemySkin.DRONE), new Enemy('Mr. Test #2', EnemySkin.DRONE)]))},
+                skin: {type: SkinType.Portal, primaryColor: 'red', secondaryColor: '#550202'}
             }]
         ]), 
         raw:
@@ -80,9 +86,9 @@ export class Maps {
         1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1								
         1																										1								
         1																										1	1	1	1	1	1	1	1	1
-        1																						901				11	11	11	11	11	11	11	11	11
+        1					902																	901				11	11	11	11	11	11	11	11	11
         1																																		
-        1			2																900											901				1
+        1		902	2																900											901				1
         1																																		
         1																						901				1	1	1	1	1	1	1	1   1
         1												900														1								

@@ -119,6 +119,8 @@ export class Game {
         Graphics.ctx.fillText('mouseY: ' + Controller.mouseY, 80, Graphics.canvas.height - 60);
         Graphics.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, Graphics.canvas.height - 40);
         Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, Graphics.canvas.height - 20);
+
+        Graphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 175, Graphics.canvas.height - 80);
     }
 }
 

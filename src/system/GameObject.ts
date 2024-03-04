@@ -22,9 +22,9 @@ export abstract class GameObject {
 
     /**
      * Each keypress event
-     * @param orientation 
+     * @param key 
      */
-    public keyPressed(orientation: number) {}
+    public keyPressed(key: number) {}
 
     /**
      * Each mouse pressed event

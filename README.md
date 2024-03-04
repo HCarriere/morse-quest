@@ -43,8 +43,8 @@ https://hcarriere.github.io/morse-quest/
 - [x] Interface: buttons
 - [x] Interface: Dialogues
 - [x] Multiple maps and teleports
-- [ ] Encounter (monsters) spawners
 - [ ] Simple fight
+- [ ] Encounter spawners
 - [ ] Interface: Character sheet
 - [ ] Classes & skills
 - [ ] Inventory
