@@ -1,5 +1,6 @@
 import { Coordinates } from "@game/system/GameMap";
 import { GameObject } from "@game/system/GameObject";
+import { Graphics } from "@game/system/Graphics";
 
 
 export interface ButtonStyle {
@@ -19,7 +20,7 @@ export class Button extends GameObject {
 
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, 
         x: number, y: number, width: number, height: number, onClick: () => void, style: ButtonStyle = {}) {
-        super(ctx, canvas);
+        super();
         this.location = {x, y};
         this.width = width;
         this.height = height;
@@ -28,14 +29,14 @@ export class Button extends GameObject {
     }
 
     public display() {
-        this.ctx.fillStyle = this.style.color || 'black';
-        this.ctx.fillRect(this.location.x, this.location.y, this.width, this.height);
+        Graphics.ctx.fillStyle = this.style.color || 'black';
+        Graphics.ctx.fillRect(this.location.x, this.location.y, this.width, this.height);
         if (this.style.text) {
-            this.ctx.fillStyle = this.style.textColor || 'grey';
-            this.ctx.textAlign = "center";
-            this.ctx.font = "30px monospace";
-            this.ctx.textBaseline = "middle";
-            this.ctx.fillText(this.style.text, this.location.x + this.width/2, this.location.y + this.height/2);
+            Graphics.ctx.fillStyle = this.style.textColor || 'grey';
+            Graphics.ctx.textAlign = "center";
+            Graphics.ctx.font = "30px monospace";
+            Graphics.ctx.textBaseline = "middle";
+            Graphics.ctx.fillText(this.style.text, this.location.x + this.width/2, this.location.y + this.height/2);
         }
     }
 

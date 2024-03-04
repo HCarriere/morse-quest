@@ -3,6 +3,7 @@ import { Controller } from "./Controller";
 import { Coordinates, GameMap, MapObject } from "./GameMap";
 import { GameObject } from "./GameObject";
 import { GameInterface } from "@game/interface/GameInterface";
+import { Graphics } from "./Graphics";
 
 /**
  * Represents the player
@@ -52,7 +53,7 @@ export class Player extends GameObject {
      */
     private static move(coordinates: Coordinates) {
         // not allowed to move
-        if (GameInterface.getInstance().freezeControls) {
+        if (GameInterface.freezeControls) {
             return;
         }
 
@@ -79,16 +80,16 @@ export class Player extends GameObject {
     }
 
     public display() {
-        this.ctx.fillStyle = 'darkgrey';
-        this.ctx.fillRect(
+        Graphics.ctx.fillStyle = 'darkgrey';
+        Graphics.ctx.fillRect(
             Math.floor(Player.x * Camera.cellSize - Camera.offsetX + 3), 
             Math.floor(Player.y * Camera.cellSize - Camera.offsetY + 3), 
             Camera.cellSize - 6, Camera.cellSize - 6);
 
         // mouse move cursor
-        if (!GameInterface.getInstance().freezeControls) {
+        if (!GameInterface.freezeControls) {
             if (Player.canMoveTo(Controller.mouseTileX, Controller.mouseTileY)) {
-                this.ctx.fillRect(
+                Graphics.ctx.fillRect(
                     Math.floor(Controller.mouseTileX * Camera.cellSize - Camera.offsetX + 6), 
                     Math.floor(Controller.mouseTileY * Camera.cellSize - Camera.offsetY + 6), 
                     Camera.cellSize - 9, Camera.cellSize - 9);

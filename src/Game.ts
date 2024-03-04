@@ -3,16 +3,15 @@ import { Camera } from "./system/Camera";
 import { Controller } from "./system/Controller";
 import { GameMap } from "./system/GameMap";
 import { GameObject } from "./system/GameObject";
+import { Graphics } from "./system/Graphics";
 import { Player } from "./system/Player";
 
 export class Game {
 
-    private ctx: CanvasRenderingContext2D;
-    private canvas: HTMLCanvasElement;
-
     private gameMap: GameMap;
     private player: Player;
     private camera: Camera;
+    private gameInterface: GameInterface;
 
     private gameObjects: GameObject[];
 
@@ -23,9 +22,9 @@ export class Game {
     }
 
     private initCanvas(canvasid: string) {
-        this.canvas = document.getElementById(canvasid) as HTMLCanvasElement;
+        Graphics.canvas = document.getElementById(canvasid) as HTMLCanvasElement;
         
-        if (!this.canvas) {
+        if (!Graphics.canvas) {
             console.log('canvas no found');
             return;
         }
@@ -33,27 +32,26 @@ export class Game {
         window.addEventListener('resize', () => { this.resize(); }, false);
         window.addEventListener('keydown', (e) => {this.keyPressed(e); });
         window.addEventListener('mousemove', (e) => {this.mouseMove(e)})
-        this.canvas.addEventListener('mousedown', (e) => {this.mousePressed(e); });
+        Graphics.canvas.addEventListener('mousedown', (e) => {this.mousePressed(e); });
 
 
-        this.ctx = this.canvas.getContext("2d");
-        if (!this.ctx) {
+        Graphics.ctx = Graphics.canvas.getContext("2d");
+        if (!Graphics.ctx) {
             console.log('2d context setup error');
             return;
         }
 
         this.gameObjects = [];
 
-        this.gameMap = new GameMap(this.ctx, this.canvas);
-        this.player = new Player(this.ctx, this.canvas);
-        this.camera = new Camera(this.ctx, this.canvas);
-
-        GameInterface.setInstance(new GameInterface(this.ctx, this.canvas));
+        this.gameMap = new GameMap();
+        this.player = new Player();
+        this.camera = new Camera();
+        this.gameInterface = new GameInterface();
 
         this.gameObjects.push(this.gameMap);
         this.gameObjects.push(this.player);
         this.gameObjects.push(this.camera);
-        this.gameObjects.push(GameInterface.getInstance());
+        this.gameObjects.push(this.gameInterface);
         
         Player.teleport(this.gameMap.getRandomSpawnPoint());
 
@@ -63,10 +61,10 @@ export class Game {
     }
 
     private loop() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        Graphics.ctx.clearRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);
         // background test
-        this.ctx.fillStyle = '#111';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        Graphics.ctx.fillStyle = '#111';
+        Graphics.ctx.fillRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);
         
         for (const obj of this.gameObjects) {
             obj.display();
@@ -78,8 +76,8 @@ export class Game {
     }
 
     private resize() {
-        this.canvas.width = this.canvas.parentElement.clientWidth;
-        this.canvas.height = this.canvas.parentElement.clientHeight;
+        Graphics.canvas.width = Graphics.canvas.parentElement.clientWidth;
+        Graphics.canvas.height = Graphics.canvas.parentElement.clientHeight;
         for (const obj of this.gameObjects) {
             obj.resize();
         }
@@ -92,7 +90,7 @@ export class Game {
     }
 
     private mousePressed(e: MouseEvent) {
-        const rect = this.canvas.getBoundingClientRect();
+        const rect = Graphics.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         for (const obj of this.gameObjects) {
@@ -102,25 +100,25 @@ export class Game {
     }
 
     private mouseMove(e: MouseEvent) {
-        const rect = this.canvas.getBoundingClientRect();
+        const rect = Graphics.canvas.getBoundingClientRect();
         Controller.mouseX = e.clientX - rect.left;
         Controller.mouseY = e.clientY - rect.top;
     }
 
     private writeDebug() {
-        this.ctx.font = '12px Arial';
-        this.ctx.fillStyle = 'grey';
-        this.ctx.textAlign = 'left'
-        this.ctx.textBaseline = 'top';
-        this.ctx.fillText('offsetX: ' + Camera.offsetX, 5, this.canvas.height - 80);
-        this.ctx.fillText('offsetY: ' + Camera.offsetY, 5, this.canvas.height - 60);
-        this.ctx.fillText('playerX: ' + Player.x, 5, this.canvas.height - 40);
-        this.ctx.fillText('playerY: ' + Player.y, 5, this.canvas.height - 20);
+        Graphics.ctx.font = '12px Arial';
+        Graphics.ctx.fillStyle = 'grey';
+        Graphics.ctx.textAlign = 'left'
+        Graphics.ctx.textBaseline = 'top';
+        Graphics.ctx.fillText('offsetX: ' + Camera.offsetX, 5, Graphics.canvas.height - 80);
+        Graphics.ctx.fillText('offsetY: ' + Camera.offsetY, 5, Graphics.canvas.height - 60);
+        Graphics.ctx.fillText('playerX: ' + Player.x, 5, Graphics.canvas.height - 40);
+        Graphics.ctx.fillText('playerY: ' + Player.y, 5, Graphics.canvas.height - 20);
 
-        this.ctx.fillText('mouseX: ' + Controller.mouseX, 80, this.canvas.height - 80);
-        this.ctx.fillText('mouseY: ' + Controller.mouseY, 80, this.canvas.height - 60);
-        this.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, this.canvas.height - 40);
-        this.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, this.canvas.height - 20);
+        Graphics.ctx.fillText('mouseX: ' + Controller.mouseX, 80, Graphics.canvas.height - 80);
+        Graphics.ctx.fillText('mouseY: ' + Controller.mouseY, 80, Graphics.canvas.height - 60);
+        Graphics.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, Graphics.canvas.height - 40);
+        Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, Graphics.canvas.height - 20);
     }
 }
 

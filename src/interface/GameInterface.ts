@@ -1,22 +1,20 @@
 import { GameObject } from "@game/system/GameObject";
-import { Button } from "./components/Button";
 import { Dialogue, DialoguePiece } from "./Dialogue";
 import { Controller } from "@game/system/Controller";
+import { Combat } from "./Combat";
+import { Graphics } from "@game/system/Graphics";
 
 export class GameInterface extends GameObject {
-    /**
-     * Singleton
-     */
-    private static instance: GameInterface;
 
     public static frame = 0;
 
-    private elements: GameObject[];
-    private dialogues: Dialogue[];
+    private static hudElements: GameObject[];
+    private static dialogues: Dialogue[];
+    private static combat: Combat;
 
     public init(): void {
-        this.elements = [];
-        this.dialogues = [];
+        GameInterface.hudElements = [];
+        GameInterface.dialogues = [];
 
         /*this.elements.push(new Button(this.ctx, this.canvas, 5, 5, 60, 60, () => {
             console.log('menu click')
@@ -26,77 +24,70 @@ export class GameInterface extends GameObject {
             textColor: 'black'
         }));*/
 
-        for (const obj of this.elements) {
+        for (const obj of GameInterface.hudElements) {
             obj.init();
         }
     }
     
     public display() {
-        for (const obj of this.elements) {
+        // Combat
+        if (GameInterface.combat) {
+            GameInterface.combat.display();
+        }
+
+        // Permanent HUD elements
+        for (const obj of GameInterface.hudElements) {
             obj.display();
         }
 
         // process first dialogue
-        if (this.dialogues.length > 0) this.dialogues[0].display();
+        if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].display();
 
         // debug TODO REMOVE ME
-        this.ctx.fillStyle = 'black';
-        this.ctx.fillRect(Controller.mouseX-5, Controller.mouseY-5, 10, 10);
+        Graphics.ctx.fillStyle = 'black';
+        Graphics.ctx.fillRect(Controller.mouseX-5, Controller.mouseY-5, 10, 10);
 
         GameInterface.frame++;
     }
 
     public keyPressed(orientation: number): void {
-        for (const obj of this.elements) {
+        for (const obj of GameInterface.hudElements) {
             obj.keyPressed(orientation);
         }
 
-        if (this.dialogues.length > 0) this.dialogues[0].keyPressed(orientation);
+        if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].keyPressed(orientation);
         
     }
 
     public mousePressed(x: number, y: number): void {
-        for (const obj of this.elements) {
+        for (const obj of GameInterface.hudElements) {
             obj.mousePressed(x, y);
         }
 
-        if (this.dialogues.length > 0) this.dialogues[0].mousePressed(x, y);
+        if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].mousePressed(x, y);
     }
 
     public resize(): void {
-        for (const obj of this.elements) {
+        for (const obj of GameInterface.hudElements) {
             obj.resize();
         }
 
-        if (this.dialogues.length > 0) this.dialogues[0].resize();
+        if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].resize();
     }
 
     /**
      * Will return true if overworld controls should be freezed, be it for
      * dialogue, interface, combat ... 
      */
-    public get freezeControls(): boolean {
-        return this.dialogues.length > 0;
+    public static get freezeControls(): boolean {
+        return GameInterface.dialogues.length > 0;
     }
 
-    public addDialogue(pieces: DialoguePiece[]) {
-        this.dialogues.push(new Dialogue(this.ctx, this.canvas, pieces));
+    public static addDialogue(pieces: DialoguePiece[]) {
+        GameInterface.dialogues.push(new Dialogue(pieces));
     }
 
-    public removeCurrentDialogue() {
-        this.dialogues.shift();
-    }
-
-
-    public static getInstance(): GameInterface {
-        if (!GameInterface.instance) {
-            console.log('error : Interface not loaded');
-        }
-
-        return GameInterface.instance;
-    }
-
-    public static setInstance(obj: GameInterface) {
-        GameInterface.instance = obj;
+    public static removeCurrentDialogue() {
+        GameInterface.dialogues.shift();
     }
 }

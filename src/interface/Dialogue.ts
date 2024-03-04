@@ -1,6 +1,7 @@
 import { Controller } from "@game/system/Controller";
 import { GameObject } from "@game/system/GameObject";
 import { GameInterface } from "./GameInterface";
+import { Graphics } from "@game/system/Graphics";
 
 export interface DialoguePiece {
     id: number;
@@ -30,8 +31,8 @@ export class Dialogue extends GameObject {
     private width: number;
     private height: number;
 
-    constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, pieces: DialoguePiece[]) {
-        super(ctx, canvas);
+    constructor(pieces: DialoguePiece[]) {
+        super();
         this.pieces = pieces;
         
         this.resize();
@@ -42,17 +43,17 @@ export class Dialogue extends GameObject {
         if (!this.currentDialoguePiece) return;
 
         // rect
-        this.ctx.fillStyle = 'lightblue';
-        this.ctx.strokeStyle = 'black';
-        this.ctx.fillRect(this.x, this.y, this.width, this.height);
-        this.ctx.strokeRect(this.x, this.y, this.width, this.height);
+        Graphics.ctx.fillStyle = 'lightblue';
+        Graphics.ctx.strokeStyle = 'black';
+        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
         // text
-        this.ctx.fillStyle = 'black';
-        this.ctx.textAlign = "left";
-        this.ctx.font = Dialogue.FONT;
-        this.ctx.textBaseline = "top";
-        /*this.ctx.fillText(this.currentDialoguePiece.textLines.substring(0, Math.floor(this.currentTextAnimation)), 
+        Graphics.ctx.fillStyle = 'black';
+        Graphics.ctx.textAlign = "left";
+        Graphics.ctx.font = Dialogue.FONT;
+        Graphics.ctx.textBaseline = "top";
+        /*Graphics.ctx.fillText(this.currentDialoguePiece.textLines.substring(0, Math.floor(this.currentTextAnimation)), 
         this.x + 20, this.y + 20, this.width - 40);*/
         let charCount = 0;
         let currentAnimatingLine = 0;
@@ -62,12 +63,12 @@ export class Dialogue extends GameObject {
                 charCount += this.currentDialoguePiece.textLines[i].length;
                 currentAnimatingLine ++;
 
-                this.ctx.fillText(this.currentDialoguePiece.textLines[i], 
+                Graphics.ctx.fillText(this.currentDialoguePiece.textLines[i], 
                     this.x + 20, this.y + 20 + Dialogue.INTERLINE * i, this.width - 40);
             }
             else if (currentAnimatingLine == i) {
                 // this line is beeing animated
-                this.ctx.fillText(this.currentDialoguePiece.textLines[i].substring(0, this.currentTextAnimation - charCount), 
+                Graphics.ctx.fillText(this.currentDialoguePiece.textLines[i].substring(0, this.currentTextAnimation - charCount), 
                     this.x + 20, this.y + 20 + Dialogue.INTERLINE * i, this.width - 40);
             }
         }
@@ -79,14 +80,14 @@ export class Dialogue extends GameObject {
 
         // responses
         if (this.answerUnlocked) {
-            this.ctx.textBaseline = "bottom";
+            Graphics.ctx.textBaseline = "bottom";
             for (let i = this.currentDialoguePiece.answers.length - 1; i >= 0; i--) {
-                this.ctx.fillStyle = 'black';
+                Graphics.ctx.fillStyle = 'black';
                 if (this.isCoordsInsideAnswer(Controller.mouseX, Controller.mouseY, i)) {
-                    this.ctx.fillRect(this.x, this.y + this.height - 20 - Dialogue.INTERLINE * i - Dialogue.INTERLINE, this.width, Dialogue.INTERLINE);
-                    this.ctx.fillStyle = 'white';
+                    Graphics.ctx.fillRect(this.x, this.y + this.height - 20 - Dialogue.INTERLINE * i - Dialogue.INTERLINE, this.width, Dialogue.INTERLINE);
+                    Graphics.ctx.fillStyle = 'white';
                 }
-                this.ctx.fillText('> ' + this.currentDialoguePiece.answers[i].text, 
+                Graphics.ctx.fillText('> ' + this.currentDialoguePiece.answers[i].text, 
                     this.x + 20, this.y + this.height - 20 - Dialogue.INTERLINE * i, this.width - 40);
             }
         }
@@ -145,9 +146,9 @@ export class Dialogue extends GameObject {
 
         // resize it
         let newTextLines = [];
-        this.ctx.font = Dialogue.FONT;
+        Graphics.ctx.font = Dialogue.FONT;
         for (const line of this.currentDialoguePiece.textLines) {
-            const size = this.ctx.measureText(line);
+            const size = Graphics.ctx.measureText(line);
             let portion = size.width / this.width;
             if (portion > 1) {
                 // text > width, need splitting
@@ -187,13 +188,13 @@ export class Dialogue extends GameObject {
     }
 
     public endDialogue() {
-        GameInterface.getInstance().removeCurrentDialogue();
+        GameInterface.removeCurrentDialogue();
     }
     
     public resize(): void {
         this.x = 100;
-        this.y = this.canvas.height - 250;
-        this.width = this.canvas.width - 200;
+        this.y = Graphics.canvas.height - 250;
+        this.width = Graphics.canvas.width - 200;
         this.height = 200
     }
     

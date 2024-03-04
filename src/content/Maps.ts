@@ -67,7 +67,7 @@ export class Maps {
     private static MAP_TUTO: MapInfo = {
         objects: new Map<number, MapObject>([
             [900, {
-                onWalk: () => {GameInterface.getInstance().addDialogue(DialoguesTuto.INTRODUCTION)},
+                onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
                 skin: {type: SkinType.AttentionMark, primaryColor: 'red', secondaryColor: 'yellow'}
             }],
             [901, {

@@ -97,17 +97,17 @@ export class GameMap extends GameObject {
 
         const startx = Math.max(Math.floor(Camera.offsetX / Camera.cellSize), 0);
         const starty = Math.max(Math.floor(Camera.offsetY / Camera.cellSize), 0);
-        const lenx = Math.floor(this.canvas.width / Camera.cellSize);
-        const leny = Math.floor(this.canvas.height / Camera.cellSize);
+        const lenx = Math.floor(Graphics.canvas.width / Camera.cellSize);
+        const leny = Math.floor(Graphics.canvas.height / Camera.cellSize);
 
         for (let x = startx; x < Math.min(startx + lenx + 2, GameMap.MapWidth); x++) {
             for (let y = starty; y < Math.min(starty + leny + 2, GameMap.MapHeight); y++) {
 
                 const tile = GameMap.getCollision({x, y});
-                if (tile) Graphics.displayTile(this.ctx, tile, x, y);
+                if (tile) Graphics.displayTile(tile, x, y);
 
                 const obj = GameMap.getMapObject({x, y});
-                if (obj) Graphics.displayObject(this.ctx, obj, x, y);
+                if (obj) Graphics.displayObject(obj, x, y);
             }
         }
     }

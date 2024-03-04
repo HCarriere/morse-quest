@@ -17,6 +17,9 @@ export enum SkinType {
  * Simple graphics, only animated with frames number (stateless)
  */
 export class Graphics {
+
+    public static ctx: CanvasRenderingContext2D;
+    public static canvas: HTMLCanvasElement;
     
     private static FONT = "30px monospace";
 
@@ -27,36 +30,36 @@ export class Graphics {
      * @param x coord x
      * @param y coord y
      */
-    public static displayTile(ctx: CanvasRenderingContext2D, tile: TileSettings, x: number, y: number) {
+    public static displayTile(tile: TileSettings, x: number, y: number) {
         if (tile.visible && tile.color) {
-            ctx.fillStyle = tile.color;
-            ctx.fillRect(
+            Graphics.ctx.fillStyle = tile.color;
+            Graphics.ctx.fillRect(
                 Math.floor(x * Camera.cellSize - Camera.offsetX), 
                 Math.floor(y * Camera.cellSize - Camera.offsetY), 
                 Camera.cellSize, Camera.cellSize);
         }
     }
 
-    public static displayObject(ctx: CanvasRenderingContext2D, object: MapObject, x: number, y: number) {
+    public static displayObject(object: MapObject, x: number, y: number) {
         if (!object.skin) return;
 
         /**
          * Attention mark graphics
          */
         if (object.skin.type == SkinType.AttentionMark) {
-            ctx.fillStyle = object.skin.secondaryColor;
-            ctx.save();
-            ctx.translate(
+            Graphics.ctx.fillStyle = object.skin.secondaryColor;
+            Graphics.ctx.save();
+            Graphics.ctx.translate(
                 x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
                 y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2);
-            ctx.rotate(45 * Math.PI/180);
-            ctx.fillRect(-Camera.cellSize / 2, -Camera.cellSize / 2, Camera.cellSize, Camera.cellSize);
-            ctx.restore();
-            ctx.fillStyle = object.skin.primaryColor;
-            ctx.textAlign = "center";
-            ctx.font = Graphics.FONT;
-            ctx.textBaseline = "middle";
-            ctx.fillText('!', 
+            Graphics.ctx.rotate(45 * Math.PI/180);
+            Graphics.ctx.fillRect(-Camera.cellSize / 2, -Camera.cellSize / 2, Camera.cellSize, Camera.cellSize);
+            Graphics.ctx.restore();
+            Graphics.ctx.fillStyle = object.skin.primaryColor;
+            Graphics.ctx.textAlign = "center";
+            Graphics.ctx.font = Graphics.FONT;
+            Graphics.ctx.textBaseline = "middle";
+            Graphics.ctx.fillText('!', 
                 x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
                 y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2);
         }
@@ -64,20 +67,20 @@ export class Graphics {
          * Portal graphics
          */
         if (object.skin.type == SkinType.Portal) {
-            ctx.fillStyle = object.skin.primaryColor;
-            ctx.beginPath();
-            ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
+            Graphics.ctx.fillStyle = object.skin.primaryColor;
+            Graphics.ctx.beginPath();
+            Graphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
                     y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2,
                     Camera.cellSize / 2, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.strokeStyle = object.skin.secondaryColor;
-            ctx.lineWidth = Camera.cellSize / 10;
-            ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
+                    Graphics.ctx.fill();
+                    Graphics.ctx.beginPath();
+                    Graphics.ctx.strokeStyle = object.skin.secondaryColor;
+                    Graphics.ctx.lineWidth = Camera.cellSize / 10;
+                    Graphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
                     y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2,
                     Camera.cellSize/2, 
                     GameInterface.frame / 10, GameInterface.frame / 10 + Math.PI, false);
-            ctx.stroke();
+                    Graphics.ctx.stroke();
         }
     }
 }
