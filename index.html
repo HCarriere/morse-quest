@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Morse Quest</title>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background-color: black;
+      }
+      .wrapper {
+        height: 600px;
+      }
+      #morsequest {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://raw.githubusercontent.com/HCarriere/morse-quest/master/build/morsequest-bundle.js"></script>
+
+    <div class="wrapper">
+      <canvas id="morsequest"></canvas>
+    </div>
+
+    <script>new MorseQuest.Game();</script>
+  </body>
+</html>

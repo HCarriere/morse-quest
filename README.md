@@ -34,6 +34,7 @@ TODO
 - [ ] Player movements economy ?
 - [ ] Saves
 - [ ] Sprites
+- [ ] Pathfinding
 - [ ] Build real map
 - [ ] Cool animated splashscreen (with particles)
 - [ ] Display other players
