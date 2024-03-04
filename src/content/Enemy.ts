@@ -20,7 +20,11 @@ export class Enemy {
      * @param size
      */
     public display(x: number, y:number, size: number) {
-        if (this.skin == EnemySkin.DRONE) {
+        Enemy.displaySkin(this.skin, x, y, size);
+    }
+
+    public static displaySkin(skin: EnemySkin, x: number, y:number, size: number) {
+        if (skin == EnemySkin.Drone) {
             size = size/2; // drones are small
             Graphics.ctx.fillStyle = 'red';
             Graphics.ctx.save();
@@ -35,5 +39,5 @@ export class Enemy {
 }
 
 export enum EnemySkin {
-    DRONE = 1,
+    Drone = 1,
 }

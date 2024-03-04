@@ -77,8 +77,8 @@ export class Maps {
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
             }],
             [902, {
-                onWalk: () => {GameInterface.setCombat(new Combat([new Enemy('Mr. Test', EnemySkin.DRONE), new Enemy('Mr. Test #2', EnemySkin.DRONE)]))},
-                skin: {type: SkinType.Portal, primaryColor: 'red', secondaryColor: '#550202'}
+                onWalk: () => {GameInterface.setCombat(new Combat([new Enemy('Mr. Test', EnemySkin.Drone), new Enemy('Mr. Test #2', EnemySkin.Drone)]))},
+                enemySkin: EnemySkin.Drone
             }]
         ]), 
         raw:

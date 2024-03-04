@@ -3,6 +3,7 @@ import { Camera } from "./Camera";
 import { GameObject } from "./GameObject";
 import { Graphics, ObjectSkin } from "./Graphics";
 import { GameEncounter, GameEvents } from "@game/content/GameEvents";
+import { Enemy, EnemySkin } from "@game/content/Enemy";
 
 export interface Coordinates {
     x: number;
@@ -19,6 +20,7 @@ export interface MapInfo {
 
 export interface MapObject {
     skin?: ObjectSkin;
+    enemySkin?: EnemySkin;
     onWalk: () => void;
 }
 
@@ -90,6 +92,7 @@ export class GameMap extends GameObject {
         GameMap.MapHeight = lines.length;
         console.log(`${GameMap.MapWidth} x ${GameMap.MapHeight} map loaded`);
         console.log('spawn points', GameMap.SpawnPoints);
+        console.log('encounters', GameMap.Encounters);
     }
 
     public display() {
@@ -107,7 +110,13 @@ export class GameMap extends GameObject {
                 if (tile) Graphics.displayTile(tile, x, y);
 
                 const obj = GameMap.getMapObject({x, y});
-                if (obj) Graphics.displayObject(obj, x, y);
+                if (obj && obj.skin) Graphics.displayObject(obj, x, y);
+                if (obj && obj.enemySkin) Enemy.displaySkin(
+                    obj.enemySkin, 
+                    x * Camera.cellSize - Camera.offsetX, 
+                    y * Camera.cellSize - Camera.offsetY, 
+                    Camera.cellSize
+                );
             }
         }
     }
