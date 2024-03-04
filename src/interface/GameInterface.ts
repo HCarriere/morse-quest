@@ -18,13 +18,13 @@ export class GameInterface extends GameObject {
         this.elements = [];
         this.dialogues = [];
 
-        this.elements.push(new Button(this.ctx, this.canvas, 5, 5, 60, 60, () => {
+        /*this.elements.push(new Button(this.ctx, this.canvas, 5, 5, 60, 60, () => {
             console.log('menu click')
         }, {
             text: 'MENU',
             color: 'lightgrey',
             textColor: 'black'
-        }));
+        }));*/
 
         for (const obj of this.elements) {
             obj.init();

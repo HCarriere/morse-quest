@@ -1,6 +1,6 @@
-import { MapObject, TileSettings } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { GameInterface } from "@game/interface/GameInterface";
+import { MapObject, TileSettings } from "./GameMap";
 
 export interface ObjectSkin {
     type: SkinType;

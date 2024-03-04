@@ -1,11 +1,34 @@
-import { MapInfo, MapObject, Maps, TileSettings } from "@game/content/Maps";
+import { Biome, Maps } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { GameObject } from "./GameObject";
-import { Graphics } from "./Graphics";
+import { Graphics, ObjectSkin } from "./Graphics";
+import { GameEncounter, GameEvents } from "@game/content/GameEvents";
 
 export interface Coordinates {
     x: number;
     y: number;
+}
+
+export interface MapInfo {
+    objects?: Map<number, MapObject>;
+    raw: string;
+
+    encounterLevel?: number;
+    biome?: Biome;
+}
+
+export interface MapObject {
+    skin?: ObjectSkin;
+    onWalk: () => void;
+}
+
+export interface TileSettings {
+    visible?: boolean;
+    color?: string;
+    solid?: boolean;
+
+    respawn?: boolean;
+    randomEncounter?: boolean;
 }
 
 export class GameMap extends GameObject {
@@ -17,6 +40,8 @@ export class GameMap extends GameObject {
     static MapWidth: number;
     static MapHeight: number;
     static SpawnPoints: Coordinates[];
+    static Encounters: Map<string, GameEncounter>;
+
     private static currentMapInfo: MapInfo;
 
     
@@ -32,6 +57,7 @@ export class GameMap extends GameObject {
         GameMap.MapWidth = 0;
         GameMap.MapHeight = 0;
         GameMap.currentMapInfo = null;
+        GameMap.Encounters = new Map<string, GameEncounter>();
         
         if (!Maps.MapIDS[mapId]) {
             console.log(`can't find map <${mapId}>, loading <main>`);
@@ -48,9 +74,16 @@ export class GameMap extends GameObject {
             for (let j = 0; j < cells.length; j++) {
                 GameMap.MapTiles[i][j] = parseInt(cells[j]);
                 
+                // spawn point
                 if (GameMap.getTileSetting(GameMap.MapTiles[i][j]).respawn) {
-                    // spawn
                     GameMap.SpawnPoints.push({x: j, y: i});
+                }
+                // encounter
+                if (GameMap.getTileSetting(GameMap.MapTiles[i][j]).randomEncounter) {
+                    const encounter = GameEvents.generateMapEncounters(GameMap.currentMapInfo);
+                    if (encounter) {
+                        GameMap.Encounters.set(`${j}:${i}`, encounter);
+                    }
                 }
             }
         }

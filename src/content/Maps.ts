@@ -1,26 +1,18 @@
 import { GameInterface } from "@game/interface/GameInterface";
 import { Player } from "@game/system/Player";
-import { ObjectSkin, SkinType } from "@game/system/Graphics";
+import { SkinType } from "@game/system/Graphics";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
+import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 
-export interface MapInfo {
-    objects?: Map<number, MapObject>;
-    raw: string;
+
+export enum Biome {
+    Normal = 0,
 }
 
-export interface MapObject {
-    skin?: ObjectSkin;
-    onWalk: () => void;
-}
-
-export interface TileSettings {
-    visible?: boolean;
-    color?: string;
-    solid?: boolean;
-
-    respawn?: boolean;
-}
-
+/**
+ * - Tiles are for decoration, flags, generic events
+ * - Map Objects are for specific and scripted events
+ */
 export class Maps {
 
     public static TilesInfo = new Map<number, TileSettings>([
@@ -29,9 +21,12 @@ export class Maps {
         [11, {solid: true, visible: true, color: '#0102CC'}],
         // events & flags
         [2, {respawn: true}],
+        [21, {randomEncounter: true, visible: true, color: '#010203'}], // meant to be invisible
     ]);
 
     private static MAP_MAIN: MapInfo = {
+        encounterLevel: 1,
+        biome: Biome.Normal,
         objects: new Map<number, MapObject>([
             [901, {
                 onWalk: () => {Player.teleport({x:5, y: 5}, 'tuto')},
@@ -43,18 +38,18 @@ export class Maps {
         1	2			1																																		1
         1		1		1		1																																1
         1				1																																		1
-        1											1																											1
-        1					901																																	1
-        1								1							1	1	1	1	1	1																		1
-        1                               11                                                 1																		
-        1														1	1			1		1													1	1	1	1	1	1
-        1				1									1					1		1																		1
-        1				1									1				1			1																		1
-        1				1									1		1	1	1		1	1	1																	1
-        1	1	1	1	1	1		1						1				1		1																			1
-        1														1			1	1	1																			1
-        1															1			1																				1
-        1																1																						1
+        1																																						1
+        1					901							21		21			21			21																		1
+        1								1																														1
+        1                               11                                                 																		1
+        1												21		21			21			21													1	1	1	1	1	1
+        1				1																																		1
+        1				1																																		1
+        1				1								21		21			21			21																		1
+        1	1	1	1	1	1		1																															1
+        1																																						1
+        1																																						1
+        1																																						1
         1																												1										1
         1																													1									1
         1																														1								1
@@ -66,7 +61,7 @@ export class Maps {
         1																																	1					1
         1																																	1					1
         1																																	1					1
-        1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1		1	1		1	1	1	1`
+        1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1`
     };
 
     private static MAP_TUTO: MapInfo = {

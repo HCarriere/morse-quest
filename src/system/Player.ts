@@ -1,8 +1,7 @@
 import { Camera } from "./Camera";
 import { Controller } from "./Controller";
-import { Coordinates, GameMap } from "./GameMap";
+import { Coordinates, GameMap, MapObject } from "./GameMap";
 import { GameObject } from "./GameObject";
-import { GameEvents } from "../content/GameEvents";
 import { GameInterface } from "@game/interface/GameInterface";
 
 /**
@@ -36,11 +35,7 @@ export class Player extends GameObject {
      * @param orientation 
      */
     private static moveByOrientation(orientation: number) {
-        // not allowed to move
-        if (GameInterface.getInstance().freezeControls) {
-            return;
-        }
-
+        
         let newCoordModifier: Coordinates = {x: 0, y: 0};
         if (orientation == Controller.KEY_UP) newCoordModifier.y -= 1;
         if (orientation == Controller.KEY_DOWN) newCoordModifier.y += 1;
@@ -56,6 +51,11 @@ export class Player extends GameObject {
      * @returns 
      */
     private static move(coordinates: Coordinates) {
+        // not allowed to move
+        if (GameInterface.getInstance().freezeControls) {
+            return;
+        }
+
         // test collision
         if (coordinates.x < 0 ||
             coordinates.x >= GameMap.MapWidth ||
@@ -75,7 +75,7 @@ export class Player extends GameObject {
         Camera.targetCoordinates = {x: Player.x, y: Player.y};
 
         // process walk tile event
-        GameEvents.processGameEvent(GameMap.getMapObject({x: coordinates.x, y: coordinates.y}));
+        Player.processGameEvent(GameMap.getMapObject({x: coordinates.x, y: coordinates.y}));
     }
 
     public display() {
@@ -120,5 +120,13 @@ export class Player extends GameObject {
 
     public mousePressed(x: number, y: number): void {
         Player.move({x: Controller.mouseTileX, y: Controller.mouseTileY});
+    }
+
+    private static processGameEvent(object: MapObject) {
+        if (!object) return;
+
+        if (object.onWalk) {
+            object.onWalk();
+        }
     }
 }

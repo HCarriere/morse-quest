@@ -1,17 +1,13 @@
-import { MapObject } from "./Maps";
+import { MapInfo } from "@game/system/GameMap";
+
+export interface GameEncounter {
+    
+}
 
 export class GameEvents {
 
-    /**
-     * Process anything that happens when the player cross this tile
-     * @param event map tile number
-     */
-    public static processGameEvent(object: MapObject) {
-        if (!object) return;
 
-        if (object.onWalk) {
-            object.onWalk();
-        }
+    public static generateMapEncounters(map: MapInfo, ): GameEncounter {
+        return null;
     }
-
 }
