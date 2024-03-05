@@ -3,6 +3,8 @@ import { GameObject } from "@game/system/GameObject";
 import { Graphics } from "@game/system/Graphics";
 import { Player } from "@game/system/Player";
 import { Button } from "./components/Button";
+import { Spell, TargetType } from "@game/content/Spell";
+import { GameInterface } from "./GameInterface";
 
 /**
  * Displays and process combats
@@ -11,6 +13,11 @@ export class Combat extends GameObject {
 
     private enemies: Enemy[]; // vs Player
 
+    // fight
+    private currentTurn: number;
+    private turnOrder: (Enemy|'player')[];
+
+    // display
     private x: number;
     private y: number;
     private width: number;
@@ -29,6 +36,13 @@ export class Combat extends GameObject {
 
     private buttons: Button[];
 
+    private currentSpellPlayed: Spell;
+    private currentSpellPlayedFrame: number;
+    private currentSpellPlayedTargets: {x: number, y: number}[];
+    private currentSpellPlayedOrig: {x: number, y: number};
+
+    private actionPlayed = false;
+
     constructor(enemies: Enemy[]) {
         super();
         
@@ -36,8 +50,13 @@ export class Combat extends GameObject {
         this.resize();
         this.frameAnim = 1.0;
         this.buildActions();
-
+        this.buildTurnOrder();
+        Player.stats.cancelAnimation();
         console.log('Combat started', enemies);
+
+        if (this.getCurrentTurn() != 'player') {
+            this.doEnemyAction(this.getCurrentTurn() as Enemy);
+        }
     }
 
     /**
@@ -74,8 +93,8 @@ export class Combat extends GameObject {
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
             this.enemies[i].display(
-                this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize) - this.enemiesSize/2, 
-                this.y + Combat.PADDING + this.enemiesSize/2, 
+                this.enemies[i].combatX - this.enemiesSize/2, 
+                this.enemies[i].combatY - this.enemiesSize/2, 
                 this.enemiesSize
             );
             
@@ -87,12 +106,29 @@ export class Combat extends GameObject {
             );
         }
 
-        // player actions
+        // spell
+        if (this.currentSpellPlayedFrame > 0) {
+            this.displaySpellAnimation();
+        } else {
+            if (this.actionPlayed) {
+                // no more frame to play & action is done
+                this.advanceTurn();
+            }
+        }
+
+        // abilities box
         Graphics.ctx.strokeRect(this.x, this.abilitiesY, this.width, this.abilitiesHeight);
 
-        for(const ob of this.buttons) {
-            ob.display();
+        if (this.getCurrentTurn() == 'player') {
+            for(const ob of this.buttons) {
+                ob.display();
+            }
         }
+        /* else if (!this.actionPlayed) {
+            // player enemies turn
+            this.doEnemyAction(this.getCurrentTurn() as Enemy);
+            this.actionPlayed = true;
+        }*/
     }
 
     public displayTooltips() {
@@ -101,10 +137,141 @@ export class Combat extends GameObject {
         }
     }
 
-    private combatEnd() {
+    public playSpellAnimation(spell: Spell, targets: (Enemy|'player')[], origin: Enemy|'player') {
+        this.currentSpellPlayedFrame = spell.frameAnimationMax;
+        this.currentSpellPlayed = spell;
+        if (origin == 'player') {
+            this.currentSpellPlayedOrig = {
+                x: this.x + Combat.PADDING + this.playerSize/2,
+                y: this.abilitiesY - Combat.PADDING - this.playerSize + this.playerSize/2,
+            };
+        } else {
+            this.currentSpellPlayedOrig = {
+                x: origin.combatX,
+                y: origin.combatY,
+            }
+        }
+        this.currentSpellPlayedTargets = [];
+        for (const t of targets) {
+            if (t == 'player') {
+                this.currentSpellPlayedTargets.push({
+                    x: this.x + Combat.PADDING + this.playerSize/2,
+                    y: this.abilitiesY - Combat.PADDING - this.playerSize + this.playerSize/2,
+                });
+            } else {
+                this.currentSpellPlayedTargets.push({
+                    x: t.combatX,
+                    y: t.combatY,
+                });
+            }
+        }
+    }
 
+    public displaySpellAnimation() {
+        if (!this.currentSpellPlayed) return;
+        this.currentSpellPlayed.animate(this.currentSpellPlayedFrame, this.currentSpellPlayedTargets, this.currentSpellPlayedOrig, this.playerSize);
+        this.currentSpellPlayedFrame --;
     }
     
+
+    private doPlayerAction(spell: Spell) {
+        if (spell.targetType == TargetType.Multiple) {
+            for(const e of this.enemies) {
+                spell.effect(e.stats);
+            }
+        } else {
+            // TODO handle targets ...
+        }
+        this.actionPlayed = true;
+        this.playSpellAnimation(spell, this.enemies, 'player');
+        console.log('end player turn');
+    }
+
+    private doEnemyAction(enemy: Enemy) {
+        console.log(enemy.name + ' is playing');
+        enemy.playTurn(this);
+        this.actionPlayed = true;
+    }
+
+    private advanceTurn() {
+        // check death
+        if (Player.stats.hp <= 0) {
+            Player.die();
+            this.end();
+            return;
+        }
+
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            if (this.enemies[i].stats.hp <= 0) {
+                console.log(this.enemies[i].name + ' is dead')
+                this.enemies.splice(i, 1);
+            }
+        }
+        if (this.enemies.length == 0) {
+            // win the fight
+            this.winFight();
+            return;
+        }
+        this.actionPlayed = false;
+        this.currentTurn ++;
+
+        if (this.getCurrentTurn() != 'player') {
+            this.doEnemyAction(this.getCurrentTurn() as Enemy);
+        }
+    }
+
+    private winFight() {
+        console.log('you won bro')
+        this.end();
+    }
+
+    private end() {
+        GameInterface.endCombat();
+    }
+
+    private buildActions() {
+        this.buttons = [];
+        // column 1
+        for (let i = 0; i < Player.stats.spells.length; i++) {
+            this.buttons.push(new Button(
+                this.x + this.abilitiesHeight/4 + (this.spellsWidth+this.abilitiesHeight/4) * i, 
+                this.abilitiesY + this.abilitiesHeight/4, 
+                this.spellsWidth, this.spellsHeight, 
+            () => {
+                
+                this.doPlayerAction(Player.stats.spells[i]);
+            }, {
+                text: Player.stats.spells[i].name,
+                color: 'black',
+                textColor: 'white',
+                strokeColor: 'white',
+                textSize: 18,
+                colorHover: 'darkgrey'
+            }, Player.stats.spells[i].description));
+        }
+    }
+
+    private getCurrentTurn(): Enemy|'player' {
+        return this.turnOrder[this.currentTurn % this.turnOrder.length];
+    }
+    
+
+    private buildTurnOrder() {
+        this.turnOrder = [];
+        this.currentTurn = 0;
+        this.turnOrder.push('player');
+        this.turnOrder.push(...this.enemies);
+        console.log('turn order', this.turnOrder);
+        this.turnOrder.sort((a, b) => Math.random()-0.5);
+        console.log('turn order after shuffle', this.turnOrder);
+    }
+
+    public mousePressed(x: number, y: number): void {
+        for(const ob of this.buttons) {
+            ob.mousePressed(x, y);
+        }    
+    }
+
     public resize(): void {
         this.x = Combat.MARGIN;
         this.y = Combat.MARGIN;
@@ -118,31 +285,11 @@ export class Combat extends GameObject {
         this.abilitiesHeight = this.height / 3;
         this.spellsWidth = this.width / 6;
         this.spellsHeight = this.abilitiesHeight / 2;
-    }
 
-    private buildActions (){
-        this.buttons = [];
-        // column 1
-        for (let i = 0; i < Player.stats.spells.length; i++) {
-            this.buttons.push(new Button(
-                this.x + this.abilitiesHeight/4 + (this.spellsWidth+this.abilitiesHeight/4) * i, 
-                this.abilitiesY + this.abilitiesHeight/4, 
-                this.spellsWidth, this.spellsHeight, 
-            () => {
-                console.log(Player.stats.spells[i].name);
-            }, {
-                text: Player.stats.spells[i].name,
-                color: 'black',
-                textColor: 'white',
-                strokeColor: 'white',
-                textSize: 18,
-            }, Player.stats.spells[i].description));
+        for (let i = 0; i<this.enemies.length; i++) {
+            // skin
+            this.enemies[i].combatX = this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize);
+            this.enemies[i].combatY = this.y + Combat.PADDING + this.enemiesSize;
         }
-    }
-
-    public mousePressed(x: number, y: number): void {
-        for(const ob of this.buttons) {
-            ob.mousePressed(x, y);
-        }    
     }
 }

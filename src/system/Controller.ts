@@ -21,6 +21,7 @@ export class Controller {
 
     public static mouseX: number;
     public static mouseY: number;
+    public static mousePressed: boolean = false;
 
     public static get mouseTileX(): number {
         return Math.floor((Controller.mouseX + Camera.offsetX) / Camera.cellSize);

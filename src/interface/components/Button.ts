@@ -1,6 +1,7 @@
 import { GameObject } from "@game/system/GameObject";
 import { Graphics } from "@game/system/Graphics";
 import { Tooltip } from "../Tooltip";
+import { Controller } from "@game/system/Controller";
 
 
 export interface ButtonStyle {
@@ -9,6 +10,7 @@ export interface ButtonStyle {
     color?: string;
     textColor?: string;
     strokeColor?: string;
+    colorHover?: string;
 }
 
 export class Button extends GameObject {
@@ -36,7 +38,11 @@ export class Button extends GameObject {
     }
 
     public display() {
-        Graphics.ctx.fillStyle = this.style.color || 'black';
+        if (this.style.colorHover && this.isInbound(Controller.mouseX, Controller.mouseY)) {
+            Graphics.ctx.fillStyle = this.style.colorHover;
+        } else {
+            Graphics.ctx.fillStyle = this.style.color || 'black';
+        }
         Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         if (this.style.text) {
             Graphics.ctx.fillStyle = this.style.textColor || 'grey';

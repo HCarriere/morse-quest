@@ -12,17 +12,11 @@ export class GameInterface extends GameObject {
     private static dialogues: Dialogue[];
     private static combat: Combat;
 
+    private static endCombatFlag = false;
+
     public init(): void {
         GameInterface.hudElements = [];
         GameInterface.dialogues = [];
-
-        /*this.elements.push(new Button(this.ctx, this.canvas, 5, 5, 60, 60, () => {
-            console.log('menu click')
-        }, {
-            text: 'MENU',
-            color: 'lightgrey',
-            textColor: 'black'
-        }));*/
 
         for (const obj of GameInterface.hudElements) {
             obj.init();
@@ -31,6 +25,10 @@ export class GameInterface extends GameObject {
     
     public display() {
         // Combat
+        if (GameInterface.endCombatFlag) {
+            delete GameInterface.combat;
+            GameInterface.endCombatFlag = false;
+        }
         if (GameInterface.combat) {
             GameInterface.combat.display();
             GameInterface.combat.displayTooltips();
@@ -110,5 +108,9 @@ export class GameInterface extends GameObject {
 
     public static setCombat(combat: Combat) {
         GameInterface.combat = combat;
+    }
+
+    public static endCombat() {
+        GameInterface.endCombatFlag = true;
     }
 }

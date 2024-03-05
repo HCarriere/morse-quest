@@ -45,6 +45,8 @@ export abstract class Spell {
 
     public abstract icon: any;
 
+    public abstract frameAnimationMax: number;
+
     /**
      * effect to be played for *each* targets.
      * 
@@ -53,11 +55,15 @@ export abstract class Spell {
      */
     public abstract effect(target: GameStats): void;
 
+
     /**
-     * Player an animation (frameLeft = number of frame, until 0)
+     * Play an animation (frameLeft = number of frame, until 0)
      * @param frameLeft 
+     * @param targets 
+     * @param orig 
+     * @param size 
      */
-    //public abstract animate(frameLeft: number): void;
+    public abstract animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number}, size: number): void;
     
 }
 

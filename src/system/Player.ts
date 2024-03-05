@@ -10,15 +10,18 @@ import { GameStats } from "@game/content/GameStats";
  * Represents the player
  */
 export class Player extends GameObject {
+    
+
+    public static stats: GameStats;
 
     // public static location: Coordinates;
     public static x: number;
     public static y: number;
 
-    public static stats: GameStats;
-
     public init() {
         Player.stats = new GameStats();
+        Player.stats.baseConstitution = 20;
+        Player.stats.healHp(500);         
     }
 
     /**
@@ -136,5 +139,9 @@ export class Player extends GameObject {
         if (object.onWalk) {
             object.onWalk();
         }
+    }
+
+    public static die() {
+        console.log('you ded bro')
     }
 }

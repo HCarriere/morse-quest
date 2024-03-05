@@ -1,11 +1,18 @@
 import { Graphics } from "@game/system/Graphics";
 import { GameStats } from "./GameStats";
 import { GameInterface } from "@game/interface/GameInterface";
+import { Player } from "@game/system/Player";
+import { Combat } from "@game/interface/Combat";
 
 export class Enemy {
-    public name: string;
+    
     public stats: GameStats;
+    public name: string;
     public skin: EnemySkin;
+
+    // used for combat placement
+    public combatX: number;
+    public combatY: number;
 
     constructor(name: string, skin: EnemySkin) {
         this.name = name;
@@ -35,6 +42,12 @@ export class Enemy {
             Graphics.ctx.fillRect( - size/2 , -size/2, size, size);
             Graphics.ctx.restore();
         }
+    }
+
+    public playTurn(combat: Combat): void {
+        // do the first spell they know to player ...
+        this.stats.spells[0].effect(Player.stats);
+        combat.playSpellAnimation(this.stats.spells[0], ['player'], this);
     }
 }
 
