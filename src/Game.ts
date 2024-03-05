@@ -106,21 +106,24 @@ export class Game {
     }
 
     private writeDebug() {
-        Graphics.ctx.font = '12px Arial';
+        Graphics.ctx.save();
+        Graphics.ctx.translate(5, 5);
+        Graphics.ctx.font = '11px Arial';
         Graphics.ctx.fillStyle = 'grey';
         Graphics.ctx.textAlign = 'left'
         Graphics.ctx.textBaseline = 'top';
-        Graphics.ctx.fillText('offsetX: ' + Camera.offsetX, 5, Graphics.canvas.height - 80);
-        Graphics.ctx.fillText('offsetY: ' + Camera.offsetY, 5, Graphics.canvas.height - 60);
-        Graphics.ctx.fillText('playerX: ' + Player.x, 5, Graphics.canvas.height - 40);
-        Graphics.ctx.fillText('playerY: ' + Player.y, 5, Graphics.canvas.height - 20);
+        Graphics.ctx.fillText('offsetX: ' + Camera.offsetX, 0, 0);
+        Graphics.ctx.fillText('offsetY: ' + Camera.offsetY, 0, 15);
+        Graphics.ctx.fillText('playerX: ' + Player.x, 0, 30);
+        Graphics.ctx.fillText('playerY: ' + Player.y, 0, 45);
 
-        Graphics.ctx.fillText('mouseX: ' + Controller.mouseX, 80, Graphics.canvas.height - 80);
-        Graphics.ctx.fillText('mouseY: ' + Controller.mouseY, 80, Graphics.canvas.height - 60);
-        Graphics.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, Graphics.canvas.height - 40);
-        Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, Graphics.canvas.height - 20);
+        Graphics.ctx.fillText('mouseX: ' + Controller.mouseX, 80, 0);
+        Graphics.ctx.fillText('mouseY: ' + Controller.mouseY, 80, 15);
+        Graphics.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, 30);
+        Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, 45);
 
-        Graphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 175, Graphics.canvas.height - 80);
+        Graphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 170, 0);
+        Graphics.ctx.restore();
     }
 }
 

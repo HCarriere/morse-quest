@@ -28,7 +28,7 @@ export class Enemy {
             size = size/2; // drones are small
             Graphics.ctx.fillStyle = 'red';
             Graphics.ctx.save();
-            Graphics.ctx.translate(x + size/2 , y + size/2);
+            Graphics.ctx.translate(x + size , y + size);
             Graphics.ctx.rotate(GameInterface.frame * 0.02);
             Graphics.ctx.fillRect( - size/2 , -size/2, size, size);
             Graphics.ctx.rotate(-GameInterface.frame*2 * 0.015);

@@ -1,42 +1,60 @@
-import { Coordinates } from "@game/system/GameMap";
 import { GameObject } from "@game/system/GameObject";
 import { Graphics } from "@game/system/Graphics";
+import { Tooltip } from "../Tooltip";
 
 
 export interface ButtonStyle {
     text?: string;
+    textSize?: number;
     color?: string;
     textColor?: string;
+    strokeColor?: string;
 }
 
 export class Button extends GameObject {
 
-    private location: Coordinates;
+    private x: number;
+    private y: number;
     private width: number;
     private height: number;
+    private tooltip: Tooltip;
     private onClick: () => void;
 
     private style: ButtonStyle;
 
-    constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, 
-        x: number, y: number, width: number, height: number, onClick: () => void, style: ButtonStyle = {}) {
+    constructor(x: number, y: number, width: number, height: number, onClick: () => void, style: ButtonStyle = {}, tooltip?: string) {
         super();
-        this.location = {x, y};
+        this.x = x;
+        this.y = y;
         this.width = width;
         this.height = height;
         this.onClick = onClick;
         this.style = style;
+        if(tooltip) {
+            this.tooltip = new Tooltip(tooltip, x, y, width, height);
+        }
     }
 
     public display() {
         Graphics.ctx.fillStyle = this.style.color || 'black';
-        Graphics.ctx.fillRect(this.location.x, this.location.y, this.width, this.height);
+        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         if (this.style.text) {
             Graphics.ctx.fillStyle = this.style.textColor || 'grey';
             Graphics.ctx.textAlign = "center";
-            Graphics.ctx.font = "30px monospace";
+            Graphics.ctx.font = this.style.textSize + "px monospace";
             Graphics.ctx.textBaseline = "middle";
-            Graphics.ctx.fillText(this.style.text, this.location.x + this.width/2, this.location.y + this.height/2);
+            Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
+        }
+        if (this.style.strokeColor) {
+            Graphics.ctx.lineWidth = 3;
+            Graphics.ctx.strokeStyle = this.style.strokeColor;
+            Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+        }
+    }
+
+    public displayTooltip() {
+        if(this.tooltip) {
+            this.tooltip.display();
         }
     }
 
@@ -52,8 +70,8 @@ export class Button extends GameObject {
      * @param y 
      */
     private isInbound(x: number, y: number): boolean {
-        return (x > this.location.x && x < this.location.x + this.width && 
-                y > this.location.y && y < this.location.y + this.height);
+        return (x > this.x && x < this.x + this.width && 
+                y > this.y && y < this.y + this.height);
     }
 
 }

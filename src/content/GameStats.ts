@@ -1,4 +1,6 @@
 import { Graphics } from "@game/system/Graphics";
+import { DamageType, Spell } from "./Spell";
+import { SpellLibrary } from "./SpellLibrary";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -6,19 +8,6 @@ import { Graphics } from "@game/system/Graphics";
 export class GameStats {
 
     private static HP_BAR_HEIGHT = 22;
-
-    constructor() {
-        this.baseConstitution = 1;
-        this.baseStrengh = 1;
-        this.baseDexterity = 1;
-        this.baseIntelligence = 1;
-        this.baseWisdom = 1;
-
-        this.classHpMultiplicator = 1;
-
-        this.hp = this.maxHp;
-        this.mana = this.maxMana;
-    }
 
     // current hp
     public hp: number;
@@ -33,6 +22,26 @@ export class GameStats {
 
     // multiply this to obtain final hp
     public classHpMultiplicator: number;
+
+    public spells: Spell[];
+    
+    constructor() {
+        this.baseConstitution = 1;
+        this.baseStrengh = 1;
+        this.baseDexterity = 1;
+        this.baseIntelligence = 1;
+        this.baseWisdom = 1;
+        
+        this.classHpMultiplicator = 1;
+        
+        this.hp = this.maxHp;
+        this.mana = this.maxMana;
+
+        this.spells = [
+            SpellLibrary.FireBall,
+            SpellLibrary.FireBall,
+        ];
+    }
 
     public get maxHp(): number {
         return Math.floor((1 + this.baseConstitution) * 10 * this.classHpMultiplicator + 100);
@@ -52,7 +61,7 @@ export class GameStats {
         if (this.mana > this.maxMana) this.mana = this.maxMana;
     }
 
-    public damage(amount: number) {
+    public damage(amount: number, type: DamageType) {
         this.hp -= amount;
     }
 
@@ -65,6 +74,7 @@ export class GameStats {
      * @param size 
      */
     public displayHp(x: number, y: number, size: number) {
+        Graphics.ctx.lineWidth = 3;
         Graphics.ctx.strokeStyle = 'white';
         Graphics.ctx.fillStyle = 'green';
         Graphics.ctx.fillRect(x, y, this.hp * size / this.maxHp, GameStats.HP_BAR_HEIGHT);

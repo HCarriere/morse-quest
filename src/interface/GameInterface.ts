@@ -33,6 +33,7 @@ export class GameInterface extends GameObject {
         // Combat
         if (GameInterface.combat) {
             GameInterface.combat.display();
+            GameInterface.combat.displayTooltips();
         }
 
         // Permanent HUD elements
@@ -44,7 +45,7 @@ export class GameInterface extends GameObject {
         if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].display();
 
         // debug TODO REMOVE ME
-        Graphics.ctx.fillStyle = 'black';
+        Graphics.ctx.fillStyle = 'purple';
         Graphics.ctx.fillRect(Controller.mouseX-5, Controller.mouseY-5, 10, 10);
 
         GameInterface.frame++;
