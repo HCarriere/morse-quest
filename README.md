@@ -34,19 +34,24 @@ https://hcarriere.github.io/morse-quest/
     - Gold is used on equipment & usable items
     - You increment stats as you play (intelligence for mages, strengh for warriors ...)
     - You unlock class skills during the run
+- Classes
+    - Summoner (add alied summons (IA Based) on turn order ?)
 
 
 # TODO
+# Base Game
 - [x] Simple Map
 - [x] Simple Player
 - [x] Moving on map (collision, camera)
 - [x] Interface: buttons
 - [x] Interface: Dialogues
 - [x] Multiple maps and teleports
-- [ ] Simple fight
+- [x] VERY Simple fight
+- [ ] Simple fight (hit selections)
+- [ ] Improve fight interface (floating numbers, etc)
 - [ ] Encounter spawners
 - [ ] Interface: Character sheet
-- [ ] Classes & skills
+- [ ] Simple Classes & skills
 - [ ] Inventory
 - [ ] Player death
 - [ ] Shops
@@ -54,7 +59,13 @@ https://hcarriere.github.io/morse-quest/
 - [ ] Saves
 - [ ] Sprites
 - [ ] Pathfinding
+## Real content
 - [ ] Build real map
+- [ ] Multiple classes
+- [ ] Multiple enemies
+- [ ] Multiple spells
+- [ ] Balancing
+## QoL
 - [ ] Cool animated splashscreen (with particles)
 - [ ] Display other players
 

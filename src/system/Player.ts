@@ -5,6 +5,7 @@ import { GameObject } from "./GameObject";
 import { GameInterface } from "@game/interface/GameInterface";
 import { Graphics } from "./Graphics";
 import { GameStats } from "@game/content/GameStats";
+import { SpellLibrary } from "@game/content/SpellLibrary";
 
 /**
  * Represents the player
@@ -21,7 +22,8 @@ export class Player extends GameObject {
     public init() {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
-        Player.stats.healHp(500);         
+        Player.stats.healHp(50000);        
+        Player.stats.spells.push(SpellLibrary.Icebolt);
     }
 
     /**

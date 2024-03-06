@@ -2,13 +2,13 @@ import { Graphics } from "@game/system/Graphics";
 import { GameStats } from "../GameStats";
 import { Spell, DamageType, TargetType } from "../Spell";
 
-export class Fireball extends Spell {
+export class SpellFireball extends Spell {
     public name = "Boule de feu";
     public description = "Envoie une boule de feu sur un ennemi, infligeant des dégats de feu.";
     public manaCost = 20;
     
     public icon: any;
-    public targetType = TargetType.Multiple;
+    public targetType = TargetType.AllEnemies;
     public frameAnimationMax = 80;
 
     public effect(target: GameStats): void {

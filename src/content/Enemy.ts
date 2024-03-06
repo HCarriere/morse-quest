@@ -46,8 +46,13 @@ export class Enemy {
 
     public playTurn(combat: Combat): void {
         // do the first spell they know to player ...
-        this.stats.spells[0].effect(Player.stats);
-        combat.playSpellAnimation(this.stats.spells[0], ['player'], this);
+        const iSpell = Math.floor(Math.random() * this.stats.spells.length);
+        
+        combat.playSpellAnimation(this.stats.spells[iSpell], ['player'], this, () => {
+            this.stats.spells[iSpell].effect(Player.stats);
+        });
+
+        console.log(this.name + ' do : ' + this.stats.spells[iSpell].name);
     }
 }
 

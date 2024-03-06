@@ -77,7 +77,11 @@ export class Maps {
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
             }],
             [902, {
-                onWalk: () => {GameInterface.setCombat(new Combat([new Enemy('Mr. Test', EnemySkin.Drone), new Enemy('Mr. Test #2', EnemySkin.Drone)]))},
+                onWalk: () => {GameInterface.setCombat(new Combat(
+                    [new Enemy('Mr. Test ALPHA', EnemySkin.Drone), 
+                    new Enemy('Mr. Test #2', EnemySkin.Drone),
+                    new Enemy('Mr. Test #3', EnemySkin.Drone),
+                    new Enemy('Mr. Test #4', EnemySkin.Drone)].slice(Math.floor(Math.random() * 4))))},
                 enemySkin: EnemySkin.Drone
             }]
         ]), 

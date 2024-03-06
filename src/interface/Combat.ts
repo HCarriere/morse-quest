@@ -40,6 +40,7 @@ export class Combat extends GameObject {
     private currentSpellPlayedFrame: number;
     private currentSpellPlayedTargets: {x: number, y: number}[];
     private currentSpellPlayedOrig: {x: number, y: number};
+    private currentSpellPlayedCallback: ()=>void;
 
     private actionPlayed = false;
 
@@ -63,6 +64,7 @@ export class Combat extends GameObject {
      * Combat interface
      */
     public display() {
+        if (!this.turnOrder) return;
         // frame
         Graphics.ctx.lineWidth = 4;
         Graphics.ctx.fillStyle = '#020202';
@@ -100,8 +102,8 @@ export class Combat extends GameObject {
             
             // energy
             this.enemies[i].stats.displayHp(
-                this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize) - this.enemiesSize/2, 
-                this.y + Combat.PADDING + this.enemiesSize + Combat.PADDING*2, 
+                this.enemies[i].combatX - this.enemiesSize/2, 
+                this.enemies[i].combatY + this.enemiesSize/2, 
                 this.enemiesSize
             );
         }
@@ -111,6 +113,7 @@ export class Combat extends GameObject {
             this.displaySpellAnimation();
         } else {
             if (this.actionPlayed) {
+                this.currentSpellPlayedCallback();
                 // no more frame to play & action is done
                 this.advanceTurn();
             }
@@ -132,12 +135,15 @@ export class Combat extends GameObject {
     }
 
     public displayTooltips() {
+        if (this.frameAnim > 0 || this.getCurrentTurn() != 'player') return;
+        
         for(const ob of this.buttons) {
             ob.displayTooltip();
         }
     }
 
-    public playSpellAnimation(spell: Spell, targets: (Enemy|'player')[], origin: Enemy|'player') {
+    public playSpellAnimation(spell: Spell, targets: (Enemy|'player')[], origin: Enemy|'player', onEnd: () => void) {
+        this.currentSpellPlayedCallback = onEnd;
         this.currentSpellPlayedFrame = spell.frameAnimationMax;
         this.currentSpellPlayed = spell;
         if (origin == 'player') {
@@ -175,20 +181,27 @@ export class Combat extends GameObject {
     
 
     private doPlayerAction(spell: Spell) {
-        if (spell.targetType == TargetType.Multiple) {
-            for(const e of this.enemies) {
-                spell.effect(e.stats);
-            }
-        } else {
-            // TODO handle targets ...
-        }
+        if (this.actionPlayed) return;
+
         this.actionPlayed = true;
-        this.playSpellAnimation(spell, this.enemies, 'player');
+
+        this.playSpellAnimation(spell, this.enemies, 'player', () => {
+            switch(spell.targetType) {
+                case TargetType.Single:
+                    spell.effect(this.enemies[0].stats);
+                break;
+                case TargetType.AllEnemies:
+                    for(const e of this.enemies) {
+                        spell.effect(e.stats);
+                    }
+                break;
+                default: break;
+            }
+        });
         console.log('end player turn');
     }
 
     private doEnemyAction(enemy: Enemy) {
-        console.log(enemy.name + ' is playing');
         enemy.playTurn(this);
         this.actionPlayed = true;
     }
@@ -267,6 +280,8 @@ export class Combat extends GameObject {
     }
 
     public mousePressed(x: number, y: number): void {
+        if (this.frameAnim > 0) return;
+
         for(const ob of this.buttons) {
             ob.mousePressed(x, y);
         }    

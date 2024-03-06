@@ -46,7 +46,8 @@ export class GameStats {
         this.cancelAnimation();
 
         this.spells = [
-            SpellLibrary.FireBall,
+            SpellLibrary.Skipturn,
+            SpellLibrary.Fireball,
         ];
     }
 

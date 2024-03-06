@@ -4,7 +4,9 @@ export enum TargetType {
     NoTarget = 0,
     Self = 1,
     Single = 2,
-    Multiple = 3
+    Multiple = 3, // Use targetMax
+    AllEnemies = 4,
+    All = 5,
 }
 
 export enum DamageType {
@@ -46,6 +48,8 @@ export abstract class Spell {
     public abstract icon: any;
 
     public abstract frameAnimationMax: number;
+
+    public targetMax: number;
 
     /**
      * effect to be played for *each* targets.
