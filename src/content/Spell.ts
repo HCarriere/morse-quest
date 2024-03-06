@@ -52,12 +52,12 @@ export abstract class Spell {
     public targetMax: number;
 
     /**
-     * effect to be played for *each* targets.
+     * effect to be played to targets.
      * 
      * If there is no targets, *target* will be empty.
      * @param target 
      */
-    public abstract effect(target: GameStats): void;
+    public abstract effect(targets: GameStats[]): void;
 
 
     /**

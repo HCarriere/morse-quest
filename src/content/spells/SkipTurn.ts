@@ -8,9 +8,9 @@ export class SpellSkipTurn extends Spell {
     
     public icon: any;
     public targetType = TargetType.NoTarget;
-    public frameAnimationMax = 10;
+    public frameAnimationMax = 30;
 
-    public effect(target: GameStats): void {}
+    public effect(targets: GameStats[]): void {}
 
     
     public animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number}, size: number): void {

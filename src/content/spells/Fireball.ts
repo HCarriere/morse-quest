@@ -11,8 +11,10 @@ export class SpellFireball extends Spell {
     public targetType = TargetType.AllEnemies;
     public frameAnimationMax = 80;
 
-    public effect(target: GameStats): void {
-        target.damage(50, DamageType.Fire);
+    public effect(targets: GameStats[]): void {
+        for (const t of targets) {
+            t.damage(50, DamageType.Fire);
+        }
     }
 
     

@@ -5,6 +5,7 @@ import { Player } from "@game/system/Player";
 import { Button } from "./components/Button";
 import { Spell, TargetType } from "@game/content/Spell";
 import { GameInterface } from "./GameInterface";
+import { Controller } from "@game/system/Controller";
 
 /**
  * Displays and process combats
@@ -43,6 +44,16 @@ export class Combat extends GameObject {
     private currentSpellPlayedCallback: ()=>void;
 
     private actionPlayed = false;
+    
+    /**
+     * Set this to the number of targets you have to choose from
+     */
+    private targetSelectionToChoose: number = 0;
+    /**
+     * From the enemies pool
+     */
+    private targetSelectionCurrent: number[];
+    private targetSelectionCallback: (targets: Enemy[])=>void;
 
     constructor(enemies: Enemy[]) {
         super();
@@ -80,7 +91,7 @@ export class Combat extends GameObject {
         if (this.frameAnim > 0) return;
 
         // player
-        // placeholder
+        // (placeholder)
         Graphics.ctx.fillStyle = '#804d32';
         Graphics.ctx.fillRect(this.x + Combat.PADDING, this.abilitiesY - Combat.PADDING - this.playerSize, 
             this.playerSize, this.playerSize);
@@ -95,23 +106,58 @@ export class Combat extends GameObject {
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
             this.enemies[i].display(
-                this.enemies[i].combatX - this.enemiesSize/2, 
-                this.enemies[i].combatY - this.enemiesSize/2, 
-                this.enemiesSize
+                this.enemies[i].combatX - this.enemies[i].combatSize/2, 
+                this.enemies[i].combatY - this.enemies[i].combatSize/2, 
+                this.enemies[i].combatSize
             );
             
             // energy
             this.enemies[i].stats.displayHp(
-                this.enemies[i].combatX - this.enemiesSize/2, 
-                this.enemies[i].combatY + this.enemiesSize/2, 
-                this.enemiesSize
+                this.enemies[i].combatX - this.enemies[i].combatSize/2, 
+                this.enemies[i].combatY + this.enemies[i].combatSize/2, 
+                this.enemies[i].combatSize
             );
+
+            if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(Controller.mouseX, Controller.mouseY)) {
+                // display selectionitivity
+                Graphics.ctx.fillStyle = 'yellow';
+                Graphics.ctx.strokeStyle = 'yellow';
+                Graphics.ctx.lineWidth = 1;
+                Graphics.ctx.strokeRect(
+                    this.enemies[i].combatX - this.enemies[i].combatSize/2, 
+                    this.enemies[i].combatY - this.enemies[i].combatSize/2, 
+                    this.enemies[i].combatSize, this.enemies[i].combatSize);
+            }
         }
 
-        // spell
+        // display spell
         if (this.currentSpellPlayedFrame > 0) {
             this.displaySpellAnimation();
-        } else {
+        }
+
+        // display target selection
+        if (this.targetSelectionToChoose > 0){
+            Graphics.ctx.fillStyle = 'yellow';
+            Graphics.ctx.strokeStyle = 'yellow';
+            Graphics.ctx.lineWidth = 3;
+
+            for (let i = 0;i<this.targetSelectionToChoose; i++) {
+                Graphics.ctx.strokeRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
+                if (this.targetSelectionCurrent[i] >= 0) {
+                    Graphics.ctx.fillRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
+
+                    // display on target
+                    const e = this.enemies[this.targetSelectionCurrent[i]];
+                    Graphics.ctx.strokeRect(
+                        e.combatX - e.combatSize/2, 
+                        e.combatY - e.combatSize/2, 
+                        e.combatSize, e.combatSize);
+                }
+            }
+        } 
+
+        // next turn when ready
+        if (this.currentSpellPlayedFrame <= 0 && this.targetSelectionToChoose <= 0) {
             if (this.actionPlayed) {
                 this.currentSpellPlayedCallback();
                 // no more frame to play & action is done
@@ -120,18 +166,15 @@ export class Combat extends GameObject {
         }
 
         // abilities box
+        Graphics.ctx.strokeStyle = 'white';
+        Graphics.ctx.lineWidth = 3;
         Graphics.ctx.strokeRect(this.x, this.abilitiesY, this.width, this.abilitiesHeight);
-
         if (this.getCurrentTurn() == 'player') {
             for(const ob of this.buttons) {
                 ob.display();
             }
         }
-        /* else if (!this.actionPlayed) {
-            // player enemies turn
-            this.doEnemyAction(this.getCurrentTurn() as Enemy);
-            this.actionPlayed = true;
-        }*/
+
     }
 
     public displayTooltips() {
@@ -182,23 +225,60 @@ export class Combat extends GameObject {
 
     private doPlayerAction(spell: Spell) {
         if (this.actionPlayed) return;
+        console.log('do player turn');
 
         this.actionPlayed = true;
+        
+        switch(spell.targetType) {
+            case TargetType.NoTarget:
+                this.playSpellAnimation(spell, [], 'player', () => {
+                    spell.effect([]);
+                });
+            break;
+            case TargetType.Single:
+                this.chooseTargets(1, (targets) => {
+                    this.playSpellAnimation(spell, targets, 'player', () => {
+                        spell.effect(targets.map(o => o.stats));
+                    });
+                });
+            break;
+            case TargetType.AllEnemies:
+                this.playSpellAnimation(spell, this.enemies, 'player', () => {
+                    spell.effect(this.enemies.map(o => o.stats));
+                });
+            break;
+            case TargetType.Multiple:
+                this.chooseTargets(spell.targetMax, (targets) => {
+                    this.playSpellAnimation(spell, targets, 'player', () => {
+                        spell.effect(targets.map(o => o.stats));
+                    });
+                });
+            break;
+            default: break;
+        }
+    }
 
-        this.playSpellAnimation(spell, this.enemies, 'player', () => {
-            switch(spell.targetType) {
-                case TargetType.Single:
-                    spell.effect(this.enemies[0].stats);
-                break;
-                case TargetType.AllEnemies:
-                    for(const e of this.enemies) {
-                        spell.effect(e.stats);
-                    }
-                break;
-                default: break;
+    private chooseTargets(number: number, onTargetsAcquired: (targets: Enemy[])=>void) {
+        console.log('choosing targets ...')
+        this.targetSelectionToChoose = number;
+        this.targetSelectionCurrent = [];
+        this.targetSelectionCallback = onTargetsAcquired;
+    }
+    private selectTarget(i: number) {
+        console.log('selected target ', i)
+        this.targetSelectionCurrent.push(i);
+
+        if (this.targetSelectionCurrent.length == this.targetSelectionToChoose) {
+            // finished
+            const targets: Enemy[] = [];
+            for (const n of this.targetSelectionCurrent) {
+                targets.push(this.enemies[n]);
             }
-        });
-        console.log('end player turn');
+            this.targetSelectionCallback(targets);
+            // reset
+            this.targetSelectionToChoose = 0;
+            this.targetSelectionCurrent = [];
+        }
     }
 
     private doEnemyAction(enemy: Enemy) {
@@ -282,6 +362,18 @@ export class Combat extends GameObject {
     public mousePressed(x: number, y: number): void {
         if (this.frameAnim > 0) return;
 
+        if (this.targetSelectionToChoose > 0) {
+            // select first
+            for(let i = 0; i<this.enemies.length; i++) {
+                if (this.enemies[i].isInbound(x, y)) {
+                    // select this one
+                    this.selectTarget(i);
+                    return;
+                }
+            }
+            return;
+        }
+
         for(const ob of this.buttons) {
             ob.mousePressed(x, y);
         }    
@@ -298,13 +390,14 @@ export class Combat extends GameObject {
         
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
         this.abilitiesHeight = this.height / 3;
-        this.spellsWidth = this.width / 6;
+        this.spellsWidth = this.width / 8;
         this.spellsHeight = this.abilitiesHeight / 2;
 
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
             this.enemies[i].combatX = this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize);
             this.enemies[i].combatY = this.y + Combat.PADDING + this.enemiesSize;
+            this.enemies[i].combatSize = this.enemiesSize;
         }
     }
 }

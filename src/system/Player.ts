@@ -24,6 +24,7 @@ export class Player extends GameObject {
         Player.stats.baseConstitution = 20;
         Player.stats.healHp(50000);        
         Player.stats.spells.push(SpellLibrary.Icebolt);
+        Player.stats.spells.push(SpellLibrary.ChainLightning);
     }
 
     /**

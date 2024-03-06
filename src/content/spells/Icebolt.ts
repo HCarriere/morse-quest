@@ -11,8 +11,10 @@ export class Spellicebolt extends Spell {
     public targetType = TargetType.Single;
     public frameAnimationMax = 80;
 
-    public effect(target: GameStats): void {
-        target.damage(200, DamageType.Ice);
+    public effect(targets: GameStats[]): void {
+        for (const t of targets) {
+            t.damage(100, DamageType.Ice);
+        }
     }
 
     

@@ -13,6 +13,7 @@ export class Enemy {
     // used for combat placement
     public combatX: number;
     public combatY: number;
+    public combatSize: number;
 
     constructor(name: string, skin: EnemySkin) {
         this.name = name;
@@ -49,11 +50,23 @@ export class Enemy {
         const iSpell = Math.floor(Math.random() * this.stats.spells.length);
         
         combat.playSpellAnimation(this.stats.spells[iSpell], ['player'], this, () => {
-            this.stats.spells[iSpell].effect(Player.stats);
+            this.stats.spells[iSpell].effect([Player.stats]);
         });
 
-        console.log(this.name + ' do : ' + this.stats.spells[iSpell].name);
+        console.log('Enemy '+this.name + ' do : ' + this.stats.spells[iSpell].name);
     }
+
+
+    /**
+     * Returns true if x,y is inside button
+     * @param x 
+     * @param y 
+     */
+    public isInbound(x: number, y: number): boolean {
+        return (x > this.combatX - this.combatSize/2 && x < this.combatX + this.combatSize/2 && 
+                y > this.combatY - this.combatSize/2 && y < this.combatY + this.combatSize/2);
+    }
+    
 }
 
 export enum EnemySkin {
