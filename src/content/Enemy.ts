@@ -46,6 +46,7 @@ export class Enemy {
     }
 
     public playTurn(combat: Combat): void {
+        if (this.isDead) return;
         // do the first spell they know to player ...
         const iSpell = Math.floor(Math.random() * this.stats.spells.length);
         
@@ -67,6 +68,12 @@ export class Enemy {
                 y > this.combatY - this.combatSize/2 && y < this.combatY + this.combatSize/2);
     }
     
+    /**
+     * Return if the enemy is dead
+     */
+    public get isDead(): boolean {
+        return this.stats.hp <=0;
+    }
 }
 
 export enum EnemySkin {

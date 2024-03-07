@@ -282,7 +282,7 @@ export class Combat extends GameObject {
     }
 
     private doEnemyAction(enemy: Enemy) {
-        enemy.playTurn(this);
+        if (!enemy.isDead) enemy.playTurn(this);
         this.actionPlayed = true;
     }
 
@@ -295,7 +295,7 @@ export class Combat extends GameObject {
         }
 
         for (let i = this.enemies.length - 1; i >= 0; i--) {
-            if (this.enemies[i].stats.hp <= 0) {
+            if (this.enemies[i].isDead) {
                 console.log(this.enemies[i].name + ' is dead')
                 this.enemies.splice(i, 1);
             }
