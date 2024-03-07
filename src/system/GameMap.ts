@@ -49,7 +49,7 @@ export class GameMap extends GameObject {
     
     public init() {
         // 1st map to be loaded
-        GameMap.loadMap('tuto');
+        GameMap.loadMap('main');
     }
 
     public static loadMap(mapId: string) {
@@ -121,7 +121,7 @@ export class GameMap extends GameObject {
         }
     }
 
-    public getRandomSpawnPoint(): Coordinates {
+    public static getRandomSpawnPoint(): Coordinates {
         if (!GameMap.SpawnPoints) return null;
         const rand = Math.floor(Math.random() * GameMap.SpawnPoints.length);
         return GameMap.SpawnPoints[rand];

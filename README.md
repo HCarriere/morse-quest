@@ -47,11 +47,13 @@ https://hcarriere.github.io/morse-quest/
 - [x] Interface: Dialogues
 - [x] Multiple maps and teleports
 - [x] VERY Simple fight
-- [ ] Simple fight (hit selections)
-- [ ] Improve fight interface (floating numbers, etc)
+- [x] Simple fight (hit selections)
 - [ ] Encounter spawners
+- [ ] Apply artistic direction
 - [ ] Interface: Character sheet
 - [ ] Simple Classes & skills
+- [ ] Improve fight interface (floating numbers, layout, etc)
+- [ ] Improve enemy AI
 - [ ] Inventory
 - [ ] Player death
 - [ ] Shops

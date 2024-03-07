@@ -13,7 +13,7 @@ export class Spellicebolt extends Spell {
 
     public effect(targets: GameStats[]): void {
         for (const t of targets) {
-            t.damage(100, DamageType.Ice);
+            t.damage(120, DamageType.Ice);
         }
     }
 

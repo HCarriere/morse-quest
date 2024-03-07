@@ -105,17 +105,13 @@ export class Combat extends GameObject {
         // enemies
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
-            this.enemies[i].display(
-                this.enemies[i].combatX - this.enemies[i].combatSize/2, 
-                this.enemies[i].combatY - this.enemies[i].combatSize/2, 
-                this.enemies[i].combatSize
-            );
+            this.enemies[i].display();
             
             // energy
             this.enemies[i].stats.displayHp(
-                this.enemies[i].combatX - this.enemies[i].combatSize/2, 
-                this.enemies[i].combatY + this.enemies[i].combatSize/2, 
-                this.enemies[i].combatSize
+                this.enemies[i].x - this.enemies[i].size/2, 
+                this.enemies[i].y + this.enemies[i].size/2, 
+                this.enemies[i].size
             );
 
             if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(Controller.mouseX, Controller.mouseY)) {
@@ -124,9 +120,9 @@ export class Combat extends GameObject {
                 Graphics.ctx.strokeStyle = 'yellow';
                 Graphics.ctx.lineWidth = 1;
                 Graphics.ctx.strokeRect(
-                    this.enemies[i].combatX - this.enemies[i].combatSize/2, 
-                    this.enemies[i].combatY - this.enemies[i].combatSize/2, 
-                    this.enemies[i].combatSize, this.enemies[i].combatSize);
+                    this.enemies[i].x - this.enemies[i].size/2, 
+                    this.enemies[i].y - this.enemies[i].size/2, 
+                    this.enemies[i].size, this.enemies[i].size);
             }
         }
 
@@ -149,12 +145,12 @@ export class Combat extends GameObject {
                     // display on target
                     const e = this.enemies[this.targetSelectionCurrent[i]];
                     Graphics.ctx.strokeRect(
-                        e.combatX - e.combatSize/2, 
-                        e.combatY - e.combatSize/2, 
-                        e.combatSize, e.combatSize);
+                        e.x - e.size/2, 
+                        e.y - e.size/2, 
+                        e.size, e.size);
                 }
             }
-        } 
+        }
 
         // next turn when ready
         if (this.currentSpellPlayedFrame <= 0 && this.targetSelectionToChoose <= 0) {
@@ -196,8 +192,8 @@ export class Combat extends GameObject {
             };
         } else {
             this.currentSpellPlayedOrig = {
-                x: origin.combatX,
-                y: origin.combatY,
+                x: origin.x,
+                y: origin.y,
             }
         }
         this.currentSpellPlayedTargets = [];
@@ -209,8 +205,8 @@ export class Combat extends GameObject {
                 });
             } else {
                 this.currentSpellPlayedTargets.push({
-                    x: t.combatX,
-                    y: t.combatY,
+                    x: t.x,
+                    y: t.y,
                 });
             }
         }
@@ -395,9 +391,9 @@ export class Combat extends GameObject {
 
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
-            this.enemies[i].combatX = this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize);
-            this.enemies[i].combatY = this.y + Combat.PADDING + this.enemiesSize;
-            this.enemies[i].combatSize = this.enemiesSize;
+            this.enemies[i].x = this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize);
+            this.enemies[i].y = this.y + Combat.PADDING + this.enemiesSize;
+            this.enemies[i].size = this.enemiesSize;
         }
     }
 }

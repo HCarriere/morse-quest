@@ -29,14 +29,14 @@ export class GameStats {
 
     private animTargetHealth: number;
     
-    constructor() {
-        this.baseConstitution = 1;
-        this.baseStrengh = 1;
-        this.baseDexterity = 1;
-        this.baseIntelligence = 1;
-        this.baseWisdom = 1;
+    constructor(mult = 1) {
+        this.baseConstitution = 1*mult;
+        this.baseStrengh = 1*mult;
+        this.baseDexterity = 1*mult;
+        this.baseIntelligence = 1*mult;
+        this.baseWisdom = 1*mult;
 
-        this.initiative = 1;
+        this.initiative = 1*mult;
         
         this.classHpMultiplicator = 1;
         
@@ -57,6 +57,10 @@ export class GameStats {
 
     public get maxMana(): number {
         return Math.floor((1 + this.baseWisdom) * 10 + 100);
+    }
+
+    public healFull() {
+        this.hp = this.maxHp;
     }
 
     public healHp(amount: number) {

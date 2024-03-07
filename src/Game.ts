@@ -53,7 +53,7 @@ export class Game {
         this.gameObjects.push(this.camera);
         this.gameObjects.push(this.gameInterface);
         
-        Player.teleport(this.gameMap.getRandomSpawnPoint());
+        Player.teleport(GameMap.getRandomSpawnPoint());
 
         this.resize();
 

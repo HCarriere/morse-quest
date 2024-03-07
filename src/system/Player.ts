@@ -22,7 +22,7 @@ export class Player extends GameObject {
     public init() {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
-        Player.stats.healHp(50000);        
+        Player.stats.healFull();        
         Player.stats.spells.push(SpellLibrary.Icebolt);
         Player.stats.spells.push(SpellLibrary.ChainLightning);
     }
@@ -33,9 +33,13 @@ export class Player extends GameObject {
      * @param y 
      * @param mapId optional, specify it to teleport on another map
      */
-    public static teleport(coordinates: Coordinates, mapId?: string) {
+    public static teleport(coordinates?: Coordinates, mapId?: string) {
         if (mapId) {
             GameMap.loadMap(mapId);
+        }
+
+        if (!coordinates) {
+            coordinates = GameMap.getRandomSpawnPoint();
         }
 
         Player.x = coordinates.x;
@@ -93,7 +97,7 @@ export class Player extends GameObject {
     }
 
     public display() {
-        Graphics.ctx.fillStyle = 'darkgrey';
+        Graphics.ctx.fillStyle = '#804d32';
         Graphics.ctx.fillRect(
             Math.floor(Player.x * Camera.cellSize - Camera.offsetX + 3), 
             Math.floor(Player.y * Camera.cellSize - Camera.offsetY + 3), 
@@ -145,6 +149,24 @@ export class Player extends GameObject {
     }
 
     public static die() {
-        console.log('you ded bro')
+        console.log('Death');
+        GameInterface.addDialogue([{
+            id: 0,
+            textLines: ["Votre corp se dissout une nouvelle fois ..."],
+            answers: [
+                {
+                    text: "Continuer",
+                    goto: 1,
+                    onAnswer: () => {
+                        Player.teleport(null, 'tuto');
+                        Player.stats.healFull();
+                    }
+                }
+            ]
+            },
+            {
+                id: 1,
+                textLines: ["... Pour réapparaitre à son point de départ.", "Comme toujours."],   
+            }]);
     }
 }

@@ -11,14 +11,17 @@ export class Enemy {
     public skin: EnemySkin;
 
     // used for combat placement
-    public combatX: number;
-    public combatY: number;
-    public combatSize: number;
+    public x: number;
+    public y: number;
+    public size: number;
 
-    constructor(name: string, skin: EnemySkin) {
+    public primaryColor: string;
+
+    constructor(name: string, skin: EnemySkin, stats: GameStats, primaryColor?: string) {
         this.name = name;
         this.skin = skin;
-        this.stats = new GameStats();
+        this.stats = stats;
+        this.primaryColor = primaryColor;
     }
 
     /**
@@ -27,14 +30,22 @@ export class Enemy {
      * @param y 
      * @param size
      */
-    public display(x: number, y:number, size: number) {
-        Enemy.displaySkin(this.skin, x, y, size);
+    public display() {
+        Enemy.displaySkin(this.skin, this.x - this.size/2, this.y - this.size/2, this.size, this.primaryColor);
     }
 
-    public static displaySkin(skin: EnemySkin, x: number, y:number, size: number) {
+    /**
+     * Display, centered
+     * @param skin 
+     * @param x 
+     * @param y 
+     * @param size 
+     * @param primaryColor 
+     */
+    public static displaySkin(skin: EnemySkin, x: number, y:number, size: number, primaryColor = 'red') {
         if (skin == EnemySkin.Drone) {
             size = size/2; // drones are small
-            Graphics.ctx.fillStyle = 'red';
+            Graphics.ctx.fillStyle = primaryColor;
             Graphics.ctx.save();
             Graphics.ctx.translate(x + size , y + size);
             Graphics.ctx.rotate(GameInterface.frame * 0.02);
@@ -64,8 +75,8 @@ export class Enemy {
      * @param y 
      */
     public isInbound(x: number, y: number): boolean {
-        return (x > this.combatX - this.combatSize/2 && x < this.combatX + this.combatSize/2 && 
-                y > this.combatY - this.combatSize/2 && y < this.combatY + this.combatSize/2);
+        return (x > this.x - this.size/2 && x < this.x + this.size/2 && 
+                y > this.y - this.size/2 && y < this.y + this.size/2);
     }
     
     /**

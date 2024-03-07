@@ -5,6 +5,7 @@ import { DialoguesTuto } from "./dialogues/DialoguesTuto";
 import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 import { Combat } from "@game/interface/Combat";
 import { Enemy, EnemySkin } from "./Enemy";
+import { GameStats } from "./GameStats";
 
 
 export enum Biome {
@@ -31,57 +32,66 @@ export class Maps {
         biome: Biome.Normal,
         objects: new Map<number, MapObject>([
             [901, {
-                onWalk: () => {Player.teleport({x:5, y: 5}, 'tuto')},
+                onWalk: () => {Player.teleport(null, 'tuto')},
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
+            }],
+            [900, {
+                onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
+                skin: {type: SkinType.AttentionMark, primaryColor: 'red', secondaryColor: 'white'}
+            }],
+            [902, {
+                onWalk: () => {GameInterface.setCombat(new Combat(
+                    [new Enemy('Mr. Test #1', EnemySkin.Drone, new GameStats()),
+                    new Enemy('Mr. Test #2', EnemySkin.Drone, new GameStats()),
+                    new Enemy('Mr. Test ALPHA', EnemySkin.Drone, new GameStats(10), 'purple'),
+                    new Enemy('Mr. Test #3', EnemySkin.Drone, new GameStats()),
+                    new Enemy('Mr. Test #4', EnemySkin.Drone, new GameStats())]))},
+                enemySkin: EnemySkin.Drone
             }]
         ]),
         raw: 
-        `1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1		1	1	1	1	1	1	1		1	1	1	1	1	1	1	1	1	1	1
-        1	2			1																																		1
-        1		1		1		1																																1
-        1				1																																		1
-        1																																						1
-        1					901							21		21			21			21																		1
-        1								1																														1
-        1                               11                                                 																		1
-        1												21		21			21			21													1	1	1	1	1	1
-        1				1																																		1
-        1				1																																		1
-        1				1								21		21			21			21																		1
-        1	1	1	1	1	1		1																															1
+        `1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+        1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1
+        1																	1																					1
+        1																	1																					1
+        1																	11																					1
+        1														21			21			21																		1
         1																																						1
         1																																						1
+        1														21			21			21																		1
         1																																						1
-        1																												1										1
-        1																													1									1
-        1																														1								1
-        1																															1							1
-        1																																1						1
-        1																																	1					1
-        1																																	1					1
-        1																																	1					1
-        1																																	1					1
-        1																																	1					1
-        1																																	1					1
+        1																																						1
+        1														21			21			21																		1
+        1																												1	1	1	1	1						1
+        1																	1											11	11	11	11	1						1
+        1			901	2													1											902		900		1						1
+        1																	1											1	1	1	1	1						1
+        1																	1											11	11	11	11	11						1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
+        1																	1																					1
         1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1`
     };
 
     private static MAP_TUTO: MapInfo = {
         objects: new Map<number, MapObject>([
-            [900, {
-                onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
-                skin: {type: SkinType.AttentionMark, primaryColor: 'red', secondaryColor: 'yellow'}
-            }],
             [901, {
-                onWalk: () => {Player.teleport({x:5, y: 5}, 'main')},
+                onWalk: () => {Player.teleport(null, 'main')},
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
             }],
             [902, {
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test ALPHA', EnemySkin.Drone), 
-                    new Enemy('Mr. Test #2', EnemySkin.Drone),
-                    new Enemy('Mr. Test #3', EnemySkin.Drone),
-                    new Enemy('Mr. Test #4', EnemySkin.Drone)].slice(Math.floor(Math.random() * 4))))},
+                    [new Enemy('Mr. Test ALPHA', EnemySkin.Drone, new GameStats()), 
+                    new Enemy('Mr. Test #2', EnemySkin.Drone, new GameStats()),
+                    new Enemy('Mr. Test #3', EnemySkin.Drone, new GameStats()),
+                    new Enemy('Mr. Test #4', EnemySkin.Drone, new GameStats())].slice(Math.floor(Math.random() * 4))))},
                 enemySkin: EnemySkin.Drone
             }]
         ]), 
@@ -90,12 +100,12 @@ export class Maps {
         1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1								
         1																										1								
         1																										1	1	1	1	1	1	1	1	1
-        1					902																	901				11	11	11	11	11	11	11	11	11
-        1																																		
-        1		902	2																900											901				1
-        1																																		
-        1																						901				1	1	1	1	1	1	1	1   1
-        1												900														1								
+        1																										1	11	11	11	11	11	11	11	11
+        1																										11								
+        1			2						902																	902				901				1
+        1																										1								
+        1																										1	1	1	1	1	1	1	1   1
+        1																										1								
         1																										1								
         1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1								`
     };
