@@ -49,7 +49,7 @@ export class GameMap extends GameObject {
     
     public init() {
         // 1st map to be loaded
-        GameMap.loadMap('main');
+        GameMap.loadMap('tuto');
     }
 
     public static loadMap(mapId: string) {
