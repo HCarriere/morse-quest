@@ -4,8 +4,9 @@ import { SkinType } from "@game/system/Graphics";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
 import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 import { Combat } from "@game/interface/Combat";
-import { Enemy, EnemySkin } from "./Enemy";
+import { Enemy } from "./Enemy";
 import { GameStats } from "./GameStats";
+import { SkinDrone } from "./skins/Drone";
 
 
 export enum Biome {
@@ -41,12 +42,12 @@ export class Maps {
             }],
             [902, {
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test #1', EnemySkin.Drone, new GameStats()),
-                    new Enemy('Mr. Test #2', EnemySkin.Drone, new GameStats()),
-                    new Enemy('Mr. Test ALPHA', EnemySkin.Drone, new GameStats(10), 'purple'),
-                    new Enemy('Mr. Test #3', EnemySkin.Drone, new GameStats()),
-                    new Enemy('Mr. Test #4', EnemySkin.Drone, new GameStats())]))},
-                enemySkin: EnemySkin.Drone
+                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats()),
+                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats()),
+                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats(10)),
+                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats()),
+                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats())]))},
+                enemySkin: new SkinDrone()
             }]
         ]),
         raw: 
@@ -88,11 +89,11 @@ export class Maps {
             }],
             [902, {
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test ALPHA', EnemySkin.Drone, new GameStats()), 
-                    new Enemy('Mr. Test #2', EnemySkin.Drone, new GameStats()),
-                    new Enemy('Mr. Test #3', EnemySkin.Drone, new GameStats()),
-                    new Enemy('Mr. Test #4', EnemySkin.Drone, new GameStats())].slice(Math.floor(Math.random() * 4))))},
-                enemySkin: EnemySkin.Drone
+                    [new Enemy('Mr. Test ALPHA', new SkinDrone(), new GameStats()), 
+                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats()),
+                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats()),
+                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats())].slice(Math.floor(Math.random() * 4))))},
+                enemySkin: new SkinDrone()
             }]
         ]), 
         raw:

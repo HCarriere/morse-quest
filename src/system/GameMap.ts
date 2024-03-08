@@ -3,7 +3,7 @@ import { Camera } from "./Camera";
 import { GameObject } from "./GameObject";
 import { Graphics, ObjectSkin } from "./Graphics";
 import { GameEncounter, GameEvents } from "@game/content/GameEvents";
-import { Enemy, EnemySkin } from "@game/content/Enemy";
+import { Skin } from "@game/content/Skin";
 
 export interface Coordinates {
     x: number;
@@ -20,7 +20,7 @@ export interface MapInfo {
 
 export interface MapObject {
     skin?: ObjectSkin;
-    enemySkin?: EnemySkin;
+    enemySkin?: Skin;
     onWalk: () => void;
 }
 
@@ -111,8 +111,7 @@ export class GameMap extends GameObject {
 
                 const obj = GameMap.getMapObject({x, y});
                 if (obj && obj.skin) Graphics.displayObject(obj, x, y);
-                if (obj && obj.enemySkin) Enemy.displaySkin(
-                    obj.enemySkin, 
+                if (obj && obj.enemySkin) obj.enemySkin.display(
                     x * Camera.cellSize - Camera.offsetX, 
                     y * Camera.cellSize - Camera.offsetY, 
                     Camera.cellSize
