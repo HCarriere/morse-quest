@@ -48,14 +48,16 @@ https://hcarriere.github.io/morse-quest/
 - [x] Multiple maps and teleports
 - [x] VERY Simple fight
 - [x] Simple fight (hit selections)
-- [ ] Encounter spawners
-- [ ] Apply artistic direction
 - [ ] Interface: Character sheet
 - [ ] Simple Classes & skills
+- [ ] Encounter spawners ?
+- [ ] Enemy agro & follow player
+- [ ] Buffs / Debuffs
 - [ ] Improve fight interface (floating numbers, layout, etc)
 - [ ] Improve enemy AI
 - [ ] Inventory
 - [ ] Player death
+- [ ] Activables (traps, enigmas ...)
 - [ ] Shops
 - [ ] Hub
 - [ ] Saves
@@ -65,9 +67,20 @@ https://hcarriere.github.io/morse-quest/
 - [ ] Build real map
 - [ ] Multiple classes
 - [ ] Multiple enemies
+- [ ] Spells animation
 - [ ] Multiple spells
 - [ ] Balancing
 ## QoL
 - [ ] Cool animated splashscreen (with particles)
 - [ ] Display other players
 
+
+
+# Contributors
+
+- H. Carriere
+- A. Dousselin
+
+# Testers
+
+- Bureau 118

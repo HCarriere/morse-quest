@@ -26,10 +26,10 @@ export class Camera extends GameObject {
         if (Camera.offsetY + Graphics.canvas.height / 2 < Camera.targetCoordinates.y * Camera.cellSize) Camera.offsetY += Camera.CAMERA_SPEED;
         if (Camera.offsetY + Graphics.canvas.height / 2 > Camera.targetCoordinates.y * Camera.cellSize + Camera.cellSize) Camera.offsetY -= Camera.CAMERA_SPEED;
 
-        this.boundCamera();
+        Camera.boundCamera();
     }
 
-    private boundCamera() {
+    private static boundCamera() {
         if (Camera.offsetX + Graphics.canvas.width > GameMap.MapWidth * Camera.cellSize) Camera.offsetX = GameMap.MapWidth * Camera.cellSize - Graphics.canvas.width;
         if (Camera.offsetY + Graphics.canvas.height > GameMap.MapHeight * Camera.cellSize) Camera.offsetY = GameMap.MapHeight * Camera.cellSize - Graphics.canvas.height;
         if (Camera.offsetX < 0) Camera.offsetX = 0;
@@ -39,10 +39,10 @@ export class Camera extends GameObject {
     /**
      * Directly snap camera towards its target
      */
-    public snap() {
+    public static snap() {
         Camera.offsetX = Camera.targetCoordinates.x * Camera.cellSize - Graphics.canvas.width / 2;
         Camera.offsetY = Camera.targetCoordinates.y * Camera.cellSize - Graphics.canvas.height / 2;
 
-        this.boundCamera();
+        Camera.boundCamera();
     }
 }

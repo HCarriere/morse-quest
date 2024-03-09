@@ -19,6 +19,11 @@ export class Player extends GameObject {
     public static x: number;
     public static y: number;
 
+    /**
+     * used for animation
+     */
+    private static tilt = 0;
+
     public init() {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
@@ -45,7 +50,10 @@ export class Player extends GameObject {
         Player.x = coordinates.x;
         Player.y = coordinates.y;
 
+        
         Camera.targetCoordinates = {x: Player.x, y: Player.y};
+
+        Camera.snap();
     }
 
     /**
@@ -92,16 +100,29 @@ export class Player extends GameObject {
 
         Camera.targetCoordinates = {x: Player.x, y: Player.y};
 
+        this.tilt = this.tilt <= 0 ? this.tilt = 30 : this.tilt = -30;
+
         // process walk tile event
         Player.processGameEvent(GameMap.getMapObject({x: coordinates.x, y: coordinates.y}));
     }
 
     public display() {
+        const halfsize = (Camera.cellSize - 3) / 2;
+
+        // display Player on map
         Graphics.ctx.fillStyle = '#804d32';
+        Graphics.ctx.save();
+        Graphics.ctx.translate(
+            Math.floor(Player.x * Camera.cellSize - Camera.offsetX) + halfsize,
+            Math.floor(Player.y * Camera.cellSize - Camera.offsetY) + halfsize
+            );
+        Graphics.ctx.rotate(Player.tilt*0.005);
         Graphics.ctx.fillRect(
-            Math.floor(Player.x * Camera.cellSize - Camera.offsetX + 3), 
-            Math.floor(Player.y * Camera.cellSize - Camera.offsetY + 3), 
-            Camera.cellSize - 6, Camera.cellSize - 6);
+            -halfsize, -halfsize,
+            halfsize*2, halfsize*2);
+        Graphics.ctx.restore();
+        if (Player.tilt > 0) Player.tilt--;
+        if (Player.tilt < 0) Player.tilt++;
 
         // mouse move cursor
         if (!GameInterface.freezeControls) {

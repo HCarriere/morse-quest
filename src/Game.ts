@@ -15,9 +15,13 @@ export class Game {
 
     private gameObjects: GameObject[];
 
+    private fpsLastCallTime: number;
+    private fpsLastMeasures: number[] = [];
+    private enableDebug = false;
+
     constructor(canvasid = 'morsequest') {
         this.initCanvas(canvasid);
-        
+
         this.loop();
     }
 
@@ -57,7 +61,7 @@ export class Game {
 
         this.resize();
 
-        this.camera.snap();
+        Camera.snap();
     }
 
     private loop() {
@@ -70,7 +74,9 @@ export class Game {
             obj.display();
         }
 
-        this.writeDebug();
+        if (this.enableDebug) {
+            this.writeDebug();
+        }
 
         requestAnimationFrame(() => {this.loop();});
     }
@@ -84,6 +90,9 @@ export class Game {
     }
 
     private keyPressed(e: KeyboardEvent) {
+        if (e.key == '²') {
+            this.enableDebug = !this.enableDebug;
+        }
         for (const obj of this.gameObjects) {
             obj.keyPressed(Controller.KeyMapping[e.key]);
         }
@@ -106,23 +115,43 @@ export class Game {
     }
 
     private writeDebug() {
+        if (!this.fpsLastCallTime) {
+            this.fpsLastCallTime = performance.now();
+        }
+        const delta = (performance.now() - this.fpsLastCallTime);
+        this.fpsLastCallTime = performance.now();
+        const fps = Math.round(1000 / delta);
+        this.fpsLastMeasures.push(fps);
+        if (this.fpsLastMeasures.length > 200) this.fpsLastMeasures.shift();
+
         Graphics.ctx.save();
         Graphics.ctx.translate(5, 5);
         Graphics.ctx.font = '11px Arial';
-        Graphics.ctx.fillStyle = 'grey';
+        Graphics.ctx.fillStyle = 'green';
         Graphics.ctx.textAlign = 'left'
         Graphics.ctx.textBaseline = 'top';
-        Graphics.ctx.fillText('offsetX: ' + Camera.offsetX, 0, 0);
-        Graphics.ctx.fillText('offsetY: ' + Camera.offsetY, 0, 15);
-        Graphics.ctx.fillText('playerX: ' + Player.x, 0, 30);
-        Graphics.ctx.fillText('playerY: ' + Player.y, 0, 45);
+        Graphics.ctx.fillText('offsetX: ' + Camera.offsetX, 0, 15);
+        Graphics.ctx.fillText('offsetY: ' + Camera.offsetY, 0, 30);
+        Graphics.ctx.fillText('playerX: ' + Player.x, 0, 45);
+        Graphics.ctx.fillText('playerY: ' + Player.y, 0, 60);
 
-        Graphics.ctx.fillText('mouseX: ' + Controller.mouseX, 80, 0);
-        Graphics.ctx.fillText('mouseY: ' + Controller.mouseY, 80, 15);
-        Graphics.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, 30);
-        Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, 45);
+        Graphics.ctx.fillText('mouseX: ' + Controller.mouseX, 80, 15);
+        Graphics.ctx.fillText('mouseY: ' + Controller.mouseY, 80, 30);
+        Graphics.ctx.fillText('mouseTileX: ' + Controller.mouseTileX, 80, 45);
+        Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, 60);
 
-        Graphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 170, 0);
+        Graphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 170, 15);
+        
+        Graphics.ctx.fillText('FPS : ' + fps, 0, 2);
+        Graphics.ctx.strokeStyle = 'green';
+        Graphics.ctx.lineWidth = 1;
+        for (let i = 0; i<this.fpsLastMeasures.length - 1; i++) {
+            Graphics.ctx.beginPath();
+            Graphics.ctx.moveTo(60+i * 3, 70 - this.fpsLastMeasures[i]);
+            Graphics.ctx.lineTo(60+(i+1) * 3, 70 - this.fpsLastMeasures[i+1]);
+            Graphics.ctx.stroke();
+        }
+
         Graphics.ctx.restore();
     }
 }

@@ -77,14 +77,14 @@ export class Combat extends GameObject {
     public display() {
         if (!this.turnOrder) return;
         // frame
-        Graphics.ctx.lineWidth = 4;
+        Graphics.ctx.lineWidth = 1;
         Graphics.ctx.fillStyle = '#020202';
-        Graphics.ctx.strokeStyle = 'lightgrey';
+        Graphics.ctx.strokeStyle = 'white';
         Graphics.ctx.fillRect(this.x, this.y + this.frameAnim*this.height/2, this.width, this.height - this.frameAnim*this.height);
         Graphics.ctx.strokeRect(this.x, this.y + this.frameAnim*this.height/2, this.width, this.height - this.frameAnim*this.height);
 
         if (this.frameAnim > 0) {
-            this.frameAnim -= 0.03;
+            this.frameAnim -= 0.04;
         } else {
             this.frameAnim = 0;
         }
@@ -163,8 +163,8 @@ export class Combat extends GameObject {
 
         // abilities box
         Graphics.ctx.strokeStyle = 'white';
-        Graphics.ctx.lineWidth = 3;
-        Graphics.ctx.strokeRect(this.x, this.abilitiesY, this.width, this.abilitiesHeight);
+        Graphics.ctx.lineWidth = 1;
+        Graphics.ctx.strokeRect(this.x+3, this.abilitiesY, this.width-6, this.abilitiesHeight);
         if (this.getCurrentTurn() == 'player') {
             for(const ob of this.buttons) {
                 ob.display();
@@ -385,7 +385,7 @@ export class Combat extends GameObject {
         this.playerSize = this.enemiesSize * 1.2;
         
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
-        this.abilitiesHeight = this.height / 3;
+        this.abilitiesHeight = this.height / 3 - 3;
         this.spellsWidth = this.width / 8;
         this.spellsHeight = this.abilitiesHeight / 2;
 

@@ -19,6 +19,7 @@ export enum DamageType {
     Lightning = 7,
     Dark = 8,
     Light = 9,
+    Acid = 10,
 }
 
 export abstract class Spell {

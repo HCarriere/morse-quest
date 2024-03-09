@@ -13,7 +13,7 @@ export class SpellFireball extends Spell {
 
     public effect(targets: GameStats[]): void {
         for (const t of targets) {
-            t.damage(50, DamageType.Fire);
+            t.damage(40, DamageType.Fire);
         }
     }
 

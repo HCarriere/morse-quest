@@ -14,7 +14,7 @@ export class SpellChainLightning extends Spell {
 
     public effect(targets: GameStats[]): void {
         for (const t of targets) {
-            t.damage(70, DamageType.Lightning);
+            t.damage(60, DamageType.Lightning);
         }
     }
 

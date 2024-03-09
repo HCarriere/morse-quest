@@ -31,6 +31,7 @@ export class Graphics {
      * @param y coord y
      */
     public static displayTile(tile: TileSettings, x: number, y: number) {
+        Graphics.ctx.save();
         if (tile.visible && tile.color) {
             Graphics.ctx.fillStyle = tile.color;
             Graphics.ctx.fillRect(
@@ -38,6 +39,14 @@ export class Graphics {
                 Math.floor(y * Camera.cellSize - Camera.offsetY), 
                 Camera.cellSize, Camera.cellSize);
         }
+        Graphics.ctx.globalAlpha = 0.1;
+        Graphics.ctx.strokeStyle = '#333';
+        Graphics.ctx.lineWidth = 1;
+        Graphics.ctx.strokeRect(
+            Math.floor(x * Camera.cellSize - Camera.offsetX), 
+            Math.floor(y * Camera.cellSize - Camera.offsetY), 
+            Camera.cellSize, Camera.cellSize);
+        Graphics.ctx.restore();
     }
 
     public static displayObject(object: MapObject, x: number, y: number) {
