@@ -32,10 +32,23 @@ https://hcarriere.github.io/morse-quest/
     - Usable items are deleted on run end
     - Gold is deleted on run start
     - Gold is used on equipment & usable items
-    - You increment stats as you play (intelligence for mages, strengh for warriors ...)
-    - You unlock class skills during the run
+    - You unlock class skills during the run, from a random pool (choose 1 from 3)
+    - You use gold to level up your stats
+- Mechanics
+    - You can move on the map
+    - When the enemy spot you they move toward you
+    - After a fight, you have a reward : gold, XP, items, permanent unlocks
+    - A storm move from left to right after a few turns
+    - If the storm catches the player, there is a fight against a (too) big enemy
+- Level design
+    - Maps shoud have 1 start, and at least 1 end
+    - They should be short and have :
+        - fights
+        - treasures
+        - curiosities (event with choices)
 - Classes
     - Summoner (add alied summons (IA Based) on turn order ?)
+    - Lardomancien
 
 
 # TODO
