@@ -120,7 +120,7 @@ export class Game {
         }
         const delta = (performance.now() - this.fpsLastCallTime);
         this.fpsLastCallTime = performance.now();
-        const fps = Math.round(1000 / delta);
+        const fps = Math.floor(1000 / delta);
         this.fpsLastMeasures.push(fps);
         if (this.fpsLastMeasures.length > 200) this.fpsLastMeasures.shift();
 

@@ -52,7 +52,7 @@ export class Button extends GameObject {
             Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
         }
         if (this.style.strokeColor) {
-            Graphics.ctx.lineWidth = 3;
+            Graphics.ctx.lineWidth = 1;
             Graphics.ctx.strokeStyle = this.style.strokeColor;
             Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }
