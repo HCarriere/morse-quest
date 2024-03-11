@@ -1,8 +1,8 @@
-import { Controller } from "@game/system/Controller";
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { GameController } from "@game/system/GameController";
+import { EngineObject } from "@game/core/EngineObject";
+import { GameGraphics } from "@game/system/GameGraphics";
 
-export class Tooltip extends GameObject {
+export class Tooltip extends EngineObject {
 
     private x: number;
     private y: number;
@@ -21,14 +21,14 @@ export class Tooltip extends GameObject {
 
     public display(): void {
         // if mouse cursor is inside boundaries, display the tooltip
-        if (this.isInbound(Controller.mouseX, Controller.mouseY)) {
-            Graphics.ctx.fillStyle = 'grey';
-            Graphics.ctx.fillRect(Controller.mouseX, Controller.mouseY-20, Graphics.ctx.measureText(this.text).width+4, 22);
-            Graphics.ctx.fillStyle = 'black';
-            Graphics.ctx.textAlign = "left";
-            Graphics.ctx.font = "18px monospace";
-            Graphics.ctx.textBaseline = "top";
-            Graphics.ctx.fillText(this.text, Controller.mouseX+2, Controller.mouseY+1-20);
+        if (this.isInbound(GameController.mouseX, GameController.mouseY)) {
+            GameGraphics.ctx.fillStyle = 'grey';
+            GameGraphics.ctx.fillRect(GameController.mouseX, GameController.mouseY-20, GameGraphics.ctx.measureText(this.text).width+4, 22);
+            GameGraphics.ctx.fillStyle = 'black';
+            GameGraphics.ctx.textAlign = "left";
+            GameGraphics.ctx.font = "18px monospace";
+            GameGraphics.ctx.textBaseline = "top";
+            GameGraphics.ctx.fillText(this.text, GameController.mouseX+2, GameController.mouseY+1-20);
         }
     }
 

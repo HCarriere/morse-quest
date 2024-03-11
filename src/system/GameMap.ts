@@ -1,7 +1,7 @@
 import { Biome, Maps } from "@game/content/Maps";
 import { Camera } from "./Camera";
-import { GameObject } from "./GameObject";
-import { Graphics, ObjectSkin } from "./Graphics";
+import { EngineObject } from "../core/EngineObject";
+import { GameGraphics, ObjectSkin } from "./GameGraphics";
 import { GameEncounter, GameEvents } from "@game/content/GameEvents";
 import { Skin } from "@game/content/Skin";
 
@@ -33,7 +33,7 @@ export interface TileSettings {
     randomEncounter?: boolean;
 }
 
-export class GameMap extends GameObject {
+export class GameMap extends EngineObject {
     
     static MAX_BLOCK_WIDTH_VIEW = 30;
     static MAX_BLOCK_HEIGHT_VIEW = 30;
@@ -100,17 +100,17 @@ export class GameMap extends GameObject {
 
         const startx = Math.max(Math.floor(Camera.offsetX / Camera.cellSize), 0);
         const starty = Math.max(Math.floor(Camera.offsetY / Camera.cellSize), 0);
-        const lenx = Math.floor(Graphics.canvas.width / Camera.cellSize);
-        const leny = Math.floor(Graphics.canvas.height / Camera.cellSize);
+        const lenx = Math.floor(GameGraphics.canvas.width / Camera.cellSize);
+        const leny = Math.floor(GameGraphics.canvas.height / Camera.cellSize);
 
         for (let x = startx; x < Math.min(startx + lenx + 2, GameMap.MapWidth); x++) {
             for (let y = starty; y < Math.min(starty + leny + 2, GameMap.MapHeight); y++) {
 
                 const tile = GameMap.getCollision({x, y});
-                if (tile) Graphics.displayTile(tile, x, y);
+                if (tile) GameGraphics.displayTile(tile, x, y);
 
                 const obj = GameMap.getMapObject({x, y});
-                if (obj && obj.skin) Graphics.displayObject(obj, x, y);
+                if (obj && obj.skin) GameGraphics.displayObject(obj, x, y);
                 if (obj && obj.enemySkin) obj.enemySkin.display(
                     x * Camera.cellSize - Camera.offsetX, 
                     y * Camera.cellSize - Camera.offsetY, 

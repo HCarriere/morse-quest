@@ -1,4 +1,4 @@
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { DamageType, Spell } from "./Spell";
 import { SpellLibrary } from "./SpellLibrary";
 
@@ -88,19 +88,19 @@ export class GameStats {
      */
     public displayHp(x: number, y: number, size: number) {
         // hp bar
-        Graphics.ctx.lineWidth = 3;
-        Graphics.ctx.strokeStyle = 'white';
-        Graphics.ctx.fillStyle = 'green';
-        Graphics.ctx.fillRect(x, y, this.animTargetHealth * size / this.maxHp, GameStats.HP_BAR_HEIGHT);
-        Graphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.lineWidth = 3;
+        GameGraphics.ctx.strokeStyle = 'white';
+        GameGraphics.ctx.fillStyle = 'green';
+        GameGraphics.ctx.fillRect(x, y, this.animTargetHealth * size / this.maxHp, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
         
         // text
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.font = '14px monospace';
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.textAlign = 'left'
-        Graphics.ctx.textBaseline = 'top';
-        Graphics.ctx.fillText(`${this.hp} / ${this.maxHp}`, x + 5, y + 5);
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.font = '14px monospace';
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.textAlign = 'left'
+        GameGraphics.ctx.textBaseline = 'top';
+        GameGraphics.ctx.fillText(`${this.hp} / ${this.maxHp}`, x + 5, y + 5);
 
         if (this.animTargetHealth < this.hp - 1) {
             this.animTargetHealth += 2;

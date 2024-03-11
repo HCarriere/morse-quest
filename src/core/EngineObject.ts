@@ -1,5 +1,5 @@
 
-export abstract class GameObject {
+export abstract class EngineObject {
     
     constructor() {
         this.init();

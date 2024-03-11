@@ -1,6 +1,6 @@
 import { GameInterface } from "@game/interface/GameInterface";
 import { Player } from "@game/system/Player";
-import { SkinType } from "@game/system/Graphics";
+import { SkinType } from "@game/system/GameGraphics";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
 import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 import { Combat } from "@game/interface/Combat";

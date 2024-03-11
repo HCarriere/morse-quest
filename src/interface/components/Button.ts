@@ -1,7 +1,7 @@
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { EngineObject } from "@game/core/EngineObject";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { Tooltip } from "../Tooltip";
-import { Controller } from "@game/system/Controller";
+import { GameController } from "@game/system/GameController";
 
 
 export interface ButtonStyle {
@@ -13,7 +13,7 @@ export interface ButtonStyle {
     colorHover?: string;
 }
 
-export class Button extends GameObject {
+export class Button extends EngineObject {
 
     private x: number;
     private y: number;
@@ -38,23 +38,23 @@ export class Button extends GameObject {
     }
 
     public display() {
-        if (this.style.colorHover && this.isInbound(Controller.mouseX, Controller.mouseY)) {
-            Graphics.ctx.fillStyle = this.style.colorHover;
+        if (this.style.colorHover && this.isInbound(GameController.mouseX, GameController.mouseY)) {
+            GameGraphics.ctx.fillStyle = this.style.colorHover;
         } else {
-            Graphics.ctx.fillStyle = this.style.color || 'black';
+            GameGraphics.ctx.fillStyle = this.style.color || 'black';
         }
-        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         if (this.style.text) {
-            Graphics.ctx.fillStyle = this.style.textColor || 'grey';
-            Graphics.ctx.textAlign = "center";
-            Graphics.ctx.font = this.style.textSize + "px monospace";
-            Graphics.ctx.textBaseline = "middle";
-            Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
+            GameGraphics.ctx.fillStyle = this.style.textColor || 'grey';
+            GameGraphics.ctx.textAlign = "center";
+            GameGraphics.ctx.font = this.style.textSize + "px monospace";
+            GameGraphics.ctx.textBaseline = "middle";
+            GameGraphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
         }
         if (this.style.strokeColor) {
-            Graphics.ctx.lineWidth = 3;
-            Graphics.ctx.strokeStyle = this.style.strokeColor;
-            Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+            GameGraphics.ctx.lineWidth = 3;
+            GameGraphics.ctx.strokeStyle = this.style.strokeColor;
+            GameGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }
     }
 

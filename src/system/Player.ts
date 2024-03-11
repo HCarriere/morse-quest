@@ -1,16 +1,16 @@
 import { Camera } from "./Camera";
-import { Controller } from "./Controller";
+import { GameController } from "./GameController";
 import { Coordinates, GameMap, MapObject } from "./GameMap";
-import { GameObject } from "./GameObject";
+import { EngineObject } from "../core/EngineObject";
 import { GameInterface } from "@game/interface/GameInterface";
-import { Graphics } from "./Graphics";
+import { GameGraphics } from "./GameGraphics";
 import { GameStats } from "@game/content/GameStats";
 import { SpellLibrary } from "@game/content/SpellLibrary";
 
 /**
  * Represents the player
  */
-export class Player extends GameObject {
+export class Player extends EngineObject {
     
 
     public static stats: GameStats;
@@ -63,10 +63,10 @@ export class Player extends GameObject {
     private static moveByOrientation(orientation: number) {
         
         let newCoordModifier: Coordinates = {x: 0, y: 0};
-        if (orientation == Controller.KEY_UP) newCoordModifier.y -= 1;
-        else if (orientation == Controller.KEY_DOWN) newCoordModifier.y += 1;
-        else if (orientation == Controller.KEY_LEFT) newCoordModifier.x -= 1;
-        else if (orientation == Controller.KEY_RIGHT) newCoordModifier.x += 1;
+        if (orientation == GameController.KEY_UP) newCoordModifier.y -= 1;
+        else if (orientation == GameController.KEY_DOWN) newCoordModifier.y += 1;
+        else if (orientation == GameController.KEY_LEFT) newCoordModifier.x -= 1;
+        else if (orientation == GameController.KEY_RIGHT) newCoordModifier.x += 1;
         else return; // not a moving key
         Player.move({x: newCoordModifier.x + Player.x, y: newCoordModifier.y + Player.y});
     }
@@ -110,26 +110,26 @@ export class Player extends GameObject {
         const halfsize = (Camera.cellSize - 3) / 2;
 
         // display Player on map
-        Graphics.ctx.fillStyle = '#804d32';
-        Graphics.ctx.save();
-        Graphics.ctx.translate(
+        GameGraphics.ctx.fillStyle = '#804d32';
+        GameGraphics.ctx.save();
+        GameGraphics.ctx.translate(
             Math.floor(Player.x * Camera.cellSize - Camera.offsetX) + halfsize,
             Math.floor(Player.y * Camera.cellSize - Camera.offsetY) + halfsize
             );
-        Graphics.ctx.rotate(Player.tilt*0.005);
-        Graphics.ctx.fillRect(
+        GameGraphics.ctx.rotate(Player.tilt*0.005);
+        GameGraphics.ctx.fillRect(
             -halfsize, -halfsize,
             halfsize*2, halfsize*2);
-        Graphics.ctx.restore();
+        GameGraphics.ctx.restore();
         if (Player.tilt > 0) Player.tilt--;
         if (Player.tilt < 0) Player.tilt++;
 
         // mouse move cursor
         if (!GameInterface.freezeControls) {
-            if (Player.canMoveTo(Controller.mouseTileX, Controller.mouseTileY)) {
-                Graphics.ctx.fillRect(
-                    Math.floor(Controller.mouseTileX * Camera.cellSize - Camera.offsetX + 6), 
-                    Math.floor(Controller.mouseTileY * Camera.cellSize - Camera.offsetY + 6), 
+            if (Player.canMoveTo(GameController.mouseTileX, GameController.mouseTileY)) {
+                GameGraphics.ctx.fillRect(
+                    Math.floor(GameController.mouseTileX * Camera.cellSize - Camera.offsetX + 6), 
+                    Math.floor(GameController.mouseTileY * Camera.cellSize - Camera.offsetY + 6), 
                     Camera.cellSize - 9, Camera.cellSize - 9);
             }
         }
@@ -158,7 +158,7 @@ export class Player extends GameObject {
     }
 
     public mousePressed(x: number, y: number): void {
-        Player.move({x: Controller.mouseTileX, y: Controller.mouseTileY});
+        Player.move({x: GameController.mouseTileX, y: GameController.mouseTileY});
     }
 
     private static processGameEvent(object: MapObject) {

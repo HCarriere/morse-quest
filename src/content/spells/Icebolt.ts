@@ -1,4 +1,4 @@
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { GameStats } from "../GameStats";
 import { Spell, DamageType, TargetType } from "../Spell";
 
@@ -20,12 +20,12 @@ export class Spellicebolt extends Spell {
     
     public animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number}, size: number): void {
         // todo animation givre
-        Graphics.ctx.fillStyle = 'lightblue';
+        GameGraphics.ctx.fillStyle = 'lightblue';
 
-        Graphics.ctx.save();
-        Graphics.ctx.translate(targets[0].x, targets[0].y);
-        Graphics.ctx.rotate(frameLeft * 0.02);
-        Graphics.ctx.fillRect( - size/2 , -size/2, size, size);
-        Graphics.ctx.restore();
+        GameGraphics.ctx.save();
+        GameGraphics.ctx.translate(targets[0].x, targets[0].y);
+        GameGraphics.ctx.rotate(frameLeft * 0.02);
+        GameGraphics.ctx.fillRect( - size/2 , -size/2, size, size);
+        GameGraphics.ctx.restore();
     }
 }
