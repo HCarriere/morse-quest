@@ -66,20 +66,22 @@ https://hcarriere.github.io/morse-quest/
 - [x] Multiple maps and teleports
 - [x] VERY Simple fight
 - [x] Simple fight (hit selections)
-- [ ] Interface: Character sheet
-- [ ] Simple Classes & skills
+- [x] Interface: Character sheet
+- [ ] Spells cooldown
+- [ ] Mana gestion
+- [ ] Simple Classe
+- [ ] Fight reward interface
+- [ ] Level up interface
 - [ ] Inventory
 - [ ] Encounter spawners ?
 - [ ] Pathfinding
 - [ ] Enemy agro & follow player
 - [ ] Buffs / Debuffs
-- [ ] Spell cooldowns
 - [ ] Improve fight interface (floating numbers, layout, etc)
-- [ ] Fight reward screen
-- [ ] Improve enemy AI
+- [ ] Improve enemy combat AI
 - [ ] Player death
 - [ ] Activables (traps, enigmas ...)
-- [ ] Movements, item weights, iminent death
+- [ ] Iminent death
 - [ ] Shops
 - [ ] Hub
 - [ ] Saves

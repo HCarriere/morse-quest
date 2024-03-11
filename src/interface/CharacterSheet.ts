@@ -20,6 +20,7 @@ export class CharacterSheet extends GameObject {
     private static SPELL_HEIGHT = 50;
 
     private static MIN_WIDTH = 1000;
+    private static MIN_HEIGHT = 500;
 
     private spellsButtons: (SpellButton|SkillButton)[];
 
@@ -93,7 +94,8 @@ export class CharacterSheet extends GameObject {
         this.y = CharacterSheet.MARGIN;
         this.width = Graphics.canvas.width - CharacterSheet.MARGIN*2;
         this.height = Graphics.canvas.height - CharacterSheet.MARGIN*2;
-        if (this.width < CharacterSheet.MIN_WIDTH) this.width = CharacterSheet.MIN_WIDTH;
+        this.width = Math.max(CharacterSheet.MIN_WIDTH, this.width);
+        this.height = Math.max(CharacterSheet.MIN_HEIGHT, this.height);
 
         this.synchronizeSheet();
     }
