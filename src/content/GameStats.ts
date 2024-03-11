@@ -1,6 +1,8 @@
 import { Graphics } from "@game/system/Graphics";
-import { DamageType, Spell } from "./Spell";
-import { SpellLibrary } from "./SpellLibrary";
+import { DamageType, Spell } from "./spells/Spell";
+import { SpellLibrary } from "./spells/SpellLibrary";
+import { Skill } from "./skills/Skill";
+import { InventorySlot, Item } from "./items/Item";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -23,9 +25,34 @@ export class GameStats {
     // multiply this to obtain final hp
     public classHpMultiplicator: number;
 
+    // all the known spells
     public spells: Spell[];
+    // all the ACTIVE spells. Each number is an index of "this.spells"
+    public activeSpells: number[];
+    public activeSpellScore = 0;
+    public activeSpellsMax = 4;
+
+    // all the known skills
+    public skills: Skill[];
+    // all the active skills.
+    public activeSkills: number[];
+    public activeSkillScore = 0;
+    public passiveSkillsMax = 4;
 
     public initiative: number;
+
+    // unused inventory
+    public iventory: Item[];
+
+    // equiped items
+    public equiped: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
+
+    public currentXp = 0;
+    public targetXp: number;
+    public level = 1;
+
+    public gold = 0;
+    // animations values
 
     private animTargetHealth: number;
     
@@ -42,6 +69,8 @@ export class GameStats {
         
         this.hp = this.maxHp;
         this.mana = this.maxMana;
+
+        this.targetXp = GameStats.calculateNextXpTarget(this.level + 1);
         
         this.cancelAnimation();
 
@@ -116,5 +145,9 @@ export class GameStats {
      */
     public cancelAnimation() {
         this.animTargetHealth = this.hp;
+    }
+
+    private static calculateNextXpTarget(nextLevel: number): number {
+        return (nextLevel-1) * 1000;
     }
 }

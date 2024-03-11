@@ -1,11 +1,12 @@
 import { Graphics } from "@game/system/Graphics";
-import { GameStats } from "../GameStats";
+import { GameStats } from "@game/content/GameStats";
 import { Spell, DamageType, TargetType } from "../Spell";
 
 export class SpellChainLightning extends Spell {
     public name = "Chaine d'éclairs";
     public description = "Envoie une chaine d'éclair sur deux ennemies au choix.";
     public manaCost = 20;
+    public cooldown = 1;
     
     public icon: any;
     public targetType = TargetType.Multiple;

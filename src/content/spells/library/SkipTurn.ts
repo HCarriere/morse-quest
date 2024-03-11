@@ -1,4 +1,4 @@
-import { GameStats } from "../GameStats";
+import { GameStats } from "@game/content/GameStats";
 import { Spell, TargetType } from "../Spell";
 
 export class SpellSkipTurn extends Spell {
@@ -9,6 +9,7 @@ export class SpellSkipTurn extends Spell {
     public icon: any;
     public targetType = TargetType.NoTarget;
     public frameAnimationMax = 30;
+    public cooldown = 1;
 
     public effect(targets: GameStats[]): void {}
 

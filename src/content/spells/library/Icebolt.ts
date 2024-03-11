@@ -1,11 +1,12 @@
 import { Graphics } from "@game/system/Graphics";
-import { GameStats } from "../GameStats";
 import { Spell, DamageType, TargetType } from "../Spell";
+import { GameStats } from "@game/content/GameStats";
 
 export class Spellicebolt extends Spell {
     public name = "Éclair de givre";
     public description = "Envoi un éclair de givre sur un ennemi.";
     public manaCost = 15;
+    public cooldown = 1;
     
     public icon: any;
     public targetType = TargetType.Single;

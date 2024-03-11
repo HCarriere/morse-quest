@@ -1,8 +1,7 @@
-import { SpellChainLightning } from "./spells/ChainLightning";
-import { SpellFireball } from "./spells/Fireball";
-import { Spellicebolt } from "./spells/Icebolt";
-import { SpellSkipTurn } from "./spells/SkipTurn";
-
+import { SpellChainLightning } from "./library/ChainLightning";
+import { SpellFireball } from "./library/Fireball";
+import { Spellicebolt } from "./library/Icebolt";
+import { SpellSkipTurn } from "./library/SkipTurn";
 
 export class SpellLibrary {
     public static Skipturn = new SpellSkipTurn();
