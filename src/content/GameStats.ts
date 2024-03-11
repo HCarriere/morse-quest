@@ -22,8 +22,12 @@ export class GameStats {
     public baseIntelligence: number;
     public baseWisdom: number;
 
+    // advanced stats
+
     // multiply this to obtain final hp
     public classHpMultiplicator: number;
+
+    public flatDamageReductor = 0;
 
     /**
      * all the known spells
@@ -39,7 +43,7 @@ export class GameStats {
      */
     public skills: Skill[];
     // all the active skills.
-    public activeSkills: number[];
+    public activeSkills: number[] = [];
     public activeSkillScore = 0;
     public passiveSkillsMax = 4;
 
@@ -81,6 +85,8 @@ export class GameStats {
         this.spells = [
             new SpellFireball(),
         ];
+
+        this.skills = [];
     }
 
     public get maxHp(): number {
@@ -106,12 +112,13 @@ export class GameStats {
     }
 
     public damage(amount: number, type: DamageType) {
+        amount = Math.max(0, amount - this.flatDamageReductor);
         this.hp -= amount;
-        if (this.hp < 0) this.hp = 0;
+        this.hp = Math.max(this.hp, 0);
     }
 
     /**
-     * Tries to select an active.
+     * Tries to activate a spell.
      * Will do nothing if spell is already active, or no free slots
      * @param index 
      * @returns true if success
@@ -150,6 +157,51 @@ export class GameStats {
         } else {
             // enable
             return this.selectActiveSpell(index);
+        }
+    }
+
+    /**
+     * Tries to activate a skill
+     * Will do nothing if spell is already active, or no free slots
+     * @param index 
+     * @returns true if success
+     */
+    public selectActiveSkill(index: number): boolean {
+        if (this.activeSkillScore + this.skills[index].slots > this.passiveSkillsMax) return false;
+        if (this.activeSkills.includes(index)) return false;
+        this.activeSkills.push(index);
+        this.activeSkillScore += this.skills[index].slots;
+        this.skills[index].isActive = true;
+        this.skills[index].onEnable(this);
+        return true;
+    }
+
+    /**
+     * Deactivate a skill
+     * @param index
+     */
+    public unselectActiveSkill(index: number) {
+        const i = this.activeSkills.indexOf(index);
+        if (i < 0) return;
+        this.activeSkills.splice(i, 1);
+        this.activeSkillScore -= this.skills[index].slots;
+        this.skills[index].isActive = false;
+        this.skills[index].onDisable(this);
+    }
+
+    /**
+     * Toggle skill activation
+     * @param index 
+     * @returns true if the skill is now active
+     */
+    public toggleActiveSkill(index: number): boolean {
+        if (this.activeSkills.includes(index)) {
+            // disable
+            this.unselectActiveSkill(index);
+            return false;
+        } else {
+            // enable
+            return this.selectActiveSkill(index);
         }
     }
 

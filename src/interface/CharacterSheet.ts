@@ -2,6 +2,7 @@ import { GameObject } from "@game/system/GameObject";
 import { Graphics } from "@game/system/Graphics";
 import { SpellButton } from "./components/SpellButton";
 import { Player } from "@game/system/Player";
+import { SkillButton } from "./components/SkillButton";
 
 /**
  * Presents and interact with character skills, inventory, etc
@@ -20,7 +21,7 @@ export class CharacterSheet extends GameObject {
 
     private static MIN_WIDTH = 1000;
 
-    private spellsButtons: SpellButton[];
+    private spellsButtons: (SpellButton|SkillButton)[];
 
     private tooltipSpell: string[];
     private tooltipSpellDisplay = false;
@@ -75,6 +76,15 @@ export class CharacterSheet extends GameObject {
         Graphics.ctx.fillText(`Sorts choisis : ${Player.stats.activeSpellScore}/${Player.stats.activeSpellsMax}`, 
             this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 10,
             this.y + 10);
+
+        // skill slots
+        Graphics.ctx.font = "14px "+Graphics.FONT;
+        Graphics.ctx.fillStyle = 'yellow';
+        Graphics.ctx.textAlign = "right";
+        Graphics.ctx.textBaseline = "top";
+        Graphics.ctx.fillText(`Passifs choisis : ${Player.stats.activeSkillScore}/${Player.stats.passiveSkillsMax}`, 
+            this.x + this.width - 10,
+            this.y + 10);
     }
 
 
@@ -104,6 +114,8 @@ export class CharacterSheet extends GameObject {
         let cx=0;
         let cy=0;
         let i=0;
+        let skillindex = 0;
+        // spells
         for (const spell of Player.stats.spells) {
             this.spellsButtons.push(new SpellButton(
                 this.x + this.width - 5 - CharacterSheet.SPELL_WIDTH - cx * (CharacterSheet.SPELL_WIDTH+5), 
@@ -119,6 +131,31 @@ export class CharacterSheet extends GameObject {
                     this.tooltipSpellDisplay = true;
                 }));
             i++;
+            if (i%2==0) {
+                cy++;
+                cx=0;
+            } else {
+                cx=1;
+            }
+        }
+
+        // skills
+        for (const skill of Player.stats.skills) {
+            this.spellsButtons.push(new SkillButton(
+                this.x + this.width - 5 - CharacterSheet.SPELL_WIDTH - cx * (CharacterSheet.SPELL_WIDTH+5), 
+                this.y + cy * (CharacterSheet.SPELL_HEIGHT+5) + 35, 
+                CharacterSheet.SPELL_WIDTH, CharacterSheet.SPELL_HEIGHT, skill, skillindex,
+                (n, sb) => {
+                    // on click
+                    Player.stats.toggleActiveSkill(n);
+                },
+                (s) => {
+                    // on hover
+                    this.tooltipSpell = s.description;
+                    this.tooltipSpellDisplay = true;
+                }));
+            i++;
+            skillindex++;
             if (i%2==0) {
                 cy++;
                 cx=0;

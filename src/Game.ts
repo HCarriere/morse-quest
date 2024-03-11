@@ -141,6 +141,7 @@ export class Game {
         Graphics.ctx.fillText('mouseTileY: ' + Controller.mouseTileY, 80, 60);
 
         Graphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 170, 15);
+        Graphics.ctx.fillText('player dam reduc: ' + Player.stats.flatDamageReductor, 170, 30);
         
         Graphics.ctx.fillText('FPS : ' + fps, 0, 2);
         Graphics.ctx.strokeStyle = 'green';

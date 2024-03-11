@@ -36,8 +36,8 @@ export class Combat extends GameObject {
     private static SPELL_HEIGHT = 65;
 
     private spellsButtons: SpellButton[];
-    private tooltipSpell: string[];
-    private tooltipSpellDisplay = false;
+    private tooltip: string[];
+    private tooltipDisplay = false;
 
     private currentSpellPlayed: Spell;
     private currentSpellPlayedFrame: number;
@@ -174,22 +174,22 @@ export class Combat extends GameObject {
         }
 
         // spell tooltip
-        if (this.tooltipSpellDisplay) {
-            this.tooltipSpellDisplay = false;
+        if (this.tooltipDisplay) {
+            this.tooltipDisplay = false;
             Graphics.ctx.lineWidth = 1;
             Graphics.ctx.fillStyle = '#020202';
             Graphics.ctx.strokeStyle = '#999999';
             Graphics.ctx.fillRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
-                 -500, 30+20*this.tooltipSpell.length);
+                 -500, 30+20*this.tooltip.length);
             Graphics.ctx.strokeRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
-                 -500, 30+20*this.tooltipSpell.length);
+                 -500, 30+20*this.tooltip.length);
 
             Graphics.ctx.font = "18px "+Graphics.FONT;
             Graphics.ctx.fillStyle = 'white';
             Graphics.ctx.textAlign = "right";
             Graphics.ctx.textBaseline = "top";
-            for (let i = 0; i<this.tooltipSpell.length; i++) {
-                Graphics.ctx.fillText(this.tooltipSpell[i], 
+            for (let i = 0; i<this.tooltip.length; i++) {
+                Graphics.ctx.fillText(this.tooltip[i], 
                     this.x + this.width - Combat.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
             }
         }
@@ -350,8 +350,8 @@ export class Combat extends GameObject {
                 },
                 (s) => {
                     // on hover
-                    this.tooltipSpell = s.description;
-                    this.tooltipSpellDisplay = true;
+                    this.tooltip = s.description;
+                    this.tooltipDisplay = true;
                 }));
             i++;
             if (i%2==0) {
