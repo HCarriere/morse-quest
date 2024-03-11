@@ -26,7 +26,7 @@ export class Tooltip extends GameObject {
             Graphics.ctx.fillRect(Controller.mouseX, Controller.mouseY-20, Graphics.ctx.measureText(this.text).width+4, 22);
             Graphics.ctx.fillStyle = 'black';
             Graphics.ctx.textAlign = "left";
-            Graphics.ctx.font = "18px monospace";
+            Graphics.ctx.font = "18px "+Graphics.FONT;
             Graphics.ctx.textBaseline = "top";
             Graphics.ctx.fillText(this.text, Controller.mouseX+2, Controller.mouseY+1-20);
         }

@@ -5,7 +5,9 @@ import { GameObject } from "./GameObject";
 import { GameInterface } from "@game/interface/GameInterface";
 import { Graphics } from "./Graphics";
 import { GameStats } from "@game/content/GameStats";
-import { SpellLibrary } from "@game/content/spells/SpellLibrary";
+import { SpellChainLightning } from "@game/content/spells/library/ChainLightning";
+import { Spellicebolt } from "@game/content/spells/library/Icebolt";
+import { SpellFireball } from "@game/content/spells/library/Fireball";
 
 /**
  * Represents the player
@@ -28,8 +30,16 @@ export class Player extends GameObject {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
         Player.stats.healFull();        
-        Player.stats.spells.push(SpellLibrary.Icebolt);
-        Player.stats.spells.push(SpellLibrary.ChainLightning);
+        Player.stats.spells.push(new SpellChainLightning());
+        Player.stats.spells.push(new Spellicebolt());
+        Player.stats.spells.push(new SpellFireball());
+        Player.stats.spells.push(new SpellChainLightning());
+        Player.stats.spells.push(new Spellicebolt());
+        Player.stats.spells.push(new SpellFireball());
+        Player.stats.selectActiveSpell(0);
+        Player.stats.selectActiveSpell(1);
+
+        
     }
 
     /**

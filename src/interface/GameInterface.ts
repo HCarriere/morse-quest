@@ -56,7 +56,6 @@ export class GameInterface extends GameObject {
 
         if (GameInterface.combat) {
             GameInterface.combat.display();
-            GameInterface.combat.displayTooltips();
         }
 
         if (GameInterface.displayCharacterSheet) {

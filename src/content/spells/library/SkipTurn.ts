@@ -3,7 +3,7 @@ import { Spell, TargetType } from "../Spell";
 
 export class SpellSkipTurn extends Spell {
     public name = "Passer son tour";
-    public description = "Passe le tour.";
+    public description = ["Passe le tour."];
     public manaCost = 0;
     
     public icon = {text: "S", color: 'grey'};

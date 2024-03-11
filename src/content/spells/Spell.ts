@@ -38,7 +38,7 @@ export abstract class Spell {
      * 
      * "Hurl a fireball at a single enemy, dealing fire damages"
      */
-    public abstract description: string;
+    public abstract description: string[];
 
     /**
      * Can be 0.
@@ -52,6 +52,8 @@ export abstract class Spell {
     public abstract frameAnimationMax: number;
 
     public abstract cooldown: number;
+
+    public isActive = false;
 
     public slots = 1;
 

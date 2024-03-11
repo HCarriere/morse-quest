@@ -47,7 +47,7 @@ export class Button extends GameObject {
         if (this.style.text) {
             Graphics.ctx.fillStyle = this.style.textColor || 'grey';
             Graphics.ctx.textAlign = "center";
-            Graphics.ctx.font = this.style.textSize + "px monospace";
+            Graphics.ctx.font = this.style.textSize + "px Luminari";
             Graphics.ctx.textBaseline = "middle";
             Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
         }

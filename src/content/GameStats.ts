@@ -1,8 +1,8 @@
 import { Graphics } from "@game/system/Graphics";
 import { DamageType, Spell } from "./spells/Spell";
-import { SpellLibrary } from "./spells/SpellLibrary";
 import { Skill } from "./skills/Skill";
 import { InventorySlot, Item } from "./items/Item";
+import { SpellFireball } from "./spells/library/Fireball";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -30,9 +30,9 @@ export class GameStats {
      */
     public spells: Spell[];
     // all the ACTIVE spells. Each number is an index of "this.spells"
-    public activeSpells: number[];
+    public activeSpells: number[] = [];
     public activeSpellScore = 0;
-    public activeSpellsMax = 4;
+    public activeSpellsMax = 6;
 
     /**
      * all the known skills
@@ -79,8 +79,7 @@ export class GameStats {
         this.cancelAnimation();
 
         this.spells = [
-            SpellLibrary.Skipturn,
-            SpellLibrary.Fireball,
+            new SpellFireball(),
         ];
     }
 
@@ -112,6 +111,57 @@ export class GameStats {
     }
 
     /**
+     * Tries to select an active.
+     * Will do nothing if spell is already active, or no free slots
+     * @param index 
+     * @returns true if success
+     */
+    public selectActiveSpell(index: number): boolean {
+        if (this.activeSpellScore >= this.activeSpellsMax) return false;
+        if (this.activeSpells.includes(index)) return false;
+        this.activeSpells.push(index);
+        this.activeSpellScore += 1;
+        this.spells[index].isActive = true;
+        return true;
+    }
+
+    /**
+     * Unselect a spell
+     * @param index
+     */
+    public unselectActiveSpell(index: number) {
+        const i = this.activeSpells.indexOf(index);
+        if (i < 0) return;
+        this.activeSpells.splice(i, 1);
+        this.activeSpellScore -= 1;
+        this.spells[index].isActive = false;
+    }
+
+    /**
+     * Toggle spell selection for given spell
+     * @param index 
+     * @returns true if the spell is now active
+     */
+    public toggleActiveSpell(index: number): boolean {
+        if (this.activeSpells.includes(index)) {
+            // disable
+            this.unselectActiveSpell(index);
+            return false;
+        } else {
+            // enable
+            return this.selectActiveSpell(index);
+        }
+    }
+
+
+
+    private static calculateNextXpTarget(nextLevel: number): number {
+        return (nextLevel-1) * 1000;
+    }
+
+    // Animations
+
+    /**
      * Displays HP
      * x and y are not relative
      * top left corner
@@ -129,7 +179,7 @@ export class GameStats {
         
         // text
         Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.font = '14px monospace';
+        Graphics.ctx.font = '14px '+ Graphics.FONT;
         Graphics.ctx.fillStyle = 'white';
         Graphics.ctx.textAlign = 'left'
         Graphics.ctx.textBaseline = 'top';
@@ -150,8 +200,5 @@ export class GameStats {
     public cancelAnimation() {
         this.animTargetHealth = this.hp;
     }
-
-    private static calculateNextXpTarget(nextLevel: number): number {
-        return (nextLevel-1) * 1000;
-    }
+    
 }

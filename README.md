@@ -51,6 +51,11 @@ https://hcarriere.github.io/morse-quest/
     - Lardomancien
 
 
+# Help
+- Icons are (for now) emoji & web symbols. Use https://symbl.cc/
+- Spells Icons are alchemic symbols https://symbl.cc/fr/unicode/blocks/alchemical-symbols/ 
+
+
 # TODO
 # Base Game
 - [x] Simple Map

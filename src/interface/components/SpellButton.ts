@@ -5,7 +5,6 @@ import { Graphics } from "@game/system/Graphics";
 
 export class SpellButton extends GameObject {
     
-    
     private x: number;
     private y: number;
     private width: number;
@@ -13,9 +12,14 @@ export class SpellButton extends GameObject {
     private spell: Spell;
     private index: number;
 
-    private onClick: (index: number) => void;
+    private onClick: (index: number, sb: SpellButton) => void;
 
-    constructor(x: number, y: number, width: number, height: number, spell: Spell, index: number, onClick: (n: number) => void) {
+    private onHover: (spell: Spell) => void;
+
+    constructor(
+        x: number, y: number, width: number, height: number, spell: Spell, 
+        index: number, onClick: (n: number, sb: SpellButton) => void, onHover: (spell: Spell) => void,
+        ) {
         super();
         this.x = x;
         this.y = y;
@@ -24,6 +28,7 @@ export class SpellButton extends GameObject {
         this.spell = spell;
         this.index = index;
         this.onClick = onClick;
+        this.onHover = onHover;
     }
 
     public display() {
@@ -31,27 +36,46 @@ export class SpellButton extends GameObject {
         Graphics.ctx.fillStyle = '#000000';
         if (this.isInbound(Controller.mouseX, Controller.mouseY)) {
             Graphics.ctx.fillStyle = '#222222';
+            this.onHover(this.spell);
         }
         Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
 
         // border 
-        Graphics.ctx.lineWidth = 1;
-        Graphics.ctx.strokeStyle = '#DDDDDD';
+        if (!this.spell.isActive) {
+            Graphics.ctx.lineWidth = 1;
+            Graphics.ctx.strokeStyle = '#DDDDDD';
+        } else {
+            
+            Graphics.ctx.lineWidth = 2;
+            Graphics.ctx.strokeStyle = 'lightgreen';
+        }
         Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
+        // icon
+        Graphics.displayIcon(this.spell.icon, this.x + 5, this.y + 5, 18);
+
         // title
-        Graphics.ctx.font = "12px monospace";
+        Graphics.ctx.font = "14px "+Graphics.FONT;
         Graphics.ctx.fillStyle = 'white';
         Graphics.ctx.textAlign = "right";
         Graphics.ctx.textBaseline = "top";
         Graphics.ctx.fillText(this.spell.name, this.x + this.width - 5, this.y + 5);
     
-        
+        // cooldowns
+        Graphics.ctx.textBaseline = "bottom";
+        Graphics.ctx.fillText(this.spell.cooldown + ' ⧖', this.x + this.width - 5, this.y + this.height - 5);
+
+        // mana costs
+        Graphics.ctx.textAlign = "left";
+        Graphics.ctx.fillStyle = 'aqua';
+        Graphics.ctx.fillText(this.spell.manaCost + ' mana', this.x + 5, this.y + this.height - 5);
     }
+
+
 
     public mousePressed(x: number, y: number): void {
         if (this.isInbound(x, y)) {
-            this.onClick(this.index);
+            this.onClick(this.index, this);
         }
     }
 

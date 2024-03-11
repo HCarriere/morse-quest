@@ -4,11 +4,11 @@ import { Spell, DamageType, TargetType } from "../Spell";
 
 export class SpellChainLightning extends Spell {
     public name = "Chaine d'éclairs";
-    public description = "Envoie une chaine d'éclair sur deux ennemies au choix.";
+    public description = ["Envoie une chaine d'éclair sur deux ennemies au choix."];
     public manaCost = 20;
     public cooldown = 1;
     
-    public icon = {text: "CL1", color: 'blue'};
+    public icon = {text: "🜁", color: '#205099'};
     public targetType = TargetType.Multiple;
     public frameAnimationMax = 80;
     public targetMax = 2;

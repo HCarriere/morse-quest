@@ -15,11 +15,15 @@ export class CharacterSheet extends GameObject {
     private height: number;
 
     private static MARGIN = 45;
-    private static PADDING = 20;
+    private static SPELL_WIDTH = 200;
+    private static SPELL_HEIGHT = 50;
 
     private static MIN_WIDTH = 1000;
 
     private spellsButtons: SpellButton[];
+
+    private tooltipSpell: string[];
+    private tooltipSpellDisplay = false;
 
     constructor() {
         super();
@@ -31,7 +35,7 @@ export class CharacterSheet extends GameObject {
         // frame
         Graphics.ctx.lineWidth = 1;
         Graphics.ctx.fillStyle = '#020202';
-        Graphics.ctx.strokeStyle = 'white';
+        Graphics.ctx.strokeStyle = '#999999';
         Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
@@ -41,6 +45,36 @@ export class CharacterSheet extends GameObject {
         for (const sb of this.spellsButtons) {
             sb.display();
         }
+
+        // spell tooltip
+        if (this.tooltipSpellDisplay) {
+            this.tooltipSpellDisplay = false;
+            Graphics.ctx.lineWidth = 1;
+            Graphics.ctx.fillStyle = '#020202';
+            Graphics.ctx.strokeStyle = '#999999';
+            Graphics.ctx.fillRect(this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 15, this.y + 35,
+                 -500, 30+20*this.tooltipSpell.length);
+            Graphics.ctx.strokeRect(this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 15, this.y + 35,
+                 -500, 30+20*this.tooltipSpell.length);
+
+            Graphics.ctx.font = "18px "+Graphics.FONT;
+            Graphics.ctx.fillStyle = 'white';
+            Graphics.ctx.textAlign = "right";
+            Graphics.ctx.textBaseline = "top";
+            for (let i = 0; i<this.tooltipSpell.length; i++) {
+                Graphics.ctx.fillText(this.tooltipSpell[i], 
+                    this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
+            }
+        }
+
+        // spell slots
+        Graphics.ctx.font = "14px "+Graphics.FONT;
+        Graphics.ctx.fillStyle = 'lightgreen';
+        Graphics.ctx.textAlign = "left";
+        Graphics.ctx.textBaseline = "top";
+        Graphics.ctx.fillText(`Sorts choisis : ${Player.stats.activeSpellScore}/${Player.stats.activeSpellsMax}`, 
+            this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 10,
+            this.y + 10);
     }
 
 
@@ -72,10 +106,17 @@ export class CharacterSheet extends GameObject {
         let i=0;
         for (const spell of Player.stats.spells) {
             this.spellsButtons.push(new SpellButton(
-                this.x + this.width - 5 - 200 - cx * 205, 
-                this.y + cy * 65 + 5, 
-                200, 60, spell, i, (n) => {
-                    
+                this.x + this.width - 5 - CharacterSheet.SPELL_WIDTH - cx * (CharacterSheet.SPELL_WIDTH+5), 
+                this.y + cy * (CharacterSheet.SPELL_HEIGHT+5) + 35, 
+                CharacterSheet.SPELL_WIDTH, CharacterSheet.SPELL_HEIGHT, spell, i,
+                (n, sb) => {
+                    // on click
+                    Player.stats.toggleActiveSpell(n);
+                },
+                (s) => {
+                    // on hover
+                    this.tooltipSpell = s.description;
+                    this.tooltipSpellDisplay = true;
                 }));
             i++;
             if (i%2==0) {

@@ -26,7 +26,7 @@ export class Graphics {
     public static ctx: CanvasRenderingContext2D;
     public static canvas: HTMLCanvasElement;
     
-    private static FONT = "30px monospace";
+    public static FONT = "luminari";
 
     /**
      * Display a single standard tile
@@ -71,7 +71,7 @@ export class Graphics {
             Graphics.ctx.restore();
             Graphics.ctx.fillStyle = object.skin.primaryColor;
             Graphics.ctx.textAlign = "center";
-            Graphics.ctx.font = Graphics.FONT;
+            Graphics.ctx.font = "30px "+Graphics.FONT;
             Graphics.ctx.textBaseline = "middle";
             Graphics.ctx.fillText('!', 
                 x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
@@ -96,5 +96,20 @@ export class Graphics {
                     GameInterface.frame / 10, GameInterface.frame / 10 + Math.PI, false);
                     Graphics.ctx.stroke();
         }
+    }
+
+    /**
+     * Display an icon
+     * @param icon 
+     * @param x top left
+     * @param y top left
+     * @param size 
+     */
+    public static displayIcon(icon: Icon, x: number, y: number, size: number) {
+        Graphics.ctx.fillStyle = icon.color;
+        Graphics.ctx.font = `bold ${size}px Luminari`
+        Graphics.ctx.textAlign = "left";
+        Graphics.ctx.textBaseline = "top";
+        Graphics.ctx.fillText(icon.text, x, y);
     }
 }

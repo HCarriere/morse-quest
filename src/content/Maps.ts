@@ -83,6 +83,10 @@ export class Maps {
 
     private static MAP_TUTO: MapInfo = {
         objects: new Map<number, MapObject>([
+            [900, {
+                onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
+                skin: {type: SkinType.AttentionMark, primaryColor: 'red', secondaryColor: 'white'}
+            }],
             [901, {
                 onWalk: () => {Player.teleport(null, 'main')},
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
@@ -101,7 +105,7 @@ export class Maps {
         1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1								
         1																										1								
         1																										1	1	1	1	1	1	1	1	1
-        1																										1	11	11	11	11	11	11	11	11
+        1				900																						1	11	11	11	11	11	11	11	11
         1																										11								
         1			2						902																	902				901				1
         1																										1								

@@ -26,7 +26,8 @@ export class Enemy {
 
     public playTurn(combat: Combat): void {
         if (this.isDead) return;
-        // do the first spell they know to player ...
+        // do a random spell
+        // TODO implement a good AI
         const iSpell = Math.floor(Math.random() * this.stats.spells.length);
         
         combat.playSpellAnimation(this.stats.spells[iSpell], ['player'], this, () => {
