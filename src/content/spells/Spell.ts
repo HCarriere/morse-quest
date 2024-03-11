@@ -1,4 +1,5 @@
 import { GameStats } from "@game/content/GameStats";
+import { Icon } from "@game/system/Graphics";
 
 export enum TargetType {
     NoTarget = 0,
@@ -46,7 +47,7 @@ export abstract class Spell {
 
     public abstract targetType: TargetType;
 
-    public abstract icon: any;
+    public abstract icon: Icon;
 
     public abstract frameAnimationMax: number;
 

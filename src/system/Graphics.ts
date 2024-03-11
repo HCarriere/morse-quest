@@ -13,6 +13,11 @@ export enum SkinType {
     Portal = 2,
 }
 
+export interface Icon {
+    text: string;
+    color: string;
+}
+
 /**
  * Simple graphics, only animated with frames number (stateless)
  */

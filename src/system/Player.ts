@@ -5,7 +5,7 @@ import { GameObject } from "./GameObject";
 import { GameInterface } from "@game/interface/GameInterface";
 import { Graphics } from "./Graphics";
 import { GameStats } from "@game/content/GameStats";
-import { SpellLibrary } from "@game/content/SpellLibrary";
+import { SpellLibrary } from "@game/content/spells/SpellLibrary";
 
 /**
  * Represents the player

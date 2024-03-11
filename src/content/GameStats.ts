@@ -25,14 +25,18 @@ export class GameStats {
     // multiply this to obtain final hp
     public classHpMultiplicator: number;
 
-    // all the known spells
+    /**
+     * all the known spells
+     */
     public spells: Spell[];
     // all the ACTIVE spells. Each number is an index of "this.spells"
     public activeSpells: number[];
     public activeSpellScore = 0;
     public activeSpellsMax = 4;
 
-    // all the known skills
+    /**
+     * all the known skills
+     */
     public skills: Skill[];
     // all the active skills.
     public activeSkills: number[];

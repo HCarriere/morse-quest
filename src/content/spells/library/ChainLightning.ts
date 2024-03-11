@@ -8,7 +8,7 @@ export class SpellChainLightning extends Spell {
     public manaCost = 20;
     public cooldown = 1;
     
-    public icon: any;
+    public icon = {text: "CL1", color: 'blue'};
     public targetType = TargetType.Multiple;
     public frameAnimationMax = 80;
     public targetMax = 2;

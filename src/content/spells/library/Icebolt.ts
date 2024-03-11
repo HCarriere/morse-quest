@@ -8,7 +8,7 @@ export class Spellicebolt extends Spell {
     public manaCost = 15;
     public cooldown = 1;
     
-    public icon: any;
+    public icon = {text: "IB1", color: 'lightblue'};
     public targetType = TargetType.Single;
     public frameAnimationMax = 80;
 

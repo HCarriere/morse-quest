@@ -3,9 +3,9 @@ import { GameObject } from "@game/system/GameObject";
 import { Graphics } from "@game/system/Graphics";
 import { Player } from "@game/system/Player";
 import { Button } from "./components/Button";
-import { Spell, TargetType } from "@game/content/Spell";
 import { GameInterface } from "./GameInterface";
 import { Controller } from "@game/system/Controller";
+import { Spell, TargetType } from "@game/content/spells/Spell";
 
 /**
  * Displays and process combats

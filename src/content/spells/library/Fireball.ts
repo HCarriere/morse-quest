@@ -8,7 +8,7 @@ export class SpellFireball extends Spell {
     public manaCost = 20;
     public cooldown = 1;
     
-    public icon: any;
+    public icon = {text: "FB1", color: '#FF9922'};
     public targetType = TargetType.AllEnemies;
     public frameAnimationMax = 120;
 

@@ -1,3 +1,4 @@
+import { Icon } from "@game/system/Graphics";
 
 export enum InventorySlot {
     Head = 1,
@@ -13,6 +14,8 @@ export abstract class Item {
     public abstract effect: string;
 
     public abstract inventorySlot: InventorySlot;
+
+    public abstract icon: Icon;
 
     public description: string;
 

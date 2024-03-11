@@ -1,3 +1,4 @@
+import { Icon } from "@game/system/Graphics";
 
 /**
  * "Passive" skills
@@ -8,6 +9,8 @@ export abstract class Skill {
     public abstract name: string;
 
     public abstract description: string;
+
+    public abstract icon: Icon;
 
     public slots = 1;
 }
