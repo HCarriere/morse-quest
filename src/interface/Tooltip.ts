@@ -1,5 +1,5 @@
 import { EngineObject } from "@game/core/EngineObject";
-import { EngineGraphics } from "@game/core/EngineGraphics";
+import { Graphics } from "@game/core/Graphics";
 import { EngineController } from "@game/core/EngineController";
 
 export class Tooltip extends EngineObject {
@@ -22,13 +22,13 @@ export class Tooltip extends EngineObject {
     public display(): void {
         // if mouse cursor is inside boundaries, display the tooltip
         if (this.isInbound(EngineController.mouseX, EngineController.mouseY)) {
-            EngineGraphics.ctx.fillStyle = 'grey';
-            EngineGraphics.ctx.fillRect(EngineController.mouseX, EngineController.mouseY-20, EngineGraphics.ctx.measureText(this.text).width+4, 22);
-            EngineGraphics.ctx.fillStyle = 'black';
-            EngineGraphics.ctx.textAlign = "left";
-            EngineGraphics.ctx.font = "18px "+EngineGraphics.FONT;
-            EngineGraphics.ctx.textBaseline = "top";
-            EngineGraphics.ctx.fillText(this.text, EngineController.mouseX+2, EngineController.mouseY+1-20);
+            Graphics.ctx.fillStyle = 'grey';
+            Graphics.ctx.fillRect(EngineController.mouseX, EngineController.mouseY-20, Graphics.ctx.measureText(this.text).width+4, 22);
+            Graphics.ctx.fillStyle = 'black';
+            Graphics.ctx.textAlign = "left";
+            Graphics.ctx.font = "18px "+Graphics.FONT;
+            Graphics.ctx.textBaseline = "top";
+            Graphics.ctx.fillText(this.text, EngineController.mouseX+2, EngineController.mouseY+1-20);
         }
     }
 

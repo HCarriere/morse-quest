@@ -1,7 +1,7 @@
 import { Camera } from "./Camera";
 import { GameInterface } from "@game/interface/GameInterface";
 import { MapObject, TileSettings } from "./GameMap";
-import { EngineGraphics } from "@game/core/EngineGraphics";
+import { Graphics } from "@game/core/Graphics";
 
 export interface ObjectSkin {
     type: SkinType;
@@ -22,7 +22,7 @@ export interface Icon {
 /**
  * Simple graphics, only animated with frames number (stateless)
  */
-export class GameGraphics extends EngineGraphics {
+export class GameGraphics extends Graphics {
 
     /**
      * Display a single standard tile
