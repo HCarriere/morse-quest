@@ -70,7 +70,7 @@ https://hcarriere.github.io/morse-quest/
 - [ ] Finish combat mechanics
     - [x] Multiple attacks per round (mana gestion)
     - [x] Spells cooldown
-    - [ ] Buffs / Debuffs
+    - [x] Buffs / Debuffs
     - [ ] Improve fight interface (floating numbers, layout, etc)
     - [ ] Simple Class
     - [ ] Fight reward interface
