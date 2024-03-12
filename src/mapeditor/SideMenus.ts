@@ -6,7 +6,7 @@ import { TileEditionMenu } from "./TileEditionMenu";
 
 export class SideMenus extends EngineObject {
     private menus: SideMenu[] = [];
-    constructor(public startX: number) {
+    constructor(private startX: number) {
         super();
         this.menus.push(new SelectMapMenu(this.startX));
         this.menus.push(new TileEditionMenu(this.startX));
@@ -18,5 +18,9 @@ export class SideMenus extends EngineObject {
         this.menus.forEach(menu => {
             startY = menu.displayMenu(startY);
         });
+    }
+    public updateStartX(newValue: number): void {
+        this.startX = newValue;
+        this.menus.forEach(menu => menu.updateStartX(newValue));
     }
 }

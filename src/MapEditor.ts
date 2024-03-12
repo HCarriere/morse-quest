@@ -27,7 +27,7 @@ export class MapEditor extends Engine {
     }
     private updateFrontier(): void {
         let frontierX = EngineGraphics.canvas.width * 4/5;
-        if (this.sideMenus) this.sideMenus.startX = frontierX;
+        if (this.sideMenus) this.sideMenus.updateStartX(frontierX);
         if (this.editionSpace) this.editionSpace.endX = frontierX;
     }
 }

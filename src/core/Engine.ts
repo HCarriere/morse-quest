@@ -31,6 +31,8 @@ export abstract class Engine {
             console.log('2d context setup error');
             return false;
         }
+        EngineGraphics.canvas.width = EngineGraphics.canvas.parentElement.clientWidth;
+        EngineGraphics.canvas.height = EngineGraphics.canvas.parentElement.clientHeight;
 
         this.engineObjects = [];
 
