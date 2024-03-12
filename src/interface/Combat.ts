@@ -290,6 +290,11 @@ export class Combat extends EngineObject {
                     this.checkCombatState();
                 });
             break;
+            case TargetType.Self:
+                this.playSpellAnimation(spell, ['player'], 'player', () => {
+                    this.checkCombatState();
+                });
+            break;
             case TargetType.Single:
                 this.chooseTargets(1, (targets) => {
                     this.playSpellAnimation(spell, targets, 'player', () => {
@@ -299,6 +304,11 @@ export class Combat extends EngineObject {
             break;
             case TargetType.AllEnemies:
                 this.playSpellAnimation(spell, this.enemies, 'player', () => {
+                    this.checkCombatState();
+                });
+            break;
+            case TargetType.All:
+                this.playSpellAnimation(spell, [...this.enemies, "player"], 'player', () => {
                     this.checkCombatState();
                 });
             break;
@@ -356,26 +366,36 @@ export class Combat extends EngineObject {
 
         if (this.enemies.length < this.currentRound) {
             // new turn
-            this.newTurn();
+            this.newPlayerTurn();
             this.currentRound = 0;
         }
         const roundTo = this.getCurrentTurn();
 
         if (roundTo != 'player') {
-            this.doEnemyAction(roundTo as Enemy);
+            // new enemy turn
+            this.newEnemyTurn(roundTo);
         }
     }
 
     /**
      * Happens when player is playing again
      */
-    private newTurn() {
+    private newPlayerTurn() {
         // refill player energy
         Player.stats.healFullEnergy();
+        // advance player buffs
+        Player.stats.advanceBuffDepletion();
         // advance spells cooldown
         for (const spellIndex of Player.stats.activeSpells) {
             Player.stats.spells[spellIndex].advanceCooldown();
         }
+    }
+
+    private newEnemyTurn(enemy: Enemy) {
+        // advance its buffs
+        enemy.stats.advanceBuffDepletion();
+        // do its action
+        this.doEnemyAction(enemy);
     }
 
     /**

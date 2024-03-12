@@ -11,12 +11,12 @@ export abstract class Item {
 
     public abstract name: string;
 
-    public abstract effect: string;
-
-    public abstract inventorySlot: InventorySlot;
+    public abstract description: string[];
 
     public abstract icon: Icon;
 
-    public description: string;
+    public abstract effect: string;
+
+    public abstract inventorySlot: InventorySlot;
 
 }

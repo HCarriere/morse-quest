@@ -17,6 +17,15 @@ export abstract class Skill {
 
     public isActive = false;
 
+    /**
+     * Happens when the skill is selected
+     * @param stats 
+     */
     public abstract onEnable(stats: GameStats);
+
+    /**
+     * Happends when the skill is disabled
+     * @param stats 
+     */
     public abstract onDisable(stats: GameStats);
 }

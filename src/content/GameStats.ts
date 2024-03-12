@@ -3,6 +3,7 @@ import { DamageType, Spell } from "./spells/Spell";
 import { Skill } from "./skills/Skill";
 import { InventorySlot, Item } from "./items/Item";
 import { SpellFireball } from "./spells/library/Fireball";
+import { Buff } from "./buffs/Buff";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -67,6 +68,11 @@ export class GameStats {
     public gold = 0;
     // animations values
 
+    /**
+     * Buffs and debuff
+     */
+    private buffs: Buff[] = [];
+
     private animTargetHealth: number;
     private animTargetEnergy: number;
     
@@ -122,9 +128,58 @@ export class GameStats {
     }
 
     public damage(amount: number, type: DamageType) {
+        // apply reduction
         amount = Math.max(0, amount - this.flatDamageReductor);
+        // notify buffs
+        for (const buff of this.buffs) {
+            buff.onBuffRecipientHit(this, amount);
+        }
+        // remove hp
         this.hp -= amount;
         this.hp = Math.max(this.hp, 0);
+    }
+
+    /**
+     * Apply a buff, with that many stacks.
+     * @param buff 
+     * @param stack 
+     */
+    public applyBuff(buff: Buff, stacks: number) {
+        const sBuff = this.buffs.find(b => b.name == buff.name);
+        if (sBuff) {
+            // already applied
+            sBuff.applyNewStack(this, stacks);
+        } else {
+            buff.onBuffed(this);
+            if (stacks > 1) {
+                buff.applyNewStack(this, stacks - 1);
+            }
+            this.buffs.push(buff);
+        }
+    }
+
+    /**
+     * Advance buffs depletion AND plays their "onnewTurn" event.
+     * To be played each new turn.
+     */
+    public advanceBuffDepletion() {
+        for (const b of this.buffs) {
+            b.onNewTurn(this);
+            b.duration -= 1;
+        }
+    }
+
+    /**
+     * Clear buffs that have no more duration OR no more stacks
+     */
+    public clearNecessaryBuffs() {
+        for (let i = this.buffs.length - 1; i >= 0; i--) {
+            if (this.buffs[i].duration == 0 
+                || this.buffs[i].stack == 0) {
+                this.buffs[i].onUnbuffed(this);
+                this.buffs.splice(i, 1);
+            }
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ export enum SkinType {
 export interface Icon {
     text: string;
     color: string;
+    backgroundColor?: string;
 }
 
 /**
