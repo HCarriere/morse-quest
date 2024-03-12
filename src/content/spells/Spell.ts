@@ -43,7 +43,7 @@ export abstract class Spell {
     /**
      * Can be 0.
      */
-    public abstract manaCost: number;
+    public abstract energyCost: number;
 
     public abstract targetType: TargetType;
 
@@ -67,7 +67,7 @@ export abstract class Spell {
      * If there is no targets, *target* will be empty.
      * @param target 
      */
-    public abstract effect(targets: GameStats[]): void;
+    // public abstract effect(targets: GameStats[]): void;
 
 
     /**
@@ -77,7 +77,7 @@ export abstract class Spell {
      * @param orig 
      * @param size 
      */
-    public abstract animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number}, size: number): void;
+    public abstract animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void;
     
 }
 

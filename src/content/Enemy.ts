@@ -1,5 +1,4 @@
 import { GameStats } from "./GameStats";
-import { Player } from "@game/system/Player";
 import { Combat } from "@game/interface/Combat";
 import { Skin } from "./Skin";
 
@@ -24,14 +23,14 @@ export class Enemy {
         this.skin.display(this.x - this.size/2, this.y - this.size/2, this.size);
     }
 
-    public playTurn(combat: Combat): void {
+    public playTurn(combat: Combat, onEnd: () => void): void {
         if (this.isDead) return;
         // do a random spell
         // TODO implement a good AI
         const iSpell = Math.floor(Math.random() * this.stats.spells.length);
         
         combat.playSpellAnimation(this.stats.spells[iSpell], ['player'], this, () => {
-            this.stats.spells[iSpell].effect([Player.stats]);
+            onEnd();
         });
 
         console.log('Enemy '+this.name + ' do : ' + this.stats.spells[iSpell].name);

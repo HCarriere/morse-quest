@@ -68,7 +68,7 @@ export class SpellButton extends GameObject {
         // mana costs
         Graphics.ctx.textAlign = "left";
         Graphics.ctx.fillStyle = 'aqua';
-        Graphics.ctx.fillText(this.spell.manaCost + ' mana', this.x + 5, this.y + this.height - 5);
+        Graphics.ctx.fillText(this.spell.energyCost + ' energy', this.x + 5, this.y + this.height - 5);
     }
 
 

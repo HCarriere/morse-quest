@@ -11,8 +11,13 @@ export class GameStats {
 
     private static HP_BAR_HEIGHT = 22;
 
-    // current hp
+    /**
+     * Current player hp
+     */
     public hp: number;
+    /**
+     * Current player energy
+     */
     public energy: number;
 
     // base stats (no modifiers)
@@ -95,11 +100,15 @@ export class GameStats {
     }
 
     public get maxEnergy(): number {
-        return Math.floor((1 + this.baseWisdom) * 10 + 100);
+        return Math.floor((1 + this.baseWisdom) + 4);
     }
 
-    public healFull() {
+    public healFullHp() {
         this.hp = this.maxHp;
+    }
+
+    public healFullEnergy() {
+        this.energy = this.maxEnergy;
     }
 
     public healHp(amount: number) {
