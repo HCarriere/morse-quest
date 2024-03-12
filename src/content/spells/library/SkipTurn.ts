@@ -1,14 +1,15 @@
-import { GameStats } from "../GameStats";
+import { GameStats } from "@game/content/GameStats";
 import { Spell, TargetType } from "../Spell";
 
 export class SpellSkipTurn extends Spell {
     public name = "Passer son tour";
-    public description = "Passe le tour.";
+    public description = ["Passe le tour."];
     public manaCost = 0;
     
-    public icon: any;
+    public icon = {text: "S", color: 'grey'};
     public targetType = TargetType.NoTarget;
     public frameAnimationMax = 30;
+    public cooldown = 1;
 
     public effect(targets: GameStats[]): void {}
 

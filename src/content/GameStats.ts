@@ -1,6 +1,8 @@
 import { GameGraphics } from "@game/system/GameGraphics";
-import { DamageType, Spell } from "./Spell";
-import { SpellLibrary } from "./SpellLibrary";
+import { DamageType, Spell } from "./spells/Spell";
+import { Skill } from "./skills/Skill";
+import { InventorySlot, Item } from "./items/Item";
+import { SpellFireball } from "./spells/library/Fireball";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -20,12 +22,45 @@ export class GameStats {
     public baseIntelligence: number;
     public baseWisdom: number;
 
+    // advanced stats
+
     // multiply this to obtain final hp
     public classHpMultiplicator: number;
 
+    public flatDamageReductor = 0;
+
+    /**
+     * all the known spells
+     */
     public spells: Spell[];
+    // all the ACTIVE spells. Each number is an index of "this.spells"
+    public activeSpells: number[] = [];
+    public activeSpellScore = 0;
+    public activeSpellsMax = 6;
+
+    /**
+     * all the known skills
+     */
+    public skills: Skill[];
+    // all the active skills.
+    public activeSkills: number[] = [];
+    public activeSkillScore = 0;
+    public passiveSkillsMax = 4;
 
     public initiative: number;
+
+    // unused inventory
+    public iventory: Item[];
+
+    // equiped items
+    public equiped: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
+
+    public currentXp = 0;
+    public targetXp: number;
+    public level = 1;
+
+    public gold = 0;
+    // animations values
 
     private animTargetHealth: number;
     
@@ -42,13 +77,16 @@ export class GameStats {
         
         this.hp = this.maxHp;
         this.mana = this.maxMana;
+
+        this.targetXp = GameStats.calculateNextXpTarget(this.level + 1);
         
         this.cancelAnimation();
 
         this.spells = [
-            SpellLibrary.Skipturn,
-            SpellLibrary.Fireball,
+            new SpellFireball(),
         ];
+
+        this.skills = [];
     }
 
     public get maxHp(): number {
@@ -74,9 +112,106 @@ export class GameStats {
     }
 
     public damage(amount: number, type: DamageType) {
+        amount = Math.max(0, amount - this.flatDamageReductor);
         this.hp -= amount;
-        if (this.hp < 0) this.hp = 0;
+        this.hp = Math.max(this.hp, 0);
     }
+
+    /**
+     * Tries to activate a spell.
+     * Will do nothing if spell is already active, or no free slots
+     * @param index 
+     * @returns true if success
+     */
+    public selectActiveSpell(index: number): boolean {
+        if (this.activeSpellScore >= this.activeSpellsMax) return false;
+        if (this.activeSpells.includes(index)) return false;
+        this.activeSpells.push(index);
+        this.activeSpellScore += 1;
+        this.spells[index].isActive = true;
+        return true;
+    }
+
+    /**
+     * Unselect a spell
+     * @param index
+     */
+    public unselectActiveSpell(index: number) {
+        const i = this.activeSpells.indexOf(index);
+        if (i < 0) return;
+        this.activeSpells.splice(i, 1);
+        this.activeSpellScore -= 1;
+        this.spells[index].isActive = false;
+    }
+
+    /**
+     * Toggle spell selection for given spell
+     * @param index 
+     * @returns true if the spell is now active
+     */
+    public toggleActiveSpell(index: number): boolean {
+        if (this.activeSpells.includes(index)) {
+            // disable
+            this.unselectActiveSpell(index);
+            return false;
+        } else {
+            // enable
+            return this.selectActiveSpell(index);
+        }
+    }
+
+    /**
+     * Tries to activate a skill
+     * Will do nothing if spell is already active, or no free slots
+     * @param index 
+     * @returns true if success
+     */
+    public selectActiveSkill(index: number): boolean {
+        if (this.activeSkillScore + this.skills[index].slots > this.passiveSkillsMax) return false;
+        if (this.activeSkills.includes(index)) return false;
+        this.activeSkills.push(index);
+        this.activeSkillScore += this.skills[index].slots;
+        this.skills[index].isActive = true;
+        this.skills[index].onEnable(this);
+        return true;
+    }
+
+    /**
+     * Deactivate a skill
+     * @param index
+     */
+    public unselectActiveSkill(index: number) {
+        const i = this.activeSkills.indexOf(index);
+        if (i < 0) return;
+        this.activeSkills.splice(i, 1);
+        this.activeSkillScore -= this.skills[index].slots;
+        this.skills[index].isActive = false;
+        this.skills[index].onDisable(this);
+    }
+
+    /**
+     * Toggle skill activation
+     * @param index 
+     * @returns true if the skill is now active
+     */
+    public toggleActiveSkill(index: number): boolean {
+        if (this.activeSkills.includes(index)) {
+            // disable
+            this.unselectActiveSkill(index);
+            return false;
+        } else {
+            // enable
+            return this.selectActiveSkill(index);
+        }
+    }
+
+
+
+    private static calculateNextXpTarget(nextLevel: number): number {
+        return (nextLevel-1) * 1000;
+    }
+
+    // Animations
 
     /**
      * Displays HP
@@ -96,7 +231,7 @@ export class GameStats {
         
         // text
         GameGraphics.ctx.fillStyle = 'white';
-        GameGraphics.ctx.font = '14px monospace';
+        GameGraphics.ctx.font = '14px '+ GameGraphics.FONT;
         GameGraphics.ctx.fillStyle = 'white';
         GameGraphics.ctx.textAlign = 'left'
         GameGraphics.ctx.textBaseline = 'top';
@@ -117,4 +252,5 @@ export class GameStats {
     public cancelAnimation() {
         this.animTargetHealth = this.hp;
     }
+    
 }

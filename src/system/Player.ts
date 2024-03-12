@@ -5,7 +5,10 @@ import { EngineObject } from "../core/EngineObject";
 import { GameInterface } from "@game/interface/GameInterface";
 import { GameGraphics } from "./GameGraphics";
 import { GameStats } from "@game/content/GameStats";
-import { SpellLibrary } from "@game/content/SpellLibrary";
+import { SpellChainLightning } from "@game/content/spells/library/ChainLightning";
+import { Spellicebolt } from "@game/content/spells/library/Icebolt";
+import { SpellFireball } from "@game/content/spells/library/Fireball";
+import { SkillIronSkill } from "@game/content/skills/library/IronSkin";
 
 /**
  * Represents the player
@@ -28,8 +31,18 @@ export class Player extends EngineObject {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
         Player.stats.healFull();        
-        Player.stats.spells.push(SpellLibrary.Icebolt);
-        Player.stats.spells.push(SpellLibrary.ChainLightning);
+        Player.stats.spells.push(new SpellChainLightning());
+        Player.stats.spells.push(new Spellicebolt());
+        Player.stats.spells.push(new SpellFireball());
+        Player.stats.spells.push(new SpellChainLightning());
+        Player.stats.spells.push(new Spellicebolt());
+        Player.stats.spells.push(new SpellFireball());
+        Player.stats.selectActiveSpell(0);
+        Player.stats.selectActiveSpell(1);
+        Player.stats.skills.push(new SkillIronSkill());
+        Player.stats.skills.push(new SkillIronSkill(2));
+        Player.stats.skills.push(new SkillIronSkill(3));
+        
     }
 
     /**

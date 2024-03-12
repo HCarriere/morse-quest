@@ -26,7 +26,7 @@ export class Tooltip extends EngineObject {
             EngineGraphics.ctx.fillRect(EngineController.mouseX, EngineController.mouseY-20, EngineGraphics.ctx.measureText(this.text).width+4, 22);
             EngineGraphics.ctx.fillStyle = 'black';
             EngineGraphics.ctx.textAlign = "left";
-            EngineGraphics.ctx.font = "18px monospace";
+            EngineGraphics.ctx.font = "18px "+EngineGraphics.FONT;
             EngineGraphics.ctx.textBaseline = "top";
             EngineGraphics.ctx.fillText(this.text, EngineController.mouseX+2, EngineController.mouseY+1-20);
         }

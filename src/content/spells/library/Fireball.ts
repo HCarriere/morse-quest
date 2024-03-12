@@ -1,13 +1,14 @@
 import { GameGraphics } from "@game/system/GameGraphics";
-import { GameStats } from "../GameStats";
+import { GameStats } from "@game/content/GameStats";
 import { Spell, DamageType, TargetType } from "../Spell";
 
 export class SpellFireball extends Spell {
     public name = "Boule de feu";
-    public description = "Envoie une boule de feu sur les ennemis, infligeant des dégats de feu.";
+    public description = ["Envoie une boule de feu sur les ennemis.", "Ouille ça brûle."];
     public manaCost = 20;
+    public cooldown = 2;
     
-    public icon: any;
+    public icon = {text: "🜂", color: '#FF9922'};
     public targetType = TargetType.AllEnemies;
     public frameAnimationMax = 120;
 

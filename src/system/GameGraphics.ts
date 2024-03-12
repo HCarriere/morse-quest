@@ -14,12 +14,15 @@ export enum SkinType {
     Portal = 2,
 }
 
+export interface Icon {
+    text: string;
+    color: string;
+}
+
 /**
  * Simple graphics, only animated with frames number (stateless)
  */
 export class GameGraphics extends EngineGraphics {
-    
-    private static FONT = "30px monospace";
 
     /**
      * Display a single standard tile
@@ -64,7 +67,7 @@ export class GameGraphics extends EngineGraphics {
             GameGraphics.ctx.restore();
             GameGraphics.ctx.fillStyle = object.skin.primaryColor;
             GameGraphics.ctx.textAlign = "center";
-            GameGraphics.ctx.font = GameGraphics.FONT;
+            GameGraphics.ctx.font = "30px "+GameGraphics.FONT;
             GameGraphics.ctx.textBaseline = "middle";
             GameGraphics.ctx.fillText('!', 
                 x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
@@ -89,5 +92,20 @@ export class GameGraphics extends EngineGraphics {
                     GameInterface.frame / 10, GameInterface.frame / 10 + Math.PI, false);
                     GameGraphics.ctx.stroke();
         }
+    }
+
+    /**
+     * Display an icon
+     * @param icon 
+     * @param x top left
+     * @param y top left
+     * @param size 
+     */
+    public static displayIcon(icon: Icon, x: number, y: number, size: number) {
+        GameGraphics.ctx.fillStyle = icon.color;
+        GameGraphics.ctx.font = `bold ${size}px Luminari`
+        GameGraphics.ctx.textAlign = "left";
+        GameGraphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillText(icon.text, x, y);
     }
 }

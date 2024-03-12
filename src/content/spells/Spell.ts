@@ -1,4 +1,5 @@
-import { GameStats } from "./GameStats";
+import { GameStats } from "@game/content/GameStats";
+import { Icon } from "@game/system/GameGraphics";
 
 export enum TargetType {
     NoTarget = 0,
@@ -37,7 +38,7 @@ export abstract class Spell {
      * 
      * "Hurl a fireball at a single enemy, dealing fire damages"
      */
-    public abstract description: string;
+    public abstract description: string[];
 
     /**
      * Can be 0.
@@ -46,9 +47,15 @@ export abstract class Spell {
 
     public abstract targetType: TargetType;
 
-    public abstract icon: any;
+    public abstract icon: Icon;
 
     public abstract frameAnimationMax: number;
+
+    public abstract cooldown: number;
+
+    public isActive = false;
+
+    public slots = 1;
 
     public targetMax: number;
 

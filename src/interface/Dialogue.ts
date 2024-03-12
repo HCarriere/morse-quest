@@ -18,7 +18,6 @@ export interface DialogueAnswer {
 
 export class Dialogue extends EngineObject {
 
-    private static FONT = "30px monospace";
     private static INTERLINE = 30;
 
     private pieces: DialoguePiece[];
@@ -51,7 +50,7 @@ export class Dialogue extends EngineObject {
         // text
         GameGraphics.ctx.fillStyle = 'black';
         GameGraphics.ctx.textAlign = "left";
-        GameGraphics.ctx.font = Dialogue.FONT;
+        GameGraphics.ctx.font = '25px '+GameGraphics.FONT;
         GameGraphics.ctx.textBaseline = "top";
         /*Graphics.ctx.fillText(this.currentDialoguePiece.textLines.substring(0, Math.floor(this.currentTextAnimation)), 
         this.x + 20, this.y + 20, this.width - 40);*/
@@ -146,7 +145,7 @@ export class Dialogue extends EngineObject {
 
         // resize it
         let newTextLines = [];
-        GameGraphics.ctx.font = Dialogue.FONT;
+        GameGraphics.ctx.font = '25px '+GameGraphics.FONT;
         for (const line of this.currentDialoguePiece.textLines) {
             const size = GameGraphics.ctx.measureText(line);
             let portion = size.width / this.width;

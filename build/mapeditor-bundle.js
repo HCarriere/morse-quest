@@ -47,7 +47,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexpo
   \************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.EngineGraphics = void 0;\nvar EngineGraphics = /** @class */ (function () {\n    function EngineGraphics() {\n    }\n    return EngineGraphics;\n}());\nexports.EngineGraphics = EngineGraphics;\n\n\n//# sourceURL=webpack://MorseQuest/./src/core/EngineGraphics.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.EngineGraphics = void 0;\nvar EngineGraphics = /** @class */ (function () {\n    function EngineGraphics() {\n    }\n    EngineGraphics.FONT = \"luminari\";\n    return EngineGraphics;\n}());\nexports.EngineGraphics = EngineGraphics;\n\n\n//# sourceURL=webpack://MorseQuest/./src/core/EngineGraphics.ts?");
 
 /***/ })
 

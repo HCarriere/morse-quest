@@ -63,7 +63,7 @@ export class Game extends Engine {
         }
         const delta = (performance.now() - this.fpsLastCallTime);
         this.fpsLastCallTime = performance.now();
-        const fps = Math.round(1000 / delta);
+        const fps = Math.floor(1000 / delta);
         this.fpsLastMeasures.push(fps);
         if (this.fpsLastMeasures.length > 200) this.fpsLastMeasures.shift();
 
@@ -84,6 +84,7 @@ export class Game extends Engine {
         GameGraphics.ctx.fillText('mouseTileY: ' + GameController.mouseTileY, 80, 60);
 
         GameGraphics.ctx.fillText('movements frozen: ' + GameInterface.freezeControls, 170, 15);
+        GameGraphics.ctx.fillText('player dam reduc: ' + Player.stats.flatDamageReductor, 170, 30);
         
         GameGraphics.ctx.fillText('FPS : ' + fps, 0, 2);
         GameGraphics.ctx.strokeStyle = 'green';

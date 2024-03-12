@@ -2,10 +2,10 @@ import { Enemy } from "@game/content/Enemy";
 import { EngineObject } from "@game/core/EngineObject";
 import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
-import { Button } from "./components/Button";
-import { Spell, TargetType } from "@game/content/Spell";
 import { GameInterface } from "./GameInterface";
 import { GameController } from "@game/system/GameController";
+import { Spell, TargetType } from "@game/content/spells/Spell";
+import { SpellButton } from "./components/SpellButton";
 
 /**
  * Displays and process combats
@@ -27,15 +27,17 @@ export class Combat extends EngineObject {
     private abilitiesHeight: number;
     private enemiesSize: number;
     private playerSize: number;
-    private spellsWidth: number;
-    private spellsHeight: number;
 
     private frameAnim: number;
 
     private static MARGIN = 50;
     private static PADDING = 20;
+    private static SPELL_WIDTH = 200;
+    private static SPELL_HEIGHT = 65;
 
-    private buttons: Button[];
+    private spellsButtons: SpellButton[];
+    private tooltip: string[];
+    private tooltipDisplay = false;
 
     private currentSpellPlayed: Spell;
     private currentSpellPlayedFrame: number;
@@ -166,20 +168,34 @@ export class Combat extends EngineObject {
         GameGraphics.ctx.lineWidth = 1;
         GameGraphics.ctx.strokeRect(this.x+3, this.abilitiesY, this.width-6, this.abilitiesHeight);
         if (this.getCurrentTurn() == 'player') {
-            for(const ob of this.buttons) {
+            for(const ob of this.spellsButtons) {
                 ob.display();
+            }
+        }
+
+        // spell tooltip
+        if (this.tooltipDisplay) {
+            this.tooltipDisplay = false;
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.fillStyle = '#020202';
+            GameGraphics.ctx.strokeStyle = '#999999';
+            GameGraphics.ctx.fillRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
+                 -500, 30+20*this.tooltip.length);
+            GameGraphics.ctx.strokeRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
+                 -500, 30+20*this.tooltip.length);
+
+            GameGraphics.ctx.font = "18px "+GameGraphics.FONT;
+            GameGraphics.ctx.fillStyle = 'white';
+            GameGraphics.ctx.textAlign = "right";
+            GameGraphics.ctx.textBaseline = "top";
+            for (let i = 0; i<this.tooltip.length; i++) {
+                GameGraphics.ctx.fillText(this.tooltip[i], 
+                    this.x + this.width - Combat.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
             }
         }
 
     }
 
-    public displayTooltips() {
-        if (this.frameAnim > 0 || this.getCurrentTurn() != 'player') return;
-        
-        for(const ob of this.buttons) {
-            ob.displayTooltip();
-        }
-    }
 
     public playSpellAnimation(spell: Spell, targets: (Enemy|'player')[], origin: Enemy|'player', onEnd: () => void) {
         this.currentSpellPlayedCallback = onEnd;
@@ -319,24 +335,31 @@ export class Combat extends EngineObject {
     }
 
     private buildActions() {
-        this.buttons = [];
-        // column 1
-        for (let i = 0; i < Player.stats.spells.length; i++) {
-            this.buttons.push(new Button(
-                this.x + this.abilitiesHeight/4 + (this.spellsWidth+this.abilitiesHeight/4) * i, 
-                this.abilitiesY + this.abilitiesHeight/4, 
-                this.spellsWidth, this.spellsHeight, 
-            () => {
-                
-                this.doPlayerAction(Player.stats.spells[i]);
-            }, {
-                text: Player.stats.spells[i].name,
-                color: 'black',
-                textColor: 'white',
-                strokeColor: 'white',
-                textSize: 18,
-                colorHover: 'darkgrey'
-            }, Player.stats.spells[i].description));
+        this.spellsButtons = [];
+        let cx=0;
+        let cy=0;
+        let i=0;
+        for (const spellIndex of Player.stats.activeSpells) {
+            this.spellsButtons.push(new SpellButton(
+                this.x + 10 + cx * (Combat.SPELL_WIDTH+10), 
+                this.abilitiesY + 10 + cy * (Combat.SPELL_HEIGHT+10), 
+                Combat.SPELL_WIDTH, Combat.SPELL_HEIGHT, Player.stats.spells[spellIndex], spellIndex,
+                (n, sb) => {
+                    // on click
+                    this.doPlayerAction(Player.stats.spells[n]);
+                },
+                (s) => {
+                    // on hover
+                    this.tooltip = s.description;
+                    this.tooltipDisplay = true;
+                }));
+            i++;
+            if (i%2==0) {
+                cx++;
+                cy=0;
+            } else {
+                cy=1;
+            }
         }
     }
 
@@ -370,7 +393,7 @@ export class Combat extends EngineObject {
             return;
         }
 
-        for(const ob of this.buttons) {
+        for(const ob of this.spellsButtons) {
             ob.mousePressed(x, y);
         }    
     }
@@ -386,8 +409,6 @@ export class Combat extends EngineObject {
         
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
         this.abilitiesHeight = this.height / 3 - 3;
-        this.spellsWidth = this.width / 8;
-        this.spellsHeight = this.abilitiesHeight / 2;
 
         for (let i = 0; i<this.enemies.length; i++) {
             // skin

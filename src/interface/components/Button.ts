@@ -47,12 +47,12 @@ export class Button extends EngineObject {
         if (this.style.text) {
             EngineGraphics.ctx.fillStyle = this.style.textColor || 'grey';
             EngineGraphics.ctx.textAlign = "center";
-            EngineGraphics.ctx.font = this.style.textSize + "px monospace";
+            EngineGraphics.ctx.font = this.style.textSize + "px Luminari";
             EngineGraphics.ctx.textBaseline = "middle";
             EngineGraphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
         }
         if (this.style.strokeColor) {
-            EngineGraphics.ctx.lineWidth = 3;
+            EngineGraphics.ctx.lineWidth = 1;
             EngineGraphics.ctx.strokeStyle = this.style.strokeColor;
             EngineGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }

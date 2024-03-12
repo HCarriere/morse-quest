@@ -6,7 +6,7 @@ export abstract class EngineObject {
     }
 
     /**
-     * At end of GameObject constructor
+     * At end of EngineObject constructor
      */
     public init() {}
 

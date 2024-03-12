@@ -32,10 +32,28 @@ https://hcarriere.github.io/morse-quest/
     - Usable items are deleted on run end
     - Gold is deleted on run start
     - Gold is used on equipment & usable items
-    - You increment stats as you play (intelligence for mages, strengh for warriors ...)
-    - You unlock class skills during the run
+    - You unlock class skills during the run, from a random pool (choose 1 from 3)
+    - You use gold to level up your stats
+- Mechanics
+    - You can move on the map
+    - When the enemy spot you they move toward you
+    - After a fight, you have a reward : gold, XP, items, permanent unlocks
+    - A storm move from left to right after a few turns
+    - If the storm catches the player, there is a fight against a (too) big enemy
+- Level design
+    - Maps shoud have 1 start, and at least 1 end
+    - They should be short and have :
+        - fights
+        - treasures
+        - curiosities (event with choices)
 - Classes
     - Summoner (add alied summons (IA Based) on turn order ?)
+    - Lardomancien
+
+
+# Help
+- Icons are (for now) emoji & web symbols. Use https://symbl.cc/
+- Spells Icons are alchemic symbols https://symbl.cc/fr/unicode/blocks/alchemical-symbols/ 
 
 
 # TODO
@@ -48,21 +66,26 @@ https://hcarriere.github.io/morse-quest/
 - [x] Multiple maps and teleports
 - [x] VERY Simple fight
 - [x] Simple fight (hit selections)
-- [ ] Interface: Character sheet
-- [ ] Simple Classes & skills
+- [x] Interface: Character sheet
+- [ ] Spells cooldown
+- [ ] Mana gestion
+- [ ] Simple Classe
+- [ ] Fight reward interface
+- [ ] Level up interface
+- [ ] Inventory
 - [ ] Encounter spawners ?
+- [ ] Pathfinding
 - [ ] Enemy agro & follow player
 - [ ] Buffs / Debuffs
 - [ ] Improve fight interface (floating numbers, layout, etc)
-- [ ] Improve enemy AI
-- [ ] Inventory
+- [ ] Improve enemy combat AI
 - [ ] Player death
 - [ ] Activables (traps, enigmas ...)
+- [ ] Iminent death
 - [ ] Shops
 - [ ] Hub
 - [ ] Saves
 - [ ] Sprites
-- [ ] Pathfinding
 ## Real content
 - [ ] Build real map
 - [ ] Multiple classes
