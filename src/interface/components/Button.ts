@@ -19,7 +19,6 @@ export class Button extends GameObject {
     private y: number;
     private width: number;
     private height: number;
-    private tooltip: Tooltip;
     private onClick: () => void;
 
     private style: ButtonStyle;
@@ -32,9 +31,6 @@ export class Button extends GameObject {
         this.height = height;
         this.onClick = onClick;
         this.style = style;
-        if(tooltip) {
-            this.tooltip = new Tooltip(tooltip, x, y, width, height);
-        }
     }
 
     public display() {
@@ -55,12 +51,6 @@ export class Button extends GameObject {
             Graphics.ctx.lineWidth = 1;
             Graphics.ctx.strokeStyle = this.style.strokeColor;
             Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
-        }
-    }
-
-    public displayTooltip() {
-        if(this.tooltip) {
-            this.tooltip.display();
         }
     }
 

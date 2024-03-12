@@ -53,6 +53,8 @@ export abstract class Spell {
 
     public abstract cooldown: number;
 
+    public currentCooldown = 0;
+
     public isActive = false;
 
     public slots = 1;

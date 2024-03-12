@@ -13,7 +13,7 @@ export class GameStats {
 
     // current hp
     public hp: number;
-    public mana: number;
+    public energy: number;
 
     // base stats (no modifiers)
     public baseConstitution: number;
@@ -63,6 +63,7 @@ export class GameStats {
     // animations values
 
     private animTargetHealth: number;
+    private animTargetEnergy: number;
     
     constructor(mult = 1) {
         this.baseConstitution = 1*mult;
@@ -76,7 +77,7 @@ export class GameStats {
         this.classHpMultiplicator = 1;
         
         this.hp = this.maxHp;
-        this.mana = this.maxMana;
+        this.energy = this.maxEnergy;
 
         this.targetXp = GameStats.calculateNextXpTarget(this.level + 1);
         
@@ -93,7 +94,7 @@ export class GameStats {
         return Math.floor((1 + this.baseConstitution) * 10 * this.classHpMultiplicator + 100);
     }
 
-    public get maxMana(): number {
+    public get maxEnergy(): number {
         return Math.floor((1 + this.baseWisdom) * 10 + 100);
     }
 
@@ -106,9 +107,9 @@ export class GameStats {
         if (this.hp > this.maxHp) this.hp = this.maxHp;
     }
 
-    public healMana(amount: number) {
-        this.mana += amount;
-        if (this.mana > this.maxMana) this.mana = this.maxMana;
+    public healEnergy(amount: number) {
+        this.energy += amount;
+        if (this.energy > this.maxEnergy) this.energy = this.maxEnergy;
     }
 
     public damage(amount: number, type: DamageType) {
@@ -243,6 +244,39 @@ export class GameStats {
             this.animTargetHealth -= 2;
         } else {
             this.animTargetHealth = this.hp;
+        }
+    }
+
+    /**
+     * Displays HP
+     * x and y are not relative
+     * top left corner
+     * @param x 
+     * @param y 
+     * @param size 
+     */
+    public displayEnergy(x: number, y: number, size: number) {
+        // hp bar
+        Graphics.ctx.lineWidth = 3;
+        Graphics.ctx.strokeStyle = 'white';
+        Graphics.ctx.fillStyle = 'rgb(5,118,231)';
+        Graphics.ctx.fillRect(x, y, this.animTargetEnergy * size / this.maxEnergy, GameStats.HP_BAR_HEIGHT);
+        Graphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        
+        // text
+        Graphics.ctx.fillStyle = 'white';
+        Graphics.ctx.font = '14px '+ Graphics.FONT;
+        Graphics.ctx.fillStyle = 'white';
+        Graphics.ctx.textAlign = 'left'
+        Graphics.ctx.textBaseline = 'top';
+        Graphics.ctx.fillText(`${this.energy} / ${this.maxEnergy}`, x + 5, y + 5);
+
+        if (this.animTargetEnergy < this.energy - 1) {
+            this.animTargetEnergy += 2;
+        } else if (this.animTargetEnergy > this.energy + 1) {
+            this.animTargetEnergy -= 2;
+        } else {
+            this.animTargetEnergy = this.energy;
         }
     }
 

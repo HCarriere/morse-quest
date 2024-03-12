@@ -6,6 +6,7 @@ import { GameInterface } from "./GameInterface";
 import { Controller } from "@game/system/Controller";
 import { Spell, TargetType } from "@game/content/spells/Spell";
 import { SpellButton } from "./components/SpellButton";
+import { Button } from "./components/Button";
 
 /**
  * Displays and process combats
@@ -35,6 +36,7 @@ export class Combat extends GameObject {
     private static SPELL_WIDTH = 200;
     private static SPELL_HEIGHT = 65;
 
+    private endTurnButton: Button;
     private spellsButtons: SpellButton[];
     private tooltip: string[];
     private tooltipDisplay = false;
@@ -103,6 +105,11 @@ export class Combat extends GameObject {
             this.abilitiesY - Combat.PADDING - this.playerSize, 
             Math.max(this.width / 6, this.playerSize)
         );
+        Player.stats.displayEnergy(
+            this.x + Combat.PADDING + this.playerSize + Combat.PADDING, 
+            this.abilitiesY - Combat.PADDING - this.playerSize+25, 
+            Math.max(this.width / 6-5, this.playerSize-5)
+        );
         
         // enemies
         for (let i = 0; i<this.enemies.length; i++) {
@@ -157,6 +164,7 @@ export class Combat extends GameObject {
         // next turn when ready
         if (this.currentSpellPlayedFrame <= 0 && this.targetSelectionToChoose <= 0) {
             if (this.actionPlayed) {
+                // do the effect of the spell
                 this.currentSpellPlayedCallback();
                 // no more frame to play & action is done
                 this.advanceTurn();
@@ -171,6 +179,9 @@ export class Combat extends GameObject {
             for(const ob of this.spellsButtons) {
                 ob.display();
             }
+    
+            // end turn
+            this.endTurnButton.display();
         }
 
         // spell tooltip
@@ -237,7 +248,7 @@ export class Combat extends GameObject {
 
     private doPlayerAction(spell: Spell) {
         if (this.actionPlayed) return;
-        console.log('do player turn');
+        console.log('do player turn' , spell);
 
         this.actionPlayed = true;
         
@@ -368,14 +379,17 @@ export class Combat extends GameObject {
     }
     
 
+    /**
+     * Player is always first
+     */
     private buildTurnOrder() {
         this.turnOrder = [];
         this.currentTurn = 0;
         this.turnOrder.push('player');
         this.turnOrder.push(...this.enemies);
-        console.log('turn order', this.turnOrder);
+        /*console.log('turn order', this.turnOrder);
         this.turnOrder.sort((a, b) => Math.random()-0.5);
-        console.log('turn order after shuffle', this.turnOrder);
+        console.log('turn order after shuffle', this.turnOrder);*/
     }
 
     public mousePressed(x: number, y: number): void {
@@ -396,6 +410,11 @@ export class Combat extends GameObject {
         for(const ob of this.spellsButtons) {
             ob.mousePressed(x, y);
         }    
+
+        // end turn
+        if (this.getCurrentTurn() == 'player') {
+            this.endTurnButton.mousePressed(x, y);
+        }
     }
 
     public resize(): void {
@@ -416,5 +435,17 @@ export class Combat extends GameObject {
             this.enemies[i].y = this.y + Combat.PADDING + this.enemiesSize;
             this.enemies[i].size = this.enemiesSize;
         }
+
+        this.endTurnButton = new Button(
+            this.x + this.width - 155, 
+            this.abilitiesY + 5, 150, 40, () => {
+                this.advanceTurn();
+            }, {
+                color: 'black',
+                strokeColor: 'red',
+                textColor: 'red',
+                colorHover: '#332222',
+                text: 'Fin du tour'
+            });
     }
 }
