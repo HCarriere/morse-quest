@@ -1,4 +1,4 @@
-import { EngineGraphics } from "@game/core/EngineGraphics";
+import { Graphics } from "@game/core/Graphics";
 import { EngineObject } from "@game/core/EngineObject";
 
 export class EditionSpace extends EngineObject {
@@ -8,7 +8,7 @@ export class EditionSpace extends EngineObject {
         super();
     }
     public display() {
-        EngineGraphics.ctx.fillStyle = 'red';
-        EngineGraphics.ctx.fillRect(0, 0, this.endX, EngineGraphics.canvas.height);
+        Graphics.ctx.fillStyle = 'red';
+        Graphics.ctx.fillRect(0, 0, this.endX, Graphics.canvas.height);
     }
 }

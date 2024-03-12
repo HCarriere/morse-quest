@@ -1,4 +1,4 @@
-import { EngineGraphics } from "@game/core/EngineGraphics";
+import { Graphics } from "@game/core/Graphics";
 import { EngineObject } from "@game/core/EngineObject";
 import { SideMenu } from "./SideMenu";
 import { SelectMapMenu } from "./SelectMapMenu";
@@ -12,8 +12,8 @@ export class SideMenus extends EngineObject {
         this.menus.push(new TileEditionMenu(this.startX));
     }
     public display() {
-        EngineGraphics.ctx.fillStyle = 'green';
-        EngineGraphics.ctx.fillRect(this.startX, 0, EngineGraphics.canvas.width - this.startX, EngineGraphics.canvas.height);
+        Graphics.ctx.fillStyle = 'green';
+        Graphics.ctx.fillRect(this.startX, 0, Graphics.canvas.width - this.startX, Graphics.canvas.height);
         let startY = 0;
         this.menus.forEach(menu => {
             startY = menu.displayMenu(startY);

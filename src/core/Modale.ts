@@ -1,4 +1,4 @@
-import { EngineGraphics } from "./EngineGraphics";
+import { Graphics } from "./Graphics";
 import { EngineObject } from "./EngineObject"
 
 export abstract class ModaleContent extends EngineObject {
@@ -14,8 +14,8 @@ export abstract class ModaleContent extends EngineObject {
     protected abstract initContent(): void;
 
     public display() {
-        EngineGraphics.ctx.fillStyle = 'black';
-        EngineGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        Graphics.ctx.fillStyle = 'black';
+        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         this.displayContent();
     }
 
@@ -30,11 +30,11 @@ export abstract class ModaleContent extends EngineObject {
     }
 
     public get x() : number {
-        return EngineGraphics.canvas.width / 2 - this.width / 2;
+        return Graphics.canvas.width / 2 - this.width / 2;
     }
     
     public get y() : number {
-        return EngineGraphics.canvas.height / 2 - this.height / 2
+        return Graphics.canvas.height / 2 - this.height / 2
     }
 
     /**

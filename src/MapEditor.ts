@@ -1,5 +1,5 @@
 import { Engine } from "./core/Engine";
-import { EngineGraphics } from "./core/EngineGraphics";
+import { Graphics } from "./core/Graphics";
 import { EditionSpace } from "./mapeditor/EditionSpace";
 import { SideMenus } from "./mapeditor/SideMenus";
 
@@ -11,7 +11,7 @@ export class MapEditor extends Engine {
     }
     protected override initCanvas(canvasid: string): boolean {
         if (!super.initCanvas(canvasid)) return false;
-        let frontierX = EngineGraphics.canvas.width * 4/5;
+        let frontierX = Graphics.canvas.width * 4/5;
         this.sideMenus = new SideMenus(frontierX);
         this.editionSpace = new EditionSpace(frontierX);
         this.engineObjects.push(this.sideMenus);
@@ -26,7 +26,7 @@ export class MapEditor extends Engine {
         this.updateFrontier();
     }
     private updateFrontier(): void {
-        let frontierX = EngineGraphics.canvas.width * 4/5;
+        let frontierX = Graphics.canvas.width * 4/5;
         if (this.sideMenus) this.sideMenus.updateStartX(frontierX);
         if (this.editionSpace) this.editionSpace.endX = frontierX;
     }

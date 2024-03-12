@@ -1,4 +1,4 @@
-import { EngineGraphics } from "@game/core/EngineGraphics";
+import { Graphics } from "@game/core/Graphics";
 import { SideMenu } from "./SideMenu";
 import { Input } from "./components/Input";
 
@@ -9,9 +9,9 @@ export class TileEditionMenu extends SideMenu {
         this.menuElements.push(this.tileValueInput);
     }
     public displayMenu(startY: number): number {
-        let height = EngineGraphics.canvas.height / 5;
-        EngineGraphics.ctx.fillStyle = 'blue';
-        EngineGraphics.ctx.fillRect(this.startX, startY, EngineGraphics.canvas.width - this.startX, height);
+        let height = Graphics.canvas.height / 5;
+        Graphics.ctx.fillStyle = 'blue';
+        Graphics.ctx.fillRect(this.startX, startY, Graphics.canvas.width - this.startX, height);
         return height;
     }
 }
