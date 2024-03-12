@@ -2,6 +2,7 @@ import { RawMaps } from "@game/content/RawMaps";
 
 export class MapEdition {
     private static currentMapId: string;
+    private static mapList: string[] = Object.keys(RawMaps);
     
     static MAX_BLOCK_WIDTH_VIEW = 30;
     static MAX_BLOCK_HEIGHT_VIEW = 30;
@@ -16,7 +17,7 @@ export class MapEdition {
         MapEdition.MapWidth = 0;
         MapEdition.MapHeight = 0;
         
-        if (!Object.keys(RawMaps).includes(mapId)) {
+        if (!this.mapList.includes(mapId)) {
             console.log(`can't find map <${mapId}>, loading <main>`);
             mapId = 'main';
         }
@@ -33,5 +34,14 @@ export class MapEdition {
         }
         MapEdition.MapHeight = lines.length;
         console.log(`${MapEdition.MapWidth} x ${MapEdition.MapHeight} map loaded`);
+    }
+
+    public static addNewMap(mapId): void {
+        this.mapList.push(mapId);
+        RawMaps[mapId] = '';
+    }
+
+    public static getMapList(): string[] {
+        return this.mapList;
     }
 }
