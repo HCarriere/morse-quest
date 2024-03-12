@@ -267,12 +267,21 @@ export class Combat extends GameObject {
     }
 
     private doPlayerAction(spell: Spell) {
-        // calculate mana
+        // check cooldown
+        if (spell.currentCooldown > 0) {
+            // cooldown not ready
+            return;
+        }
+        // check energy
         if (Player.stats.energy < spell.energyCost) {
-            // can't cast spell
+            // not enough energy
             return;
         } 
         
+        // process cooldown
+        spell.currentCooldown = spell.cooldown;
+        
+        // process energy
         Player.stats.energy -= spell.energyCost;
         
         switch(spell.targetType) {
@@ -345,18 +354,27 @@ export class Combat extends GameObject {
         
         this.currentRound++;
 
-        console.log('advancing round to', this.currentRound)
-
         if (this.enemies.length < this.currentRound) {
             // new turn
-            console.log('reset round to 0')
+            this.newTurn();
             this.currentRound = 0;
-            Player.stats.healFullEnergy();
         }
         const roundTo = this.getCurrentTurn();
-        console.log('round to : ', roundTo)
+
         if (roundTo != 'player') {
             this.doEnemyAction(roundTo as Enemy);
+        }
+    }
+
+    /**
+     * Happens when player is playing again
+     */
+    private newTurn() {
+        // refill player energy
+        Player.stats.healFullEnergy();
+        // advance spells cooldown
+        for (const spellIndex of Player.stats.activeSpells) {
+            Player.stats.spells[spellIndex].advanceCooldown();
         }
     }
 

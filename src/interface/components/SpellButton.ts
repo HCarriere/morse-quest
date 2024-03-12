@@ -2,6 +2,7 @@ import { Spell } from "@game/content/spells/Spell";
 import { Controller } from "@game/system/Controller";
 import { GameObject } from "@game/system/GameObject";
 import { Graphics } from "@game/system/Graphics";
+import { Player } from "@game/system/Player";
 
 export class SpellButton extends GameObject {
     
@@ -63,11 +64,23 @@ export class SpellButton extends GameObject {
     
         // cooldowns
         Graphics.ctx.textBaseline = "bottom";
-        Graphics.ctx.fillText(this.spell.cooldown + ' ⧖', this.x + this.width - 5, this.y + this.height - 5);
+        if (this.spell.currentCooldown == 0) {
+            Graphics.ctx.fillText(this.spell.cooldown + ' ⧖', this.x + this.width - 5, this.y + this.height - 5);
+        } else {
+            // on cooldown
+            Graphics.ctx.fillStyle = 'red';
+            Graphics.ctx.fillText(this.spell.cooldown + ' ⧖ '+this.spell.currentCooldown, this.x + this.width - 5, this.y + this.height - 5);
+        }
 
         // mana costs
         Graphics.ctx.textAlign = "left";
-        Graphics.ctx.fillStyle = 'aqua';
+        if (this.spell.energyCost <= Player.stats.energy) {
+            // enough mana
+            Graphics.ctx.fillStyle = 'aqua';
+        } else {
+            // not enough mana
+            Graphics.ctx.fillStyle = 'red';
+        }
         Graphics.ctx.fillText(this.spell.energyCost + ' energy', this.x + 5, this.y + this.height - 5);
     }
 

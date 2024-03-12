@@ -68,8 +68,8 @@ https://hcarriere.github.io/morse-quest/
 - [x] Simple fight (hit selections)
 - [x] Interface: Character sheet
 - [ ] Finish combat mechanics
-    - [ ] Multiple attacks per round (mana gestion)
-    - [ ] Spells cooldown
+    - [x] Multiple attacks per round (mana gestion)
+    - [x] Spells cooldown
     - [ ] Buffs / Debuffs
     - [ ] Improve fight interface (floating numbers, layout, etc)
     - [ ] Simple Class

@@ -79,5 +79,9 @@ export abstract class Spell {
      */
     public abstract animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void;
     
+
+    public advanceCooldown() {
+        if (this.currentCooldown > 0) this.currentCooldown--;
+    }
 }
 
