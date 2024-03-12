@@ -1,7 +1,7 @@
 import { EngineObject } from "@game/core/EngineObject";
-import { GameGraphics } from "@game/system/GameGraphics";
 import { Tooltip } from "../Tooltip";
-import { GameController } from "@game/system/GameController";
+import { EngineGraphics } from "@game/core/EngineGraphics";
+import { EngineController } from "@game/core/EngineController";
 
 
 export interface ButtonStyle {
@@ -38,23 +38,23 @@ export class Button extends EngineObject {
     }
 
     public display() {
-        if (this.style.colorHover && this.isInbound(GameController.mouseX, GameController.mouseY)) {
-            GameGraphics.ctx.fillStyle = this.style.colorHover;
+        if (this.style.colorHover && this.isInbound(EngineController.mouseX, EngineController.mouseY)) {
+            EngineGraphics.ctx.fillStyle = this.style.colorHover;
         } else {
-            GameGraphics.ctx.fillStyle = this.style.color || 'black';
+            EngineGraphics.ctx.fillStyle = this.style.color || 'black';
         }
-        GameGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        EngineGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         if (this.style.text) {
-            GameGraphics.ctx.fillStyle = this.style.textColor || 'grey';
-            GameGraphics.ctx.textAlign = "center";
-            GameGraphics.ctx.font = this.style.textSize + "px monospace";
-            GameGraphics.ctx.textBaseline = "middle";
-            GameGraphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
+            EngineGraphics.ctx.fillStyle = this.style.textColor || 'grey';
+            EngineGraphics.ctx.textAlign = "center";
+            EngineGraphics.ctx.font = this.style.textSize + "px monospace";
+            EngineGraphics.ctx.textBaseline = "middle";
+            EngineGraphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
         }
         if (this.style.strokeColor) {
-            GameGraphics.ctx.lineWidth = 3;
-            GameGraphics.ctx.strokeStyle = this.style.strokeColor;
-            GameGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+            EngineGraphics.ctx.lineWidth = 3;
+            EngineGraphics.ctx.strokeStyle = this.style.strokeColor;
+            EngineGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }
     }
 
