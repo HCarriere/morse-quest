@@ -16,7 +16,7 @@ export class SideMenus extends EngineObject {
         EngineGraphics.ctx.fillRect(this.startX, 0, EngineGraphics.canvas.width - this.startX, EngineGraphics.canvas.height);
         let startY = 0;
         this.menus.forEach(menu => {
-            startY = menu.display(startY);
+            startY = menu.displayMenu(startY);
         });
     }
 }

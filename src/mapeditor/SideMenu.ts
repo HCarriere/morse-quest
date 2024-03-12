@@ -1,5 +1,27 @@
-export abstract class SideMenu {
-    constructor(public startX: number) {}
+import { EngineObject } from "@game/core/EngineObject";
+
+export abstract class SideMenu extends EngineObject {
+    protected menuElements: EngineObject[] = [];
+    constructor(public startX: number) {
+        super();
+        this.initMenu();
+    }
+    protected initMenu(): void {}
     /** Display the menu and return its height */
-    public abstract display(startY: number): number;
+    public abstract displayMenu(startY: number): number;
+    public display() {
+        throw new Error("You should use displayMenu(startY: number)");
+    }
+    public resize(): void {
+        super.resize();
+        this.menuElements.forEach(elem => elem.resize());
+    }
+    public keyPressed(key: number): void {
+        super.keyPressed(key);
+        this.menuElements.forEach(elem => elem.keyPressed(key));
+    }
+    public mousePressed(x: number, y: number): void {
+        super.mousePressed(x, y);
+        this.menuElements.forEach(elem => elem.mousePressed(x, y));
+    }
 }
