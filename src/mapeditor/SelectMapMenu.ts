@@ -1,14 +1,23 @@
 import { EngineGraphics } from "@game/core/EngineGraphics";
 import { SideMenu } from "./SideMenu";
-import { Dropdown } from "./components/Dropdown";
+import { Button } from "@game/interface/components/Button";
 
 export class SelectMapMenu extends SideMenu {
     private static padding = 10;
     private static dropdownHeight = 20;
-    private mapDropdown: Dropdown;
+    private mapSelectButton: Button;
     public initMenu(): void {
-        this.mapDropdown = new Dropdown(this.startX + SelectMapMenu.padding, SelectMapMenu.padding, EngineGraphics.canvas.width - this.startX - 2 * SelectMapMenu.padding, SelectMapMenu.dropdownHeight, [], () => {});
-        this.menuElements.push(this.mapDropdown);
+        this.mapSelectButton = new Button(
+            this.startX + SelectMapMenu.padding,
+            SelectMapMenu.padding,
+            EngineGraphics.canvas.width - this.startX - 2 * SelectMapMenu.padding,
+            SelectMapMenu.dropdownHeight,
+            () => {},
+            {
+                text: 'Sélectionner une map'
+            },
+            'Sélectionner une map');
+        this.menuElements.push(this.mapSelectButton);
     }
     public displayMenu(startY: number): number {
         let height = SelectMapMenu.dropdownHeight + 2 * SelectMapMenu.padding;
@@ -21,7 +30,7 @@ export class SelectMapMenu extends SideMenu {
     }
     public updateStartX(newValue: number): void {
         super.updateStartX(newValue);
-        this.mapDropdown.x = this.startX + SelectMapMenu.padding;
-        this.mapDropdown.width = EngineGraphics.canvas.width - this.startX - 2 * SelectMapMenu.padding;
+        this.mapSelectButton.x = this.startX + SelectMapMenu.padding;
+        this.mapSelectButton.width = EngineGraphics.canvas.width - this.startX - 2 * SelectMapMenu.padding;
     }
 }

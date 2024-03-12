@@ -15,23 +15,10 @@ export interface ButtonStyle {
 
 export class Button extends EngineObject {
 
-    private x: number;
-    private y: number;
-    private width: number;
-    private height: number;
     private tooltip: Tooltip;
-    private onClick: () => void;
 
-    private style: ButtonStyle;
-
-    constructor(x: number, y: number, width: number, height: number, onClick: () => void, style: ButtonStyle = {}, tooltip?: string) {
+    constructor(public x: number, public y: number, public width: number, public height: number, public onClick: () => void, public style: ButtonStyle = {}, tooltip?: string) {
         super();
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.onClick = onClick;
-        this.style = style;
         if(tooltip) {
             this.tooltip = new Tooltip(tooltip, x, y, width, height);
         }

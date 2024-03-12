@@ -1,6 +1,7 @@
 import { EngineGraphics } from "./EngineGraphics";
 import { EngineController } from "./EngineController";
 import { EngineObject } from "./EngineObject";
+import { Modale } from "./Modale";
 
 export abstract class Engine {
 
@@ -48,6 +49,10 @@ export abstract class Engine {
         for (const obj of this.engineObjects) {
             obj.display();
         }
+
+        if (Modale.showModale) {
+            Modale.content.display();
+        }
         
         this.onLoop();
 
@@ -62,9 +67,16 @@ export abstract class Engine {
         for (const obj of this.engineObjects) {
             obj.resize();
         }
+        if (Modale.showModale) {
+            Modale.content.resize();
+        }
     }
 
     protected keyPressed(e: KeyboardEvent) {
+        if (Modale.showModale) {
+            Modale.content.keyPressed(EngineController.KeyMapping[e.key]);
+            return;
+        }
         for (const obj of this.engineObjects) {
             obj.keyPressed(EngineController.KeyMapping[e.key]);
         }
@@ -74,8 +86,11 @@ export abstract class Engine {
         const rect = EngineGraphics.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
+        if (Modale.showModale) {
+            Modale.content.mousePressed(x, y);
+            return;
+        }
         for (const obj of this.engineObjects) {
-            // obj.mousePressed(e.offsetX, e.offsetY);
             obj.mousePressed(x, y);
         }
     }

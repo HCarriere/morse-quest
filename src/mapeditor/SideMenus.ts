@@ -19,6 +19,18 @@ export class SideMenus extends EngineObject {
             startY = menu.displayMenu(startY);
         });
     }
+    public resize(): void {
+        super.resize();
+        this.menus.forEach(menu => menu.resize());
+    }
+    public keyPressed(key: number): void {
+        super.keyPressed(key);
+        this.menus.forEach(menu => menu.keyPressed(key));
+    }
+    public mousePressed(x: number, y: number): void {
+        super.mousePressed(x, y);
+        this.menus.forEach(menu => menu.mousePressed(x, y));
+    }
     public updateStartX(newValue: number): void {
         this.startX = newValue;
         this.menus.forEach(menu => menu.updateStartX(newValue));
