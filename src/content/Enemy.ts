@@ -1,6 +1,7 @@
 import { GameStats } from "./GameStats";
 import { Combat } from "@game/interface/Combat";
 import { Skin } from "./Skin";
+import { TargetType } from "./spells/Spell";
 
 export class Enemy {
 
@@ -28,12 +29,21 @@ export class Enemy {
         // do a random spell
         // TODO implement a good AI
         const iSpell = Math.floor(Math.random() * this.stats.spells.length);
+        const spell = this.stats.spells[iSpell];
         
-        combat.playSpellAnimation(this.stats.spells[iSpell], ['player'], this, () => {
-            onEnd();
-        });
+        if (spell.targetType == TargetType.Self) {
+            // buffs, if any
+            combat.playSpellAnimation(spell, [this], this, () => {
+                onEnd();
+            });
+        } else {
+            // target offensive spells
+            combat.playSpellAnimation(spell, ['player'], this, () => {
+                onEnd();
+            });
+        }
 
-        console.log('Enemy '+this.name + ' do : ' + this.stats.spells[iSpell].name);
+        console.log('Enemy '+this.name + ' do : ' + spell);
     }
 
 

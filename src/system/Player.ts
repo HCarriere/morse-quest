@@ -32,7 +32,7 @@ export class Player extends EngineObject {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
         Player.stats.healFullHp();        
-        Player.stats.spells.push(new SpellCreateShield());
+        Player.stats.spells.push(new SpellCreateShield(50));
         Player.stats.spells.push(new SpellFireball());
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellChainLightning());

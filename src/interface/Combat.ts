@@ -8,6 +8,7 @@ import { Spell, TargetType } from "@game/content/spells/Spell";
 import { SpellButton } from "./components/SpellButton";
 import { Button } from "./components/Button";
 import { GameStats } from "@game/content/GameStats";
+import { BuffIcons } from "./components/BuffIcons";
 
 /**
  * Displays and process combats
@@ -42,6 +43,7 @@ export class Combat extends EngineObject {
 
     private endTurnButton: Button;
     private spellsButtons: SpellButton[];
+    private buffIcons: BuffIcons[];
     private tooltip: string[];
     private tooltipDisplay = false;
 
@@ -70,6 +72,7 @@ export class Combat extends EngineObject {
         this.resize();
         this.frameAnim = 1.0;
         this.buildActions();
+        this.synchronizeBuffs();
         // this.buildTurnOrder();
         Player.stats.cancelAnimation();
         console.log('Combat started', enemies);
@@ -79,6 +82,7 @@ export class Combat extends EngineObject {
         }
         */
        Player.stats.healFullEnergy();
+       Player.stats.resetAllCooldowns();
     }
 
     /**
@@ -141,6 +145,11 @@ export class Combat extends EngineObject {
             }
         }
 
+        // display all buffs
+        for (const b of this.buffIcons) {
+            b.display();
+        }
+
         // display spell
         if (this.currentSpellPlayedFrame > 0) {
             this.displaySpellAnimation();
@@ -166,19 +175,7 @@ export class Combat extends EngineObject {
                 }
             }
         }
-
-        // next turn when ready
-        if (this.currentSpellPlayedFrame <= 0 && this.currentSpellPlayed) {
-            /*if (this.actionPlayed) {
-                // do the effect of the spell
-                this.currentSpellPlayedCallback();
-                // no more frame to play & action is done
-                this.advanceTurn();
-            }*/
-            console.log('playing spell animation callback')
-            this.currentSpellPlayed = null;
-            this.currentSpellPlayedCallback();
-        }
+        
 
         // abilities box
         GameGraphics.ctx.strokeStyle = 'white';
@@ -213,10 +210,22 @@ export class Combat extends EngineObject {
                     this.x + this.width - Combat.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
             }
         }
+
+        // next turn when ready
+        if (this.currentSpellPlayedFrame <= 0 && this.currentSpellPlayed) {
+            // If the animation is demanded AND the animation finished
+            // then call current animation callback. Handle combat states 
+            // in the according methods.
+            this.currentSpellPlayed = null;
+            this.currentSpellPlayedCallback();
+        }
     }
 
-    
-    public displaySpellAnimation() {
+    /**
+     * Animate, if needed, the current spell animation
+     * @returns 
+     */
+    private displaySpellAnimation() {
         if (!this.currentSpellPlayed) return;
         this.currentSpellPlayed.animate(this.currentSpellPlayedFrame, this.currentSpellPlayedTargets, this.currentSpellPlayedOrig, this.playerSize);
         this.currentSpellPlayedFrame --;
@@ -385,15 +394,21 @@ export class Combat extends EngineObject {
         Player.stats.healFullEnergy();
         // advance player buffs
         Player.stats.advanceBuffDepletion();
+        this.synchronizeBuffs();
         // advance spells cooldown
         for (const spellIndex of Player.stats.activeSpells) {
             Player.stats.spells[spellIndex].advanceCooldown();
         }
     }
 
+    /**
+     * Happens when an enemy takes its turn
+     * @param enemy 
+     */
     private newEnemyTurn(enemy: Enemy) {
         // advance its buffs
         enemy.stats.advanceBuffDepletion();
+        this.synchronizeBuffs();
         // do its action
         this.doEnemyAction(enemy);
     }
@@ -405,6 +420,9 @@ export class Combat extends EngineObject {
      * @returns 
      */
     private checkCombatState() {
+
+        this.synchronizeBuffs();
+        
         // check death
         if (Player.stats.hp <= 0) {
             Player.die();
@@ -425,15 +443,24 @@ export class Combat extends EngineObject {
         }
     }
 
+    /**
+     * Player win
+     */
     private winFight() {
         console.log('you won bro')
         this.end();
     }
 
+    /**
+     * End the combat interface
+     */
     private end() {
         GameInterface.endCombat();
     }
 
+    /**
+     * Build action buttons
+     */
     private buildActions() {
         this.spellsButtons = [];
         let cx=0;
@@ -464,6 +491,39 @@ export class Combat extends EngineObject {
     }
 
     /**
+     * Build ALL buffs icons (player & ennemies)
+     * Recall this method to synchronize.
+     */
+    private synchronizeBuffs() {
+        console.log('synchronizing all buffs and build buffs icons');
+        this.buffIcons = [];
+        
+        // Player buffs
+        Player.stats.clearNecessaryBuffs();
+        this.buffIcons.push(new BuffIcons(
+            this.x + Combat.PADDING + this.playerSize + Combat.PADDING, 
+            this.abilitiesY - Combat.PADDING - this.playerSize+55, 
+            Player.stats, (buff) => {
+            // on hover
+            this.tooltip = buff.description;
+            this.tooltipDisplay = true;
+        }));
+
+        // enemies buffs
+        for (const e of this.enemies) {
+            e.stats.clearNecessaryBuffs();
+            this.buffIcons.push(new BuffIcons(
+                e.x - e.size/2, 
+                e.y + e.size/2 + 30,  
+                e.stats, (buff) => {
+                // on hover
+                this.tooltip = buff.description;
+                this.tooltipDisplay = true;
+            }));
+        }
+    }
+
+    /**
      * Get the current entity playing.
      */
     private getCurrentTurn(): Enemy|'player' {
@@ -471,7 +531,6 @@ export class Combat extends EngineObject {
         return this.enemies[this.currentRound - 1];
     }
     
-
     public mousePressed(x: number, y: number): void {
         if (this.frameAnim > 0) return;
 

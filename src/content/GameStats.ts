@@ -4,6 +4,7 @@ import { Skill } from "./skills/Skill";
 import { InventorySlot, Item } from "./items/Item";
 import { SpellFireball } from "./spells/library/Fireball";
 import { Buff } from "./buffs/Buff";
+import { SpellCreateShield } from "./spells/library/CreateShield";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -71,7 +72,7 @@ export class GameStats {
     /**
      * Buffs and debuff
      */
-    private buffs: Buff[] = [];
+    public buffs: Buff[] = [];
 
     private animTargetHealth: number;
     private animTargetEnergy: number;
@@ -96,6 +97,7 @@ export class GameStats {
 
         this.spells = [
             new SpellFireball(),
+            new SpellCreateShield(),
         ];
 
         this.skills = [];
@@ -129,13 +131,16 @@ export class GameStats {
 
     public damage(amount: number, type: DamageType) {
         // apply reduction
-        amount = Math.max(0, amount - this.flatDamageReductor);
+        const modAmount = Math.max(0, amount - this.flatDamageReductor);
+
         // notify buffs
         for (const buff of this.buffs) {
             buff.onBuffRecipientHit(this, amount);
         }
+        
         // remove hp
-        this.hp -= amount;
+        this.hp -= modAmount;
+        // constrain to 0
         this.hp = Math.max(this.hp, 0);
     }
 
@@ -167,6 +172,7 @@ export class GameStats {
             b.onNewTurn(this);
             b.duration -= 1;
         }
+        this.clearNecessaryBuffs();
     }
 
     /**
@@ -271,6 +277,11 @@ export class GameStats {
     }
 
 
+    public resetAllCooldowns() {
+        for (const s of this.spells) {
+            s.currentCooldown = 0;
+        }
+    }
 
     private static calculateNextXpTarget(nextLevel: number): number {
         return (nextLevel-1) * 1000;
@@ -349,6 +360,7 @@ export class GameStats {
      */
     public cancelAnimation() {
         this.animTargetHealth = this.hp;
+        this.animTargetEnergy = this.energy;
     }
     
 }

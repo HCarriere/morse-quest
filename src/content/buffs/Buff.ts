@@ -44,8 +44,15 @@ export abstract class Buff {
      * Duration is handled elsewhere.
      * @param stats 
      */
-    public abstract onNewTurn(stats: GameStats);
+    public onNewTurn(stats: GameStats){}
 
+    /**
+     * Triggers when the buff recipient has been hit by an attack.
+     * @param stats 
+     * @param damage 
+     */
+    public onBuffRecipientHit(stats: GameStats, damage: number) {}
+    
     /**
      * Happens when buff is *already* applied.
      * Will play *onBuffed* for each new stack
@@ -60,12 +67,5 @@ export abstract class Buff {
         }
     }
 
-    /**
-     * Triggers when the buff recipient has been hit by an attack.
-     * @param stats 
-     * @param damage 
-     */
-    public onBuffRecipientHit(stats: GameStats, damage: number) {
-
-    }
+    
 }
