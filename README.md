@@ -57,7 +57,7 @@ https://hcarriere.github.io/morse-quest/
 
 
 # TODO
-# Base Game
+## Base Game
 - [x] Simple Map
 - [x] Simple Player
 - [x] Moving on map (collision, camera)
@@ -67,32 +67,42 @@ https://hcarriere.github.io/morse-quest/
 - [x] VERY Simple fight
 - [x] Simple fight (hit selections)
 - [x] Interface: Character sheet
-- [ ] Spells cooldown
-- [ ] Mana gestion
-- [ ] Simple Classe
-- [ ] Fight reward interface
-- [ ] Level up interface
-- [ ] Inventory
-- [ ] Encounter spawners ?
-- [ ] Pathfinding
-- [ ] Enemy agro & follow player
-- [ ] Buffs / Debuffs
-- [ ] Improve fight interface (floating numbers, layout, etc)
-- [ ] Improve enemy combat AI
-- [ ] Player death
-- [ ] Activables (traps, enigmas ...)
-- [ ] Iminent death
-- [ ] Shops
+- [ ] Finish combat mechanics
+    - [x] Multiple attacks per round (mana gestion)
+    - [x] Spells cooldown
+    - [ ] Buffs / Debuffs
+    - [ ] Improve fight interface (floating numbers, layout, etc)
+    - [ ] Simple Class
+    - [ ] Fight reward interface
+- [ ] Player capabilities
+    - [ ] Level up interface
+    - [ ] Inventory
+- [ ] World
+    - [ ] Map builder
+    - [ ] Player death
+    - [ ] Encounter spawners ?
+    - [ ] Pathfinding
+    - [ ] Enemy agro & follow player
+    - [ ] Activables (traps, enigmas ...)
+    - [ ] Iminent death
+    - [ ] Saves
 - [ ] Hub
-- [ ] Saves
-- [ ] Sprites
+    - [ ] Shops
+- [ ] Improvements
+    - [ ] Improve enemy combat AI
+    - [ ] Documentation: create spells
+    - [ ] Documentation: create skills
+    - [ ] Documentation: create classes
+    - [ ] Documentation: create items
+    - [ ] Documentation: create enemies
+
 ## Real content
-- [ ] Build real map
+- [ ] Balancing
+- [ ] Build real maps
 - [ ] Multiple classes
 - [ ] Multiple enemies
 - [ ] Spells animation
 - [ ] Multiple spells
-- [ ] Balancing
 ## QoL
 - [ ] Cool animated splashscreen (with particles)
 - [ ] Display other players

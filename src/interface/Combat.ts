@@ -6,6 +6,8 @@ import { GameInterface } from "./GameInterface";
 import { GameController } from "@game/system/GameController";
 import { Spell, TargetType } from "@game/content/spells/Spell";
 import { SpellButton } from "./components/SpellButton";
+import { Button } from "./components/Button";
+import { GameStats } from "@game/content/GameStats";
 
 /**
  * Displays and process combats
@@ -14,9 +16,12 @@ export class Combat extends EngineObject {
 
     private enemies: Enemy[]; // vs Player
 
-    // fight
-    private currentTurn: number;
-    private turnOrder: (Enemy|'player')[];
+    /**
+     * Reset to 0 each turn.
+     * If == 0, then its player turn.
+     */
+    private currentRound = 0;
+    // private turnOrder: (Enemy|'player')[];
 
     // display
     private x: number;
@@ -35,17 +40,18 @@ export class Combat extends EngineObject {
     private static SPELL_WIDTH = 200;
     private static SPELL_HEIGHT = 65;
 
+    private endTurnButton: Button;
     private spellsButtons: SpellButton[];
     private tooltip: string[];
     private tooltipDisplay = false;
 
     private currentSpellPlayed: Spell;
-    private currentSpellPlayedFrame: number;
-    private currentSpellPlayedTargets: {x: number, y: number}[];
-    private currentSpellPlayedOrig: {x: number, y: number};
+    private currentSpellPlayedFrame = 0;
+    private currentSpellPlayedTargets: {x: number, y: number, stat: GameStats}[];
+    private currentSpellPlayedOrig: {x: number, y: number, stat: GameStats};
     private currentSpellPlayedCallback: ()=>void;
 
-    private actionPlayed = false;
+    // private actionPlayed = false;
     
     /**
      * Set this to the number of targets you have to choose from
@@ -64,20 +70,22 @@ export class Combat extends EngineObject {
         this.resize();
         this.frameAnim = 1.0;
         this.buildActions();
-        this.buildTurnOrder();
+        // this.buildTurnOrder();
         Player.stats.cancelAnimation();
         console.log('Combat started', enemies);
-
+        /*
         if (this.getCurrentTurn() != 'player') {
             this.doEnemyAction(this.getCurrentTurn() as Enemy);
         }
+        */
+       Player.stats.healFullEnergy();
     }
 
     /**
      * Combat interface
      */
     public display() {
-        if (!this.turnOrder) return;
+        // if (!this.turnOrder) return;
         // frame
         GameGraphics.ctx.lineWidth = 1;
         GameGraphics.ctx.fillStyle = '#020202';
@@ -102,6 +110,11 @@ export class Combat extends EngineObject {
             this.x + Combat.PADDING + this.playerSize + Combat.PADDING, 
             this.abilitiesY - Combat.PADDING - this.playerSize, 
             Math.max(this.width / 6, this.playerSize)
+        );
+        Player.stats.displayEnergy(
+            this.x + Combat.PADDING + this.playerSize + Combat.PADDING, 
+            this.abilitiesY - Combat.PADDING - this.playerSize+25, 
+            Math.max(this.width / 6-5, this.playerSize-5)
         );
         
         // enemies
@@ -155,12 +168,16 @@ export class Combat extends EngineObject {
         }
 
         // next turn when ready
-        if (this.currentSpellPlayedFrame <= 0 && this.targetSelectionToChoose <= 0) {
-            if (this.actionPlayed) {
+        if (this.currentSpellPlayedFrame <= 0 && this.currentSpellPlayed) {
+            /*if (this.actionPlayed) {
+                // do the effect of the spell
                 this.currentSpellPlayedCallback();
                 // no more frame to play & action is done
                 this.advanceTurn();
-            }
+            }*/
+            console.log('playing spell animation callback')
+            this.currentSpellPlayed = null;
+            this.currentSpellPlayedCallback();
         }
 
         // abilities box
@@ -171,6 +188,9 @@ export class Combat extends EngineObject {
             for(const ob of this.spellsButtons) {
                 ob.display();
             }
+    
+            // end turn
+            this.endTurnButton.display();
         }
 
         // spell tooltip
@@ -193,23 +213,39 @@ export class Combat extends EngineObject {
                     this.x + this.width - Combat.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
             }
         }
-
     }
 
-
+    
+    public displaySpellAnimation() {
+        if (!this.currentSpellPlayed) return;
+        this.currentSpellPlayed.animate(this.currentSpellPlayedFrame, this.currentSpellPlayedTargets, this.currentSpellPlayedOrig, this.playerSize);
+        this.currentSpellPlayedFrame --;
+    }
+    
+    /**
+     * Triggers a spell to its 
+     * @param spell 
+     * @param targets 
+     * @param origin 
+     * @param onEnd 
+     */
     public playSpellAnimation(spell: Spell, targets: (Enemy|'player')[], origin: Enemy|'player', onEnd: () => void) {
         this.currentSpellPlayedCallback = onEnd;
         this.currentSpellPlayedFrame = spell.frameAnimationMax;
         this.currentSpellPlayed = spell;
+        console.log('playing spell animation : ', this.currentSpellPlayed);
+
         if (origin == 'player') {
             this.currentSpellPlayedOrig = {
                 x: this.x + Combat.PADDING + this.playerSize/2,
                 y: this.abilitiesY - Combat.PADDING - this.playerSize + this.playerSize/2,
+                stat: Player.stats,
             };
         } else {
             this.currentSpellPlayedOrig = {
                 x: origin.x,
                 y: origin.y,
+                stat: origin.stats,
             }
         }
         this.currentSpellPlayedTargets = [];
@@ -218,51 +254,58 @@ export class Combat extends EngineObject {
                 this.currentSpellPlayedTargets.push({
                     x: this.x + Combat.PADDING + this.playerSize/2,
                     y: this.abilitiesY - Combat.PADDING - this.playerSize + this.playerSize/2,
+                    stat: Player.stats,
                 });
             } else {
                 this.currentSpellPlayedTargets.push({
                     x: t.x,
                     y: t.y,
+                    stat: t.stats,
                 });
             }
         }
     }
 
-    public displaySpellAnimation() {
-        if (!this.currentSpellPlayed) return;
-        this.currentSpellPlayed.animate(this.currentSpellPlayedFrame, this.currentSpellPlayedTargets, this.currentSpellPlayedOrig, this.playerSize);
-        this.currentSpellPlayedFrame --;
-    }
-    
-
     private doPlayerAction(spell: Spell) {
-        if (this.actionPlayed) return;
-        console.log('do player turn');
-
-        this.actionPlayed = true;
+        // check cooldown
+        if (spell.currentCooldown > 0) {
+            // cooldown not ready
+            return;
+        }
+        // check energy
+        if (Player.stats.energy < spell.energyCost) {
+            // not enough energy
+            return;
+        } 
+        
+        // process cooldown
+        spell.currentCooldown = spell.cooldown;
+        
+        // process energy
+        Player.stats.energy -= spell.energyCost;
         
         switch(spell.targetType) {
             case TargetType.NoTarget:
                 this.playSpellAnimation(spell, [], 'player', () => {
-                    spell.effect([]);
+                    this.checkCombatState();
                 });
             break;
             case TargetType.Single:
                 this.chooseTargets(1, (targets) => {
                     this.playSpellAnimation(spell, targets, 'player', () => {
-                        spell.effect(targets.map(o => o.stats));
+                        this.checkCombatState();
                     });
                 });
             break;
             case TargetType.AllEnemies:
                 this.playSpellAnimation(spell, this.enemies, 'player', () => {
-                    spell.effect(this.enemies.map(o => o.stats));
+                    this.checkCombatState();
                 });
             break;
             case TargetType.Multiple:
                 this.chooseTargets(spell.targetMax, (targets) => {
                     this.playSpellAnimation(spell, targets, 'player', () => {
-                        spell.effect(targets.map(o => o.stats));
+                        this.checkCombatState();
                     });
                 });
             break;
@@ -276,6 +319,7 @@ export class Combat extends EngineObject {
         this.targetSelectionCurrent = [];
         this.targetSelectionCallback = onTargetsAcquired;
     }
+
     private selectTarget(i: number) {
         console.log('selected target ', i)
         this.targetSelectionCurrent.push(i);
@@ -292,13 +336,55 @@ export class Combat extends EngineObject {
             this.targetSelectionCurrent = [];
         }
     }
-
+    
     private doEnemyAction(enemy: Enemy) {
-        if (!enemy.isDead) enemy.playTurn(this);
-        this.actionPlayed = true;
+        if (enemy) enemy.playTurn(this, () => {
+            // the enemy finished playing
+            this.advanceRound();
+        });
+    }
+    
+    /**
+     * Checks combat state & advance round.
+     * 
+     */
+    private advanceRound() {
+        
+        this.checkCombatState();
+        
+        this.currentRound++;
+
+        if (this.enemies.length < this.currentRound) {
+            // new turn
+            this.newTurn();
+            this.currentRound = 0;
+        }
+        const roundTo = this.getCurrentTurn();
+
+        if (roundTo != 'player') {
+            this.doEnemyAction(roundTo as Enemy);
+        }
     }
 
-    private advanceTurn() {
+    /**
+     * Happens when player is playing again
+     */
+    private newTurn() {
+        // refill player energy
+        Player.stats.healFullEnergy();
+        // advance spells cooldown
+        for (const spellIndex of Player.stats.activeSpells) {
+            Player.stats.spells[spellIndex].advanceCooldown();
+        }
+    }
+
+    /**
+     * Checks on combat state.
+     * If player is dead, it loses the fight.
+     * If an enemy is dead it removes it from the pool
+     * @returns 
+     */
+    private checkCombatState() {
         // check death
         if (Player.stats.hp <= 0) {
             Player.die();
@@ -316,12 +402,6 @@ export class Combat extends EngineObject {
             // win the fight
             this.winFight();
             return;
-        }
-        this.actionPlayed = false;
-        this.currentTurn ++;
-
-        if (this.getCurrentTurn() != 'player') {
-            this.doEnemyAction(this.getCurrentTurn() as Enemy);
         }
     }
 
@@ -363,20 +443,14 @@ export class Combat extends EngineObject {
         }
     }
 
+    /**
+     * Get the current entity playing.
+     */
     private getCurrentTurn(): Enemy|'player' {
-        return this.turnOrder[this.currentTurn % this.turnOrder.length];
+        if (this.currentRound == 0) return 'player';
+        return this.enemies[this.currentRound - 1];
     }
     
-
-    private buildTurnOrder() {
-        this.turnOrder = [];
-        this.currentTurn = 0;
-        this.turnOrder.push('player');
-        this.turnOrder.push(...this.enemies);
-        console.log('turn order', this.turnOrder);
-        this.turnOrder.sort((a, b) => Math.random()-0.5);
-        console.log('turn order after shuffle', this.turnOrder);
-    }
 
     public mousePressed(x: number, y: number): void {
         if (this.frameAnim > 0) return;
@@ -393,9 +467,16 @@ export class Combat extends EngineObject {
             return;
         }
 
-        for(const ob of this.spellsButtons) {
-            ob.mousePressed(x, y);
-        }    
+        // if its player turn & no animation running
+        if (this.getCurrentTurn() == 'player' && this.currentSpellPlayedFrame <= 0) {
+            // abilities
+            for(const ob of this.spellsButtons) {
+                ob.mousePressed(x, y);
+            }  
+
+            // end turn
+            this.endTurnButton.mousePressed(x, y);
+        }
     }
 
     public resize(): void {
@@ -416,5 +497,18 @@ export class Combat extends EngineObject {
             this.enemies[i].y = this.y + Combat.PADDING + this.enemiesSize;
             this.enemies[i].size = this.enemiesSize;
         }
+
+        this.endTurnButton = new Button(
+            this.x + this.width - 155, 
+            this.abilitiesY + 5, 150, 40, () => {
+                // this.advanceTurn();
+                this.advanceRound();
+            }, {
+                color: 'black',
+                strokeColor: 'red',
+                textColor: 'red',
+                colorHover: '#332222',
+                text: 'Fin du tour'
+            });
     }
 }

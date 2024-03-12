@@ -15,13 +15,8 @@ export interface ButtonStyle {
 
 export class Button extends EngineObject {
 
-    private tooltip: Tooltip;
-
-    constructor(public x: number, public y: number, public width: number, public height: number, public onClick: () => void, public style: ButtonStyle = {}, tooltip?: string) {
+    constructor(public x: number, public y: number, public width: number, public height: number, public onClick: () => void, public style: ButtonStyle = {}) {
         super();
-        if(tooltip) {
-            this.tooltip = new Tooltip(tooltip, x, y, width, height);
-        }
     }
 
     public display() {
@@ -42,12 +37,6 @@ export class Button extends EngineObject {
             EngineGraphics.ctx.lineWidth = 1;
             EngineGraphics.ctx.strokeStyle = this.style.strokeColor;
             EngineGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
-        }
-    }
-
-    public displayTooltip() {
-        if(this.tooltip) {
-            this.tooltip.display();
         }
     }
 

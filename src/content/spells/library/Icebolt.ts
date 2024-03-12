@@ -5,21 +5,22 @@ import { GameStats } from "@game/content/GameStats";
 export class Spellicebolt extends Spell {
     public name = "Éclair de givre";
     public description = ["Envoie un éclair de givre sur un ennemi."];
-    public manaCost = 15;
+    public energyCost = 1;
     public cooldown = 1;
     
     public icon = {text: "🜄", color: 'lightblue'};
     public targetType = TargetType.Single;
     public frameAnimationMax = 80;
 
-    public effect(targets: GameStats[]): void {
-        for (const t of targets) {
-            t.damage(120, DamageType.Ice);
-        }
-    }
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
 
-    
-    public animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number}, size: number): void {
+        // effect
+        if (frameLeft == 10) {
+            for (const t of targets) {
+                t.stat.damage(120, DamageType.Ice);
+            }
+        }
+
         // todo animation givre
         GameGraphics.ctx.fillStyle = 'lightblue';
 

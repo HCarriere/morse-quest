@@ -15,8 +15,7 @@ export class SelectMapMenu extends SideMenu {
             () => {},
             {
                 text: 'Sélectionner une map'
-            },
-            'Sélectionner une map');
+            });
         this.menuElements.push(this.mapSelectButton);
     }
     public displayMenu(startY: number): number {

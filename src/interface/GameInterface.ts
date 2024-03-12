@@ -34,7 +34,7 @@ export class GameInterface extends EngineObject {
             if (GameInterface.displayCharacterSheet) GameInterface.hideCharacterSheet();
             else GameInterface.showCharacterSheet();
         }, {
-            text: 'Personnage',
+            text: '☰ Personnage',
             textColor: 'white',
             color: 'black',
             strokeColor: 'white',

@@ -5,7 +5,7 @@ import { Spell, DamageType, TargetType } from "../Spell";
 export class SpellFireball extends Spell {
     public name = "Boule de feu";
     public description = ["Envoie une boule de feu sur les ennemis.", "Ouille ça brûle."];
-    public manaCost = 20;
+    public energyCost = 3;
     public cooldown = 2;
     
     public icon = {text: "🜂", color: '#FF9922'};
@@ -14,14 +14,14 @@ export class SpellFireball extends Spell {
 
     private fireTrail: {x: number, y: number, initialSize: number, initialRotate: number, birthFrame: number, deathFrame: number}[];
 
-    public effect(targets: GameStats[]): void {
-        for (const t of targets) {
-            t.damage(40, DamageType.Fire);
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+        // effect
+        if (frameLeft == 10) {
+            for (const t of targets) {
+                t.stat.damage(40, DamageType.Fire);
+            }
         }
-    }
 
-    
-    public animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number}, size: number): void {
         const landFrame = 50;
         const fadeFrame = 20;
         const explosionSize = 3;

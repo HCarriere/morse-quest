@@ -30,7 +30,7 @@ export class Player extends EngineObject {
     public init() {
         Player.stats = new GameStats();
         Player.stats.baseConstitution = 20;
-        Player.stats.healFull();        
+        Player.stats.healFullHp();        
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new Spellicebolt());
         Player.stats.spells.push(new SpellFireball());
@@ -193,7 +193,7 @@ export class Player extends EngineObject {
                     goto: 1,
                     onAnswer: () => {
                         Player.teleport(null, 'tuto');
-                        Player.stats.healFull();
+                        Player.stats.healFullHp();
                     }
                 }
             ]
