@@ -1,7 +1,7 @@
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { EngineObject } from "@game/core/EngineObject";
 import { Tooltip } from "../Tooltip";
-import { Controller } from "@game/system/Controller";
+import { EngineGraphics } from "@game/core/EngineGraphics";
+import { EngineController } from "@game/core/EngineController";
 
 
 export interface ButtonStyle {
@@ -13,44 +13,30 @@ export interface ButtonStyle {
     colorHover?: string;
 }
 
-export class Button extends GameObject {
+export class Button extends EngineObject {
 
-    private x: number;
-    private y: number;
-    private width: number;
-    private height: number;
-    private onClick: () => void;
-
-    private style: ButtonStyle;
-
-    constructor(x: number, y: number, width: number, height: number, onClick: () => void, style: ButtonStyle = {}, tooltip?: string) {
+    constructor(public x: number, public y: number, public width: number, public height: number, public onClick: () => void, public style: ButtonStyle = {}) {
         super();
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.onClick = onClick;
-        this.style = style;
     }
 
     public display() {
-        if (this.style.colorHover && this.isInbound(Controller.mouseX, Controller.mouseY)) {
-            Graphics.ctx.fillStyle = this.style.colorHover;
+        if (this.style.colorHover && this.isInbound(EngineController.mouseX, EngineController.mouseY)) {
+            EngineGraphics.ctx.fillStyle = this.style.colorHover;
         } else {
-            Graphics.ctx.fillStyle = this.style.color || 'black';
+            EngineGraphics.ctx.fillStyle = this.style.color || 'black';
         }
-        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        EngineGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         if (this.style.text) {
-            Graphics.ctx.fillStyle = this.style.textColor || 'grey';
-            Graphics.ctx.textAlign = "center";
-            Graphics.ctx.font = this.style.textSize + "px Luminari";
-            Graphics.ctx.textBaseline = "middle";
-            Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
+            EngineGraphics.ctx.fillStyle = this.style.textColor || 'grey';
+            EngineGraphics.ctx.textAlign = "center";
+            EngineGraphics.ctx.font = this.style.textSize + "px Luminari";
+            EngineGraphics.ctx.textBaseline = "middle";
+            EngineGraphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
         }
         if (this.style.strokeColor) {
-            Graphics.ctx.lineWidth = 1;
-            Graphics.ctx.strokeStyle = this.style.strokeColor;
-            Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+            EngineGraphics.ctx.lineWidth = 1;
+            EngineGraphics.ctx.strokeStyle = this.style.strokeColor;
+            EngineGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }
     }
 

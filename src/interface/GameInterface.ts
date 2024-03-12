@@ -1,16 +1,16 @@
-import { GameObject } from "@game/system/GameObject";
+import { EngineObject } from "@game/core/EngineObject";
 import { Dialogue, DialoguePiece } from "./Dialogue";
-import { Controller } from "@game/system/Controller";
+import { GameController } from "@game/system/GameController";
 import { Combat } from "./Combat";
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { CharacterSheet } from "./CharacterSheet";
 import { Button } from "./components/Button";
 
-export class GameInterface extends GameObject {
+export class GameInterface extends EngineObject {
 
     public static frame = 0;
 
-    private static hudElements: GameObject[];
+    private static hudElements: EngineObject[];
     private static dialogues: Dialogue[];
     private static combat: Combat;
     private static characterSheet: CharacterSheet;
@@ -73,8 +73,8 @@ export class GameInterface extends GameObject {
         if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].display();
 
         // debug TODO REMOVE ME
-        Graphics.ctx.fillStyle = 'purple';
-        Graphics.ctx.fillRect(Controller.mouseX-5, Controller.mouseY-5, 10, 10);
+        GameGraphics.ctx.fillStyle = 'purple';
+        GameGraphics.ctx.fillRect(GameController.mouseX-5, GameController.mouseY-5, 10, 10);
 
         GameInterface.frame++;
     }

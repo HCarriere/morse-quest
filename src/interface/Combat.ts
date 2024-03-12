@@ -1,9 +1,9 @@
 import { Enemy } from "@game/content/Enemy";
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { EngineObject } from "@game/core/EngineObject";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
 import { GameInterface } from "./GameInterface";
-import { Controller } from "@game/system/Controller";
+import { GameController } from "@game/system/GameController";
 import { Spell, TargetType } from "@game/content/spells/Spell";
 import { SpellButton } from "./components/SpellButton";
 import { Button } from "./components/Button";
@@ -12,7 +12,7 @@ import { GameStats } from "@game/content/GameStats";
 /**
  * Displays and process combats
  */
-export class Combat extends GameObject {
+export class Combat extends EngineObject {
 
     private enemies: Enemy[]; // vs Player
 
@@ -87,11 +87,11 @@ export class Combat extends GameObject {
     public display() {
         // if (!this.turnOrder) return;
         // frame
-        Graphics.ctx.lineWidth = 1;
-        Graphics.ctx.fillStyle = '#020202';
-        Graphics.ctx.strokeStyle = 'white';
-        Graphics.ctx.fillRect(this.x, this.y + this.frameAnim*this.height/2, this.width, this.height - this.frameAnim*this.height);
-        Graphics.ctx.strokeRect(this.x, this.y + this.frameAnim*this.height/2, this.width, this.height - this.frameAnim*this.height);
+        GameGraphics.ctx.lineWidth = 1;
+        GameGraphics.ctx.fillStyle = '#020202';
+        GameGraphics.ctx.strokeStyle = 'white';
+        GameGraphics.ctx.fillRect(this.x, this.y + this.frameAnim*this.height/2, this.width, this.height - this.frameAnim*this.height);
+        GameGraphics.ctx.strokeRect(this.x, this.y + this.frameAnim*this.height/2, this.width, this.height - this.frameAnim*this.height);
 
         if (this.frameAnim > 0) {
             this.frameAnim -= 0.04;
@@ -102,8 +102,8 @@ export class Combat extends GameObject {
 
         // player
         // (placeholder)
-        Graphics.ctx.fillStyle = '#804d32';
-        Graphics.ctx.fillRect(this.x + Combat.PADDING, this.abilitiesY - Combat.PADDING - this.playerSize, 
+        GameGraphics.ctx.fillStyle = '#804d32';
+        GameGraphics.ctx.fillRect(this.x + Combat.PADDING, this.abilitiesY - Combat.PADDING - this.playerSize, 
             this.playerSize, this.playerSize);
         // player energy
         Player.stats.displayHp(
@@ -129,12 +129,12 @@ export class Combat extends GameObject {
                 this.enemies[i].size
             );
 
-            if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(Controller.mouseX, Controller.mouseY)) {
+            if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)) {
                 // display selectionitivity
-                Graphics.ctx.fillStyle = 'yellow';
-                Graphics.ctx.strokeStyle = 'yellow';
-                Graphics.ctx.lineWidth = 1;
-                Graphics.ctx.strokeRect(
+                GameGraphics.ctx.fillStyle = 'yellow';
+                GameGraphics.ctx.strokeStyle = 'yellow';
+                GameGraphics.ctx.lineWidth = 1;
+                GameGraphics.ctx.strokeRect(
                     this.enemies[i].x - this.enemies[i].size/2, 
                     this.enemies[i].y - this.enemies[i].size/2, 
                     this.enemies[i].size, this.enemies[i].size);
@@ -148,18 +148,18 @@ export class Combat extends GameObject {
 
         // display target selection
         if (this.targetSelectionToChoose > 0){
-            Graphics.ctx.fillStyle = 'yellow';
-            Graphics.ctx.strokeStyle = 'yellow';
-            Graphics.ctx.lineWidth = 3;
+            GameGraphics.ctx.fillStyle = 'yellow';
+            GameGraphics.ctx.strokeStyle = 'yellow';
+            GameGraphics.ctx.lineWidth = 3;
 
             for (let i = 0;i<this.targetSelectionToChoose; i++) {
-                Graphics.ctx.strokeRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
+                GameGraphics.ctx.strokeRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
                 if (this.targetSelectionCurrent[i] >= 0) {
-                    Graphics.ctx.fillRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
+                    GameGraphics.ctx.fillRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
 
                     // display on target
                     const e = this.enemies[this.targetSelectionCurrent[i]];
-                    Graphics.ctx.strokeRect(
+                    GameGraphics.ctx.strokeRect(
                         e.x - e.size/2, 
                         e.y - e.size/2, 
                         e.size, e.size);
@@ -181,10 +181,10 @@ export class Combat extends GameObject {
         }
 
         // abilities box
-        Graphics.ctx.strokeStyle = 'white';
-        Graphics.ctx.lineWidth = 1;
-        Graphics.ctx.strokeRect(this.x+3, this.abilitiesY, this.width-6, this.abilitiesHeight);
-        if (this.getCurrentTurn() == 'player' && this.currentSpellPlayedFrame <= 0) {
+        GameGraphics.ctx.strokeStyle = 'white';
+        GameGraphics.ctx.lineWidth = 1;
+        GameGraphics.ctx.strokeRect(this.x+3, this.abilitiesY, this.width-6, this.abilitiesHeight);
+        if (this.getCurrentTurn() == 'player') {
             for(const ob of this.spellsButtons) {
                 ob.display();
             }
@@ -196,20 +196,20 @@ export class Combat extends GameObject {
         // spell tooltip
         if (this.tooltipDisplay) {
             this.tooltipDisplay = false;
-            Graphics.ctx.lineWidth = 1;
-            Graphics.ctx.fillStyle = '#020202';
-            Graphics.ctx.strokeStyle = '#999999';
-            Graphics.ctx.fillRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.fillStyle = '#020202';
+            GameGraphics.ctx.strokeStyle = '#999999';
+            GameGraphics.ctx.fillRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
                  -500, 30+20*this.tooltip.length);
-            Graphics.ctx.strokeRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
+            GameGraphics.ctx.strokeRect(this.x + this.width - Combat.SPELL_WIDTH*2 - 15, this.y + 35,
                  -500, 30+20*this.tooltip.length);
 
-            Graphics.ctx.font = "18px "+Graphics.FONT;
-            Graphics.ctx.fillStyle = 'white';
-            Graphics.ctx.textAlign = "right";
-            Graphics.ctx.textBaseline = "top";
+            GameGraphics.ctx.font = "18px "+GameGraphics.FONT;
+            GameGraphics.ctx.fillStyle = 'white';
+            GameGraphics.ctx.textAlign = "right";
+            GameGraphics.ctx.textBaseline = "top";
             for (let i = 0; i<this.tooltip.length; i++) {
-                Graphics.ctx.fillText(this.tooltip[i], 
+                GameGraphics.ctx.fillText(this.tooltip[i], 
                     this.x + this.width - Combat.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
             }
         }
@@ -482,8 +482,8 @@ export class Combat extends GameObject {
     public resize(): void {
         this.x = Combat.MARGIN;
         this.y = Combat.MARGIN;
-        this.width = Graphics.canvas.width - Combat.MARGIN*2;
-        this.height = Graphics.canvas.height - Combat.MARGIN*2;
+        this.width = GameGraphics.canvas.width - Combat.MARGIN*2;
+        this.height = GameGraphics.canvas.height - Combat.MARGIN*2;
 
         this.enemiesSize = this.height / 5;
         this.playerSize = this.enemiesSize * 1.2;

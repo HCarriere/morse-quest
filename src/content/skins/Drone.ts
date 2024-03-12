@@ -1,4 +1,4 @@
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { GameInterface } from "@game/interface/GameInterface";
 import { Skin } from "../Skin"
 
@@ -8,13 +8,13 @@ export class SkinDrone extends Skin {
     }
     public display(x: number, y: number, size: number): void {
         size = size/2; // drones are small
-        Graphics.ctx.fillStyle = this.primaryColor;
-        Graphics.ctx.save();
-        Graphics.ctx.translate(x + size , y + size);
-        Graphics.ctx.rotate(GameInterface.frame * 0.02);
-        Graphics.ctx.fillRect( - size/2 , -size/2, size, size);
-        Graphics.ctx.rotate(-GameInterface.frame*2 * 0.015);
-        Graphics.ctx.fillRect( - size/2 , -size/2, size, size);
-        Graphics.ctx.restore();
+        GameGraphics.ctx.fillStyle = this.primaryColor;
+        GameGraphics.ctx.save();
+        GameGraphics.ctx.translate(x + size , y + size);
+        GameGraphics.ctx.rotate(GameInterface.frame * 0.02);
+        GameGraphics.ctx.fillRect( - size/2 , -size/2, size, size);
+        GameGraphics.ctx.rotate(-GameInterface.frame*2 * 0.015);
+        GameGraphics.ctx.fillRect( - size/2 , -size/2, size, size);
+        GameGraphics.ctx.restore();
     }
 }

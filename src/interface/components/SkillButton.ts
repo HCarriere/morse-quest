@@ -1,9 +1,9 @@
 import { Skill } from "@game/content/skills/Skill";
-import { Controller } from "@game/system/Controller";
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { GameController } from "@game/system/GameController";
+import { EngineObject } from "@game/core/EngineObject";
+import { GameGraphics } from "@game/system/GameGraphics";
 
-export class SkillButton extends GameObject {
+export class SkillButton extends EngineObject {
     
     private x: number;
     private y: number;
@@ -33,38 +33,38 @@ export class SkillButton extends GameObject {
 
     public display() {
         // background
-        Graphics.ctx.fillStyle = '#000000';
-        if (this.isInbound(Controller.mouseX, Controller.mouseY)) {
-            Graphics.ctx.fillStyle = '#222222';
+        GameGraphics.ctx.fillStyle = '#000000';
+        if (this.isInbound(GameController.mouseX, GameController.mouseY)) {
+            GameGraphics.ctx.fillStyle = '#222222';
             this.onHover(this.skill);
         }
-        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
 
         // border 
         if (!this.skill.isActive) {
-            Graphics.ctx.lineWidth = 1;
-            Graphics.ctx.strokeStyle = '#DDDDDD';
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.strokeStyle = '#DDDDDD';
         } else {
             
-            Graphics.ctx.lineWidth = 2;
-            Graphics.ctx.strokeStyle = 'yellow';
+            GameGraphics.ctx.lineWidth = 2;
+            GameGraphics.ctx.strokeStyle = 'yellow';
         }
-        Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
         // icon
-        Graphics.displayIcon(this.skill.icon, this.x + 5, this.y + 5, 18);
+        GameGraphics.displayIcon(this.skill.icon, this.x + 5, this.y + 5, 18);
 
         // title
-        Graphics.ctx.font = "14px "+Graphics.FONT;
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.textAlign = "right";
-        Graphics.ctx.textBaseline = "top";
-        Graphics.ctx.fillText(this.skill.name, this.x + this.width - 5, this.y + 5);
+        GameGraphics.ctx.font = "14px "+GameGraphics.FONT;
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.textAlign = "right";
+        GameGraphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillText(this.skill.name, this.x + this.width - 5, this.y + 5);
     
         // cooldowns
-        Graphics.ctx.textBaseline = "bottom";
-        Graphics.ctx.fillStyle = 'yellow';
-        Graphics.ctx.fillText(this.skill.slots + ' emplacement(s)', this.x + this.width - 5, this.y + this.height - 5);
+        GameGraphics.ctx.textBaseline = "bottom";
+        GameGraphics.ctx.fillStyle = 'yellow';
+        GameGraphics.ctx.fillText(this.skill.slots + ' emplacement(s)', this.x + this.width - 5, this.y + this.height - 5);
     }
 
 

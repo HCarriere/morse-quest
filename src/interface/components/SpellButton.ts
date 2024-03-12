@@ -1,10 +1,10 @@
 import { Spell } from "@game/content/spells/Spell";
-import { Controller } from "@game/system/Controller";
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { GameController } from "@game/system/GameController";
+import { EngineObject } from "@game/core/EngineObject";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
 
-export class SpellButton extends GameObject {
+export class SpellButton extends EngineObject {
     
     private x: number;
     private y: number;
@@ -34,54 +34,54 @@ export class SpellButton extends GameObject {
 
     public display() {
         // background
-        Graphics.ctx.fillStyle = '#000000';
-        if (this.isInbound(Controller.mouseX, Controller.mouseY)) {
-            Graphics.ctx.fillStyle = '#222222';
+        GameGraphics.ctx.fillStyle = '#000000';
+        if (this.isInbound(GameController.mouseX, GameController.mouseY)) {
+            GameGraphics.ctx.fillStyle = '#222222';
             this.onHover(this.spell);
         }
-        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
 
         // border 
         if (!this.spell.isActive) {
-            Graphics.ctx.lineWidth = 1;
-            Graphics.ctx.strokeStyle = '#DDDDDD';
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.strokeStyle = '#DDDDDD';
         } else {
             
-            Graphics.ctx.lineWidth = 2;
-            Graphics.ctx.strokeStyle = 'lightgreen';
+            GameGraphics.ctx.lineWidth = 2;
+            GameGraphics.ctx.strokeStyle = 'lightgreen';
         }
-        Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
         // icon
-        Graphics.displayIcon(this.spell.icon, this.x + 5, this.y + 5, 18);
+        GameGraphics.displayIcon(this.spell.icon, this.x + 5, this.y + 5, 18);
 
         // title
-        Graphics.ctx.font = "14px "+Graphics.FONT;
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.textAlign = "right";
-        Graphics.ctx.textBaseline = "top";
-        Graphics.ctx.fillText(this.spell.name, this.x + this.width - 5, this.y + 5);
+        GameGraphics.ctx.font = "14px "+GameGraphics.FONT;
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.textAlign = "right";
+        GameGraphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillText(this.spell.name, this.x + this.width - 5, this.y + 5);
     
         // cooldowns
-        Graphics.ctx.textBaseline = "bottom";
+        GameGraphics.ctx.textBaseline = "bottom";
         if (this.spell.currentCooldown == 0) {
-            Graphics.ctx.fillText(this.spell.cooldown + ' ⧖', this.x + this.width - 5, this.y + this.height - 5);
+            GameGraphics.ctx.fillText(this.spell.cooldown + ' ⧖', this.x + this.width - 5, this.y + this.height - 5);
         } else {
             // on cooldown
-            Graphics.ctx.fillStyle = 'red';
-            Graphics.ctx.fillText(this.spell.cooldown + ' ⧖ '+this.spell.currentCooldown, this.x + this.width - 5, this.y + this.height - 5);
+            GameGraphics.ctx.fillStyle = 'red';
+            GameGraphics.ctx.fillText(this.spell.cooldown + ' ⧖ '+this.spell.currentCooldown, this.x + this.width - 5, this.y + this.height - 5);
         }
 
         // mana costs
-        Graphics.ctx.textAlign = "left";
+        GameGraphics.ctx.textAlign = "left";
         if (this.spell.energyCost <= Player.stats.energy) {
             // enough mana
-            Graphics.ctx.fillStyle = 'aqua';
+            GameGraphics.ctx.fillStyle = 'aqua';
         } else {
             // not enough mana
-            Graphics.ctx.fillStyle = 'red';
+            GameGraphics.ctx.fillStyle = 'red';
         }
-        Graphics.ctx.fillText(this.spell.energyCost + ' energy', this.x + 5, this.y + this.height - 5);
+        GameGraphics.ctx.fillText(this.spell.energyCost + ' energy', this.x + 5, this.y + this.height - 5);
     }
 
 

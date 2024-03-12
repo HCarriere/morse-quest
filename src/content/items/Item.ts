@@ -1,4 +1,4 @@
-import { Icon } from "@game/system/Graphics";
+import { Icon } from "@game/system/GameGraphics";
 
 export enum InventorySlot {
     Head = 1,

@@ -1,12 +1,12 @@
 
-export abstract class GameObject {
+export abstract class EngineObject {
     
     constructor() {
         this.init();
     }
 
     /**
-     * At end of GameObject constructor
+     * At end of EngineObject constructor
      */
     public init() {}
 

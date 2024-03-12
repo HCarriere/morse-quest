@@ -1,4 +1,4 @@
-import { Icon } from "@game/system/Graphics";
+import { Icon } from "@game/system/GameGraphics";
 import { GameStats } from "../GameStats";
 
 /**

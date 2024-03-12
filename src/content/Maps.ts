@@ -1,12 +1,13 @@
 import { GameInterface } from "@game/interface/GameInterface";
 import { Player } from "@game/system/Player";
-import { SkinType } from "@game/system/Graphics";
+import { SkinType } from "@game/system/GameGraphics";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
 import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 import { Combat } from "@game/interface/Combat";
 import { Enemy } from "./Enemy";
 import { GameStats } from "./GameStats";
 import { SkinDrone } from "./skins/Drone";
+import { RawMaps } from "./RawMaps";
 
 
 export enum Biome {
@@ -50,35 +51,7 @@ export class Maps {
                 enemySkin: new SkinDrone()
             }]
         ]),
-        raw: 
-        `1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-        1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1
-        1																	1																					1
-        1																	1																					1
-        1																	11																					1
-        1														21			21			21																		1
-        1																																						1
-        1																																						1
-        1														21			21			21																		1
-        1																																						1
-        1																																						1
-        1														21			21			21																		1
-        1																												1	1	1	1	1						1
-        1																	1											11	11	11	11	1						1
-        1			901	2													1											902		900		1						1
-        1																	1											1	1	1	1	1						1
-        1																	1											11	11	11	11	11						1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1																	1																					1
-        1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1`
+        raw: RawMaps.main
     };
 
     private static MAP_TUTO: MapInfo = {
@@ -100,19 +73,7 @@ export class Maps {
                 enemySkin: new SkinDrone()
             }]
         ]), 
-        raw:
-        `1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1								
-        1	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	1								
-        1																										1								
-        1																										1	1	1	1	1	1	1	1	1
-        1				900																						1	11	11	11	11	11	11	11	11
-        1																										11								
-        1			2						902																	902				901				1
-        1																										1								
-        1																										1	1	1	1	1	1	1	1   1
-        1																										1								
-        1																										1								
-        1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1								`
+        raw: RawMaps.tuto
     };
 
     public static MapIDS = {

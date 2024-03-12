@@ -1,5 +1,5 @@
-import { GameObject } from "@game/system/GameObject";
-import { Graphics } from "@game/system/Graphics";
+import { EngineObject } from "@game/core/EngineObject";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { SpellButton } from "./components/SpellButton";
 import { Player } from "@game/system/Player";
 import { SkillButton } from "./components/SkillButton";
@@ -7,7 +7,7 @@ import { SkillButton } from "./components/SkillButton";
 /**
  * Presents and interact with character skills, inventory, etc
  */
-export class CharacterSheet extends GameObject {
+export class CharacterSheet extends EngineObject {
 
     // display
     private x: number;
@@ -35,11 +35,11 @@ export class CharacterSheet extends GameObject {
 
     public display() {
         // frame
-        Graphics.ctx.lineWidth = 1;
-        Graphics.ctx.fillStyle = '#020202';
-        Graphics.ctx.strokeStyle = '#999999';
-        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
-        Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.lineWidth = 1;
+        GameGraphics.ctx.fillStyle = '#020202';
+        GameGraphics.ctx.strokeStyle = '#999999';
+        GameGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
         // inventory
 
@@ -51,39 +51,39 @@ export class CharacterSheet extends GameObject {
         // spell tooltip
         if (this.tooltipSpellDisplay) {
             this.tooltipSpellDisplay = false;
-            Graphics.ctx.lineWidth = 1;
-            Graphics.ctx.fillStyle = '#020202';
-            Graphics.ctx.strokeStyle = '#999999';
-            Graphics.ctx.fillRect(this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 15, this.y + 35,
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.fillStyle = '#020202';
+            GameGraphics.ctx.strokeStyle = '#999999';
+            GameGraphics.ctx.fillRect(this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 15, this.y + 35,
                  -500, 30+20*this.tooltipSpell.length);
-            Graphics.ctx.strokeRect(this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 15, this.y + 35,
+            GameGraphics.ctx.strokeRect(this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 15, this.y + 35,
                  -500, 30+20*this.tooltipSpell.length);
 
-            Graphics.ctx.font = "18px "+Graphics.FONT;
-            Graphics.ctx.fillStyle = 'white';
-            Graphics.ctx.textAlign = "right";
-            Graphics.ctx.textBaseline = "top";
+            GameGraphics.ctx.font = "18px "+GameGraphics.FONT;
+            GameGraphics.ctx.fillStyle = 'white';
+            GameGraphics.ctx.textAlign = "right";
+            GameGraphics.ctx.textBaseline = "top";
             for (let i = 0; i<this.tooltipSpell.length; i++) {
-                Graphics.ctx.fillText(this.tooltipSpell[i], 
+                GameGraphics.ctx.fillText(this.tooltipSpell[i], 
                     this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 20, this.y + 50 + i*20);
             }
         }
 
         // spell slots
-        Graphics.ctx.font = "14px "+Graphics.FONT;
-        Graphics.ctx.fillStyle = 'lightgreen';
-        Graphics.ctx.textAlign = "left";
-        Graphics.ctx.textBaseline = "top";
-        Graphics.ctx.fillText(`Sorts choisis : ${Player.stats.activeSpellScore}/${Player.stats.activeSpellsMax}`, 
+        GameGraphics.ctx.font = "14px "+GameGraphics.FONT;
+        GameGraphics.ctx.fillStyle = 'lightgreen';
+        GameGraphics.ctx.textAlign = "left";
+        GameGraphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillText(`Sorts choisis : ${Player.stats.activeSpellScore}/${Player.stats.activeSpellsMax}`, 
             this.x + this.width - CharacterSheet.SPELL_WIDTH*2 - 10,
             this.y + 10);
 
         // skill slots
-        Graphics.ctx.font = "14px "+Graphics.FONT;
-        Graphics.ctx.fillStyle = 'yellow';
-        Graphics.ctx.textAlign = "right";
-        Graphics.ctx.textBaseline = "top";
-        Graphics.ctx.fillText(`Passifs choisis : ${Player.stats.activeSkillScore}/${Player.stats.passiveSkillsMax}`, 
+        GameGraphics.ctx.font = "14px "+GameGraphics.FONT;
+        GameGraphics.ctx.fillStyle = 'yellow';
+        GameGraphics.ctx.textAlign = "right";
+        GameGraphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillText(`Passifs choisis : ${Player.stats.activeSkillScore}/${Player.stats.passiveSkillsMax}`, 
             this.x + this.width - 10,
             this.y + 10);
     }
@@ -92,8 +92,8 @@ export class CharacterSheet extends GameObject {
     public resize(): void {
         this.x = CharacterSheet.MARGIN;
         this.y = CharacterSheet.MARGIN;
-        this.width = Graphics.canvas.width - CharacterSheet.MARGIN*2;
-        this.height = Graphics.canvas.height - CharacterSheet.MARGIN*2;
+        this.width = GameGraphics.canvas.width - CharacterSheet.MARGIN*2;
+        this.height = GameGraphics.canvas.height - CharacterSheet.MARGIN*2;
         this.width = Math.max(CharacterSheet.MIN_WIDTH, this.width);
         this.height = Math.max(CharacterSheet.MIN_HEIGHT, this.height);
 

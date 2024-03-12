@@ -1,5 +1,5 @@
 import { GameStats } from "@game/content/GameStats";
-import { Icon } from "@game/system/Graphics";
+import { Icon } from "@game/system/GameGraphics";
 
 export enum TargetType {
     NoTarget = 0,

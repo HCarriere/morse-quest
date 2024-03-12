@@ -1,4 +1,4 @@
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { GameStats } from "@game/content/GameStats";
 import { Spell, DamageType, TargetType } from "../Spell";
 
@@ -22,16 +22,16 @@ export class SpellChainLightning extends Spell {
             }
         }
 
-        Graphics.ctx.fillStyle = 'blue';
+        GameGraphics.ctx.fillStyle = 'blue';
 
         size = size / 2;
 
         for (const target of targets) {
-            Graphics.ctx.save();
-            Graphics.ctx.translate(target.x, target.y);
-            Graphics.ctx.rotate(frameLeft * 0.3);
-            Graphics.ctx.fillRect( - size/2 , -size/2, size, size);
-            Graphics.ctx.restore();
+            GameGraphics.ctx.save();
+            GameGraphics.ctx.translate(target.x, target.y);
+            GameGraphics.ctx.rotate(frameLeft * 0.3);
+            GameGraphics.ctx.fillRect( - size/2 , -size/2, size, size);
+            GameGraphics.ctx.restore();
         }
     }
 }

@@ -1,6 +1,7 @@
 import { Camera } from "./Camera";
 import { GameInterface } from "@game/interface/GameInterface";
 import { MapObject, TileSettings } from "./GameMap";
+import { EngineGraphics } from "@game/core/EngineGraphics";
 
 export interface ObjectSkin {
     type: SkinType;
@@ -21,12 +22,7 @@ export interface Icon {
 /**
  * Simple graphics, only animated with frames number (stateless)
  */
-export class Graphics {
-
-    public static ctx: CanvasRenderingContext2D;
-    public static canvas: HTMLCanvasElement;
-    
-    public static FONT = "luminari";
+export class GameGraphics extends EngineGraphics {
 
     /**
      * Display a single standard tile
@@ -36,22 +32,22 @@ export class Graphics {
      * @param y coord y
      */
     public static displayTile(tile: TileSettings, x: number, y: number) {
-        Graphics.ctx.save();
+        GameGraphics.ctx.save();
         if (tile.visible && tile.color) {
-            Graphics.ctx.fillStyle = tile.color;
-            Graphics.ctx.fillRect(
+            GameGraphics.ctx.fillStyle = tile.color;
+            GameGraphics.ctx.fillRect(
                 Math.floor(x * Camera.cellSize - Camera.offsetX), 
                 Math.floor(y * Camera.cellSize - Camera.offsetY), 
                 Camera.cellSize, Camera.cellSize);
         }
-        Graphics.ctx.globalAlpha = 0.1;
-        Graphics.ctx.strokeStyle = '#333';
-        Graphics.ctx.lineWidth = 1;
-        Graphics.ctx.strokeRect(
+        GameGraphics.ctx.globalAlpha = 0.1;
+        GameGraphics.ctx.strokeStyle = '#333';
+        GameGraphics.ctx.lineWidth = 1;
+        GameGraphics.ctx.strokeRect(
             Math.floor(x * Camera.cellSize - Camera.offsetX), 
             Math.floor(y * Camera.cellSize - Camera.offsetY), 
             Camera.cellSize, Camera.cellSize);
-        Graphics.ctx.restore();
+        GameGraphics.ctx.restore();
     }
 
     public static displayObject(object: MapObject, x: number, y: number) {
@@ -61,19 +57,19 @@ export class Graphics {
          * Attention mark graphics
          */
         if (object.skin.type == SkinType.AttentionMark) {
-            Graphics.ctx.fillStyle = object.skin.secondaryColor;
-            Graphics.ctx.save();
-            Graphics.ctx.translate(
+            GameGraphics.ctx.fillStyle = object.skin.secondaryColor;
+            GameGraphics.ctx.save();
+            GameGraphics.ctx.translate(
                 x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
                 y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2);
-            Graphics.ctx.rotate(45 * Math.PI/180);
-            Graphics.ctx.fillRect(-Camera.cellSize / 2, -Camera.cellSize / 2, Camera.cellSize, Camera.cellSize);
-            Graphics.ctx.restore();
-            Graphics.ctx.fillStyle = object.skin.primaryColor;
-            Graphics.ctx.textAlign = "center";
-            Graphics.ctx.font = "30px "+Graphics.FONT;
-            Graphics.ctx.textBaseline = "middle";
-            Graphics.ctx.fillText('!', 
+            GameGraphics.ctx.rotate(45 * Math.PI/180);
+            GameGraphics.ctx.fillRect(-Camera.cellSize / 2, -Camera.cellSize / 2, Camera.cellSize, Camera.cellSize);
+            GameGraphics.ctx.restore();
+            GameGraphics.ctx.fillStyle = object.skin.primaryColor;
+            GameGraphics.ctx.textAlign = "center";
+            GameGraphics.ctx.font = "30px "+GameGraphics.FONT;
+            GameGraphics.ctx.textBaseline = "middle";
+            GameGraphics.ctx.fillText('!', 
                 x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
                 y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2);
         }
@@ -81,20 +77,20 @@ export class Graphics {
          * Portal graphics
          */
         if (object.skin.type == SkinType.Portal) {
-            Graphics.ctx.fillStyle = object.skin.primaryColor;
-            Graphics.ctx.beginPath();
-            Graphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
+            GameGraphics.ctx.fillStyle = object.skin.primaryColor;
+            GameGraphics.ctx.beginPath();
+            GameGraphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
                     y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2,
                     Camera.cellSize / 2, 0, 2 * Math.PI, false);
-                    Graphics.ctx.fill();
-                    Graphics.ctx.beginPath();
-                    Graphics.ctx.strokeStyle = object.skin.secondaryColor;
-                    Graphics.ctx.lineWidth = Camera.cellSize / 10;
-                    Graphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
+                    GameGraphics.ctx.fill();
+                    GameGraphics.ctx.beginPath();
+                    GameGraphics.ctx.strokeStyle = object.skin.secondaryColor;
+                    GameGraphics.ctx.lineWidth = Camera.cellSize / 10;
+                    GameGraphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
                     y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2,
                     Camera.cellSize/2, 
                     GameInterface.frame / 10, GameInterface.frame / 10 + Math.PI, false);
-                    Graphics.ctx.stroke();
+                    GameGraphics.ctx.stroke();
         }
     }
 
@@ -106,10 +102,10 @@ export class Graphics {
      * @param size 
      */
     public static displayIcon(icon: Icon, x: number, y: number, size: number) {
-        Graphics.ctx.fillStyle = icon.color;
-        Graphics.ctx.font = `bold ${size}px Luminari`
-        Graphics.ctx.textAlign = "left";
-        Graphics.ctx.textBaseline = "top";
-        Graphics.ctx.fillText(icon.text, x, y);
+        GameGraphics.ctx.fillStyle = icon.color;
+        GameGraphics.ctx.font = `bold ${size}px Luminari`
+        GameGraphics.ctx.textAlign = "left";
+        GameGraphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillText(icon.text, x, y);
     }
 }

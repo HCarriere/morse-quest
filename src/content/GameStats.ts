@@ -1,4 +1,4 @@
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 import { DamageType, Spell } from "./spells/Spell";
 import { Skill } from "./skills/Skill";
 import { InventorySlot, Item } from "./items/Item";
@@ -233,19 +233,19 @@ export class GameStats {
      */
     public displayHp(x: number, y: number, size: number) {
         // hp bar
-        Graphics.ctx.lineWidth = 3;
-        Graphics.ctx.strokeStyle = 'white';
-        Graphics.ctx.fillStyle = 'green';
-        Graphics.ctx.fillRect(x, y, this.animTargetHealth * size / this.maxHp, GameStats.HP_BAR_HEIGHT);
-        Graphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.lineWidth = 3;
+        GameGraphics.ctx.strokeStyle = 'white';
+        GameGraphics.ctx.fillStyle = 'green';
+        GameGraphics.ctx.fillRect(x, y, this.animTargetHealth * size / this.maxHp, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
         
         // text
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.font = '14px '+ Graphics.FONT;
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.textAlign = 'left'
-        Graphics.ctx.textBaseline = 'top';
-        Graphics.ctx.fillText(`${this.hp} / ${this.maxHp}`, x + 5, y + 5);
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.font = '14px '+ GameGraphics.FONT;
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.textAlign = 'left'
+        GameGraphics.ctx.textBaseline = 'top';
+        GameGraphics.ctx.fillText(`${this.hp} / ${this.maxHp}`, x + 5, y + 5);
 
         if (this.animTargetHealth < this.hp - 1) {
             this.animTargetHealth += 2;
@@ -266,19 +266,19 @@ export class GameStats {
      */
     public displayEnergy(x: number, y: number, size: number) {
         // hp bar
-        Graphics.ctx.lineWidth = 3;
-        Graphics.ctx.strokeStyle = 'white';
-        Graphics.ctx.fillStyle = 'rgb(5,118,231)';
-        Graphics.ctx.fillRect(x, y, this.animTargetEnergy * size / this.maxEnergy, GameStats.HP_BAR_HEIGHT);
-        Graphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.lineWidth = 3;
+        GameGraphics.ctx.strokeStyle = 'white';
+        GameGraphics.ctx.fillStyle = 'rgb(5,118,231)';
+        GameGraphics.ctx.fillRect(x, y, this.animTargetEnergy * size / this.maxEnergy, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
         
         // text
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.font = '14px '+ Graphics.FONT;
-        Graphics.ctx.fillStyle = 'white';
-        Graphics.ctx.textAlign = 'left'
-        Graphics.ctx.textBaseline = 'top';
-        Graphics.ctx.fillText(`${this.energy} / ${this.maxEnergy}`, x + 5, y + 5);
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.font = '14px '+ GameGraphics.FONT;
+        GameGraphics.ctx.fillStyle = 'white';
+        GameGraphics.ctx.textAlign = 'left'
+        GameGraphics.ctx.textBaseline = 'top';
+        GameGraphics.ctx.fillText(`${this.energy} / ${this.maxEnergy}`, x + 5, y + 5);
 
         if (this.animTargetEnergy < this.energy - 1) {
             this.animTargetEnergy += 2;

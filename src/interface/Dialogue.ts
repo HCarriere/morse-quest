@@ -1,7 +1,7 @@
-import { Controller } from "@game/system/Controller";
-import { GameObject } from "@game/system/GameObject";
+import { GameController } from "@game/system/GameController";
+import { EngineObject } from "@game/core/EngineObject";
 import { GameInterface } from "./GameInterface";
-import { Graphics } from "@game/system/Graphics";
+import { GameGraphics } from "@game/system/GameGraphics";
 
 export interface DialoguePiece {
     id: number;
@@ -16,7 +16,7 @@ export interface DialogueAnswer {
     onAnswer?: () => void;
 }
 
-export class Dialogue extends GameObject {
+export class Dialogue extends EngineObject {
 
     private static INTERLINE = 30;
 
@@ -42,16 +42,16 @@ export class Dialogue extends GameObject {
         if (!this.currentDialoguePiece) return;
 
         // rect
-        Graphics.ctx.fillStyle = 'lightblue';
-        Graphics.ctx.strokeStyle = 'black';
-        Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
-        Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.fillStyle = 'lightblue';
+        GameGraphics.ctx.strokeStyle = 'black';
+        GameGraphics.ctx.fillRect(this.x, this.y, this.width, this.height);
+        GameGraphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
         // text
-        Graphics.ctx.fillStyle = 'black';
-        Graphics.ctx.textAlign = "left";
-        Graphics.ctx.font = '25px '+Graphics.FONT;
-        Graphics.ctx.textBaseline = "top";
+        GameGraphics.ctx.fillStyle = 'black';
+        GameGraphics.ctx.textAlign = "left";
+        GameGraphics.ctx.font = '25px '+GameGraphics.FONT;
+        GameGraphics.ctx.textBaseline = "top";
         /*Graphics.ctx.fillText(this.currentDialoguePiece.textLines.substring(0, Math.floor(this.currentTextAnimation)), 
         this.x + 20, this.y + 20, this.width - 40);*/
         let charCount = 0;
@@ -62,12 +62,12 @@ export class Dialogue extends GameObject {
                 charCount += this.currentDialoguePiece.textLines[i].length;
                 currentAnimatingLine ++;
 
-                Graphics.ctx.fillText(this.currentDialoguePiece.textLines[i], 
+                GameGraphics.ctx.fillText(this.currentDialoguePiece.textLines[i], 
                     this.x + 20, this.y + 20 + Dialogue.INTERLINE * i, this.width - 40);
             }
             else if (currentAnimatingLine == i) {
                 // this line is beeing animated
-                Graphics.ctx.fillText(this.currentDialoguePiece.textLines[i].substring(0, this.currentTextAnimation - charCount), 
+                GameGraphics.ctx.fillText(this.currentDialoguePiece.textLines[i].substring(0, this.currentTextAnimation - charCount), 
                     this.x + 20, this.y + 20 + Dialogue.INTERLINE * i, this.width - 40);
             }
         }
@@ -79,14 +79,14 @@ export class Dialogue extends GameObject {
 
         // responses
         if (this.answerUnlocked) {
-            Graphics.ctx.textBaseline = "bottom";
+            GameGraphics.ctx.textBaseline = "bottom";
             for (let i = this.currentDialoguePiece.answers.length - 1; i >= 0; i--) {
-                Graphics.ctx.fillStyle = 'black';
-                if (this.isCoordsInsideAnswer(Controller.mouseX, Controller.mouseY, i)) {
-                    Graphics.ctx.fillRect(this.x, this.y + this.height - 20 - Dialogue.INTERLINE * i - Dialogue.INTERLINE, this.width, Dialogue.INTERLINE);
-                    Graphics.ctx.fillStyle = 'white';
+                GameGraphics.ctx.fillStyle = 'black';
+                if (this.isCoordsInsideAnswer(GameController.mouseX, GameController.mouseY, i)) {
+                    GameGraphics.ctx.fillRect(this.x, this.y + this.height - 20 - Dialogue.INTERLINE * i - Dialogue.INTERLINE, this.width, Dialogue.INTERLINE);
+                    GameGraphics.ctx.fillStyle = 'white';
                 }
-                Graphics.ctx.fillText('> ' + this.currentDialoguePiece.answers[i].text, 
+                GameGraphics.ctx.fillText('> ' + this.currentDialoguePiece.answers[i].text, 
                     this.x + 20, this.y + this.height - 20 - Dialogue.INTERLINE * i, this.width - 40);
             }
         }
@@ -145,9 +145,9 @@ export class Dialogue extends GameObject {
 
         // resize it
         let newTextLines = [];
-        Graphics.ctx.font = '25px '+Graphics.FONT;
+        GameGraphics.ctx.font = '25px '+GameGraphics.FONT;
         for (const line of this.currentDialoguePiece.textLines) {
-            const size = Graphics.ctx.measureText(line);
+            const size = GameGraphics.ctx.measureText(line);
             let portion = size.width / this.width;
             if (portion > 1) {
                 // text > width, need splitting
@@ -192,8 +192,8 @@ export class Dialogue extends GameObject {
     
     public resize(): void {
         this.x = 100;
-        this.y = Graphics.canvas.height - 250;
-        this.width = Graphics.canvas.width - 200;
+        this.y = GameGraphics.canvas.height - 250;
+        this.width = GameGraphics.canvas.width - 200;
         this.height = 200
     }
     
