@@ -14,7 +14,7 @@ export class SpellCreateShield extends Spell {
 
     private strengh: number;
 
-    constructor(strengh = 10) {
+    constructor(strengh = 8) {
         super();
         this.strengh = strengh;
         this.description = [`Absorbe ${this.strengh} dégats.`, `Maintenu un tour.`];

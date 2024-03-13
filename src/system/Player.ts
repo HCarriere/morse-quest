@@ -9,6 +9,7 @@ import { SpellChainLightning } from "@game/content/spells/library/ChainLightning
 import { SpellIcebolt } from "@game/content/spells/library/Icebolt";
 import { SpellFireball } from "@game/content/spells/library/Fireball";
 import { SkillIronSkill } from "@game/content/skills/library/IronSkin";
+import { SpellCreateShield } from "@game/content/spells/library/CreateShield";
 
 /**
  * Represents the player
@@ -32,6 +33,7 @@ export class Player extends EngineObject {
         Player.stats.healFullHp();        
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellIcebolt());
+        Player.stats.spells.push(new SpellCreateShield());
         Player.stats.spells.push(new SpellFireball());
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellIcebolt());
