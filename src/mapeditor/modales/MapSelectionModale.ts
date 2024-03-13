@@ -96,7 +96,7 @@ export class MapSelectionModale extends ModaleContent {
     private addNewMapButton(page: number, nbPerLine: number, paddingLeft: number, paddingTop: number): void {
         let newMapBtnIndex = this.pages[page].length;
         let newMapBtnI = newMapBtnIndex % nbPerLine;
-        let newMapBtnJ = Math.floor( newMapBtnIndex / nbPerLine - 1);
+        let newMapBtnJ = Math.floor( newMapBtnIndex / nbPerLine);
         this.pages[page].push(new Button(
             this.x + newMapBtnI * (this.btnWidth + 2 * this.btnPadding) + this.btnPadding + paddingLeft,
             this.y + newMapBtnJ * (this.btnHeight + 2 * this.btnPadding) + this.btnPadding + paddingTop,
