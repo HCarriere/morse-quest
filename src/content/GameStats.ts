@@ -22,17 +22,10 @@ export class GameStats {
      */
     public energy: number;
 
-    // base stats (no modifiers)
-    public baseConstitution: number;
-    public baseStrengh: number;
-    public baseDexterity: number;
-    public baseIntelligence: number;
-    public baseWisdom: number;
+    public baseHp: number;
+    public baseEnergy = 4;
 
     // advanced stats
-
-    // multiply this to obtain final hp
-    public classHpMultiplicator: number;
 
     public flatDamageReductor = 0;
 
@@ -54,19 +47,16 @@ export class GameStats {
     public activeSkillScore = 0;
     public passiveSkillsMax = 4;
 
-    public initiative: number;
-
     // unused inventory
-    public iventory: Item[];
-
+    public inventory: Item[] = [];
     // equiped items
-    public equiped: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
+    public equipedItems: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
 
     public currentXp = 0;
     public targetXp: number;
     public level = 1;
-
     public gold = 0;
+
     // animations values
 
     /**
@@ -77,20 +67,11 @@ export class GameStats {
     private animTargetHealth: number;
     private animTargetEnergy: number;
     
-    constructor(mult = 1) {
-        this.baseConstitution = 1*mult;
-        this.baseStrengh = 1*mult;
-        this.baseDexterity = 1*mult;
-        this.baseIntelligence = 1*mult;
-        this.baseWisdom = 1*mult;
+    constructor(baseHp = 30) {
+        this.baseHp = baseHp;
 
-        this.initiative = 1*mult;
-        
-        this.classHpMultiplicator = 1;
-        
         this.hp = this.maxHp;
         this.energy = this.maxEnergy;
-
         this.targetXp = GameStats.calculateNextXpTarget(this.level + 1);
         
         this.cancelAnimation();
@@ -104,11 +85,11 @@ export class GameStats {
     }
 
     public get maxHp(): number {
-        return Math.floor((1 + this.baseConstitution) * 10 * this.classHpMultiplicator + 100);
+        return this.baseHp;
     }
 
     public get maxEnergy(): number {
-        return Math.floor((1 + this.baseWisdom) + 4);
+        return this.baseEnergy;
     }
 
     public healFullHp() {
@@ -186,6 +167,16 @@ export class GameStats {
                 this.buffs.splice(i, 1);
             }
         }
+    }
+
+    /**
+     * Force clear af all buffs
+     */
+    public clearAllBuffs() {
+        for (let i = this.buffs.length - 1; i >= 0; i--) {
+            this.buffs[i].onUnbuffed(this);
+        }
+        this.buffs = [];
     }
 
     /**

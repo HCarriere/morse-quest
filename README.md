@@ -46,9 +46,7 @@ https://hcarriere.github.io/morse-quest/
         - fights
         - treasures
         - curiosities (event with choices)
-- Classes
-    - Summoner (add alied summons (IA Based) on turn order ?)
-    - Lardomancien
+
 
 
 # Help
@@ -67,20 +65,27 @@ https://hcarriere.github.io/morse-quest/
 - [x] VERY Simple fight
 - [x] Simple fight (hit selections)
 - [x] Interface: Character sheet
-- [ ] Finish combat mechanics
+- [ ] Combat mechanics
     - [x] Multiple attacks per round (mana gestion)
     - [x] Spells cooldown
     - [x] Buffs / Debuffs
-    - [ ] Improve fight interface (floating numbers, layout, etc)
     - [ ] Simple Class
-    - [ ] Fight reward interface
+    - [ ] Fight reward interface.
+        - random XP
+        - random gold
+        - random item
+    - [ ] Improve fight interface (floating numbers, etc)
+    - [ ] Random events every few turns ? (buff / debuff / action ...)
 - [ ] Player capabilities
-    - [ ] Level up interface
+    - [ ] Level up interface.
+        Random between : 
+        - spells from the class pool
+        - a stat up (hp, energy, slots ...)
     - [ ] Inventory
 - [ ] World
     - [ ] Map builder
     - [ ] Player death
-    - [ ] Encounter spawners ?
+    - [ ] Encounter spawners ? random ? handcrafted ?
     - [ ] Pathfinding
     - [ ] Enemy agro & follow player
     - [ ] Activables (traps, enigmas ...)
@@ -89,20 +94,44 @@ https://hcarriere.github.io/morse-quest/
 - [ ] Hub
     - [ ] Shops
 - [ ] Improvements
+    - [ ] Player sprite
     - [ ] Improve enemy combat AI
+    - [ ] Music ? oscilloscope js generated
     - [ ] Documentation: create spells
     - [ ] Documentation: create skills
     - [ ] Documentation: create classes
     - [ ] Documentation: create items
     - [ ] Documentation: create enemies
+- [ ] Technical
+    - [ ] Lose size
+        - [ ] Mangling
+        - [ ] Graphics.ctx / GameGraphics.ctx ==> G.ctx
 
-## Real content
+## Content
 - [ ] Balancing
-- [ ] Build real maps
-- [ ] Multiple classes
-- [ ] Multiple enemies
-- [ ] Spells animation
-- [ ] Multiple spells
+- [ ] Maps
+- [ ] Classes
+    - [ ] Metalomancien
+        - Manipule le metal sous toutes ses formes.
+        - Classe simple, pas de flavor particulière.
+    - [ ] Pyromancien
+        - Manipule le feu.
+        - Peu de défense, mais beaucoup d'attaque.
+        - Inflige un debuff 'brulure'.
+    - [ ] Briquomancien
+        - Manipule la terre, et les briques.
+        - Défensif, utilise un buff 'Mur de brique' pour ses sorts.
+    - [ ] Lardomancien
+        - Manipule le gras, et les lardons.
+        - Faible puissance, mais gagne en puissance au long du combat avec ses buffs.
+- [ ] Enemies
+- [ ] Spells
+- [ ] Skills
+- [ ] Buffs/Debuffs
+    - [x] Protection
+    - [ ] Brulure: DOT
+- [ ] Items
+
 ## QoL
 - [ ] Cool animated splashscreen (with particles)
 - [ ] Display other players

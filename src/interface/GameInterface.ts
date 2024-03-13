@@ -1,8 +1,6 @@
 import { EngineObject } from "@game/core/EngineObject";
 import { Dialogue, DialoguePiece } from "./Dialogue";
-import { GameController } from "@game/system/GameController";
 import { Combat } from "./Combat";
-import { GameGraphics } from "@game/system/GameGraphics";
 import { CharacterSheet } from "./CharacterSheet";
 import { Button } from "./components/Button";
 
@@ -11,6 +9,7 @@ export class GameInterface extends EngineObject {
     public static frame = 0;
 
     private static hudElements: EngineObject[];
+    private static characterSheetButton: Button;
     private static dialogues: Dialogue[];
     private static combat: Combat;
     private static characterSheet: CharacterSheet;
@@ -30,17 +29,18 @@ export class GameInterface extends EngineObject {
         GameInterface.characterSheet = new CharacterSheet();
 
         // init HUD elements
-        GameInterface.hudElements.push(new Button(5, 5, 100, 30, () => {
+        GameInterface.characterSheetButton = new Button(5, 5, 110, 30, () => {
             if (GameInterface.displayCharacterSheet) GameInterface.hideCharacterSheet();
             else GameInterface.showCharacterSheet();
         }, {
-            text: '☰ Personnage',
+            text: '☰ Personnage ❗',
             textColor: 'white',
             color: 'black',
             strokeColor: 'white',
             colorHover: 'darkgrey',
             textSize: 15,
-        }))
+        });
+        GameInterface.hudElements.push(GameInterface.characterSheetButton);
 
         for (const obj of GameInterface.hudElements) {
             obj.init();
@@ -71,10 +71,6 @@ export class GameInterface extends EngineObject {
 
         // process first dialogue
         if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].display();
-
-        // debug TODO REMOVE ME
-        GameGraphics.ctx.fillStyle = 'purple';
-        GameGraphics.ctx.fillRect(GameController.mouseX-5, GameController.mouseY-5, 10, 10);
 
         GameInterface.frame++;
     }
@@ -160,6 +156,7 @@ export class GameInterface extends EngineObject {
     public static showCharacterSheet() {
         GameInterface.characterSheet.resize();
         GameInterface.displayCharacterSheet = true;
+        GameInterface.characterSheetButton.style.text = `☰ Personnage`;
     }
 
     public static hideCharacterSheet() {

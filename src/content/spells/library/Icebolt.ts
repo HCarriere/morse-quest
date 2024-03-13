@@ -2,9 +2,9 @@ import { GameGraphics } from "@game/system/GameGraphics";
 import { Spell, DamageType, TargetType } from "../Spell";
 import { GameStats } from "@game/content/GameStats";
 
-export class Spellicebolt extends Spell {
+export class SpellIcebolt extends Spell {
     public name = "Éclair de givre";
-    public description = ["Envoie un éclair de givre sur un ennemi."];
+    public description = ["Envoie un éclair de givre sur un ennemi.", 'Inflige 10 dégats.'];
     public energyCost = 1;
     public cooldown = 1;
     
@@ -17,7 +17,7 @@ export class Spellicebolt extends Spell {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(120, DamageType.Ice);
+                t.stat.damage(10, DamageType.Ice);
             }
         }
 

@@ -45,7 +45,7 @@ export class Maps {
                 onWalk: () => {GameInterface.setCombat(new Combat(
                     [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats()),
                     new Enemy('Mr. Test #2', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats(10)),
+                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats(300)),
                     new Enemy('Mr. Test #3', new SkinDrone(), new GameStats()),
                     new Enemy('Mr. Test #4', new SkinDrone(), new GameStats())]))},
                 enemySkin: new SkinDrone()

@@ -4,7 +4,7 @@ import { Spell, DamageType, TargetType } from "../Spell";
 
 export class SpellFireball extends Spell {
     public name = "Boule de feu";
-    public description = ["Envoie une boule de feu sur les ennemis.", "Ouille ça brûle."];
+    public description = ["Envoie une boule de feu sur les ennemis.", "Inflige 10 dégats."];
     public energyCost = 3;
     public cooldown = 2;
     
@@ -18,7 +18,7 @@ export class SpellFireball extends Spell {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(40, DamageType.Fire);
+                t.stat.damage(10, DamageType.Fire);
             }
         }
 

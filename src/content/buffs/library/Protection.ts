@@ -3,7 +3,7 @@ import { Buff } from "../Buff";
 
 export class BuffProtection extends Buff {
     public name = "Protection";
-    public description = ['Vous protège de 1 dégat par pile.'];
+    public description = ['Protège de 1 dégat par pile.'];
     public icon = {text: "XX", color: '#666'};
     public stackMax = 100;
 

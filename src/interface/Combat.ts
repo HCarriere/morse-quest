@@ -81,8 +81,10 @@ export class Combat extends EngineObject {
             this.doEnemyAction(this.getCurrentTurn() as Enemy);
         }
         */
+
        Player.stats.healFullEnergy();
        Player.stats.resetAllCooldowns();
+       Player.stats.clearAllBuffs();
     }
 
     /**
@@ -452,9 +454,13 @@ export class Combat extends EngineObject {
     }
 
     /**
+     * Reset player stats 
      * End the combat interface
      */
     private end() {
+        Player.stats.resetAllCooldowns();
+        Player.stats.clearAllBuffs();
+
         GameInterface.endCombat();
     }
 
@@ -519,7 +525,7 @@ export class Combat extends EngineObject {
                 // on hover
                 this.tooltip = buff.description;
                 this.tooltipDisplay = true;
-            }));
+            }, 3));
         }
     }
 

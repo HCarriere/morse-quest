@@ -6,10 +6,9 @@ import { GameInterface } from "@game/interface/GameInterface";
 import { GameGraphics } from "./GameGraphics";
 import { GameStats } from "@game/content/GameStats";
 import { SpellChainLightning } from "@game/content/spells/library/ChainLightning";
-import { Spellicebolt } from "@game/content/spells/library/Icebolt";
+import { SpellIcebolt } from "@game/content/spells/library/Icebolt";
 import { SpellFireball } from "@game/content/spells/library/Fireball";
 import { SkillIronSkill } from "@game/content/skills/library/IronSkin";
-import { SpellCreateShield } from "@game/content/spells/library/CreateShield";
 
 /**
  * Represents the player
@@ -29,20 +28,18 @@ export class Player extends EngineObject {
     private static tilt = 0;
 
     public init() {
-        Player.stats = new GameStats();
-        Player.stats.baseConstitution = 20;
+        Player.stats = new GameStats(100);
         Player.stats.healFullHp();        
-        Player.stats.spells.push(new SpellCreateShield(50));
+        Player.stats.spells.push(new SpellChainLightning());
+        Player.stats.spells.push(new SpellIcebolt());
         Player.stats.spells.push(new SpellFireball());
         Player.stats.spells.push(new SpellChainLightning());
-        Player.stats.spells.push(new SpellChainLightning());
-        Player.stats.spells.push(new Spellicebolt());
-        Player.stats.spells.push(new Spellicebolt());
+        Player.stats.spells.push(new SpellIcebolt());
         Player.stats.selectActiveSpell(0);
         Player.stats.selectActiveSpell(1);
+        Player.stats.selectActiveSpell(2);
+        Player.stats.selectActiveSpell(3);
         Player.stats.skills.push(new SkillIronSkill());
-        Player.stats.skills.push(new SkillIronSkill(2));
-        Player.stats.skills.push(new SkillIronSkill(3));
         
     }
 
