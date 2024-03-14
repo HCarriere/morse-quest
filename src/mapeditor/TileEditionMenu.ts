@@ -4,13 +4,14 @@ import { Input } from "./components/Input";
 
 export class TileEditionMenu extends SideMenu {
     private static padding = 10;
+    private static elementHeight = 50;
     private tileValueInput: Input;
     protected initMenu(): void {
         this.tileValueInput = new Input(
             this.startX + TileEditionMenu.padding,
             TileEditionMenu.padding,
             Graphics.canvas.width - (this.startX + 2 * TileEditionMenu.padding),
-            50,
+            TileEditionMenu.elementHeight,
             (char: string) => !Number.isNaN(parseInt(char)),
             (value: string) => {
                 // TODO update tile value
@@ -19,10 +20,19 @@ export class TileEditionMenu extends SideMenu {
         this.menuElements.push(this.tileValueInput);
     }
     public displayMenu(startY: number): number {
-        let height = this.tileValueInput.height + 2 * TileEditionMenu.padding;
-        Graphics.ctx.fillStyle = 'blue';
+        let height = 2 * TileEditionMenu.elementHeight + 4 * TileEditionMenu.padding;
+        Graphics.ctx.save();
+        Graphics.ctx.fillStyle = 'black';
         Graphics.ctx.fillRect(this.startX, startY, Graphics.canvas.width - this.startX, height);
-        this.tileValueInput.y = startY + TileEditionMenu.padding;
+        Graphics.ctx.strokeStyle = 'white';
+        Graphics.ctx.strokeRect(this.startX, startY, Graphics.canvas.width - this.startX, height);
+        Graphics.ctx.fillStyle = 'white';
+        Graphics.ctx.textAlign = "left";
+        Graphics.ctx.font = TileEditionMenu.elementHeight + "px Luminari";
+        Graphics.ctx.textBaseline = "top";
+        Graphics.ctx.fillText('Valeur de tuile', this.startX + TileEditionMenu.padding, startY + TileEditionMenu.padding, Graphics.canvas.width - (this.startX + 2 * TileEditionMenu.padding));
+        Graphics.ctx.restore();
+        this.tileValueInput.y = startY + TileEditionMenu.elementHeight + 3 * TileEditionMenu.padding;
         this.tileValueInput.display();
         return height;
     }

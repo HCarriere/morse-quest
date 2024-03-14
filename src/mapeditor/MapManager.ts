@@ -45,4 +45,8 @@ export class MapManager {
     public static getMapList(): string[] {
         return this.mapList;
     }
+
+    public static mapExists(mapId): boolean {
+        return this.mapList.includes(mapId);
+    }
 }

@@ -2,7 +2,7 @@ import { Modale, ModaleContent } from "@game/core/Modale";
 import { MapManager } from "../MapManager";
 import { Grid } from "../components/Grid";
 import { ButtonStyle } from "@game/interface/components/Button";
-import { InputModale } from "./InputModale";
+import { MapCreationModale } from "./MapCreationModale";
 
 export class MapSelectionModale extends ModaleContent {
     private btnPerLine: number;
@@ -132,14 +132,7 @@ export class MapSelectionModale extends ModaleContent {
             newMapBtnI + ignoreCols,
             newMapBtnJ + ignoreRows,
             () => {
-                Modale.openModale(new InputModale(
-                    'Id de la nouvelle map',
-                    (value: string) => {
-                        console.log('New map id', value);
-                        // Add New Map
-                    },
-                    (char: string) => char != ' '
-                ));
+                Modale.openModale(new MapCreationModale());
             },
             {
                 ...this.btnStyle,

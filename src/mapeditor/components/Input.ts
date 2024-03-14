@@ -3,8 +3,9 @@ import { Graphics } from "@game/core/Graphics";
 
 export class Input extends EngineObject {
     public value: string = '';
+    public error: string;
     private focused = false;
-    constructor(public x: number, public y: number, public width: number, public height: number, private valideChar: (char: string) => boolean = () => true, private onValueChanged: (value: string) => void = () => {}) {
+    constructor(public x: number, public y: number, public width: number, public height: number, private isCharValid: (char: string) => boolean = () => true, private onValueChanged: (value: string) => void = () => {}) {
         super();
     }
     public display() {
@@ -12,7 +13,7 @@ export class Input extends EngineObject {
         Graphics.ctx.fillStyle = 'purple';
         Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         if (this.focused) {
-            Graphics.ctx.strokeStyle = 'white';
+            Graphics.ctx.strokeStyle = !!this.error ? 'red' : 'white';
             Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }
         Graphics.ctx.fillStyle = 'white';
@@ -20,6 +21,11 @@ export class Input extends EngineObject {
         Graphics.ctx.font = this.height - 10 + "px Luminari";
         Graphics.ctx.textBaseline = "top";
         Graphics.ctx.fillText(this.value, this.x + 5, this.y + 5, this.width - 10);
+        if (!!this.error) {
+            Graphics.ctx.fillStyle = 'red';
+            Graphics.ctx.font = this.height / 5 + 'px Luminari';
+            Graphics.ctx.fillText(this.error, this.x, this.y + this.height * 1.2, this.width);
+        }
         Graphics.ctx.restore();
     }
 
@@ -29,7 +35,7 @@ export class Input extends EngineObject {
 
     public originalKeyPressed(key: string): void {
         if (!this.focused) return;
-        if (key.length == 1 && this.valideChar(key)) {
+        if (key.length == 1 && this.isCharValid(key)) {
             this.value += key;
             this.onValueChanged(this.value);
             return;
