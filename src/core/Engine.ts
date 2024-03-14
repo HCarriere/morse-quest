@@ -75,10 +75,12 @@ export abstract class Engine {
     protected keyPressed(e: KeyboardEvent) {
         if (Modale.showModale) {
             Modale.content.keyPressed(EngineController.KeyMapping[e.key]);
+            Modale.content.originalKeyPressed(e.key);
             return;
         }
         for (const obj of this.engineObjects) {
             obj.keyPressed(EngineController.KeyMapping[e.key]);
+            obj.originalKeyPressed(e.key);
         }
     }
 

@@ -1,6 +1,8 @@
-import { ModaleContent } from "@game/core/Modale";
-import { MapEdition } from "../MapEdition";
+import { Modale, ModaleContent } from "@game/core/Modale";
+import { MapManager } from "../MapManager";
 import { Grid } from "../components/Grid";
+import { ButtonStyle } from "@game/interface/components/Button";
+import { InputModale } from "./InputModale";
 
 export class MapSelectionModale extends ModaleContent {
     private btnPerLine: number;
@@ -10,17 +12,24 @@ export class MapSelectionModale extends ModaleContent {
     private btnHeight: number;
     private btnPadding: number;
     private currentPage: number;
+    private btnStyle: ButtonStyle;
+    private deactivatedBtnColor: string;
     protected initContent(): void {
         this.btnPadding = 10;
         this.btnHeight = 50;
         this.btnWidth = 200;
         this.btnPerLine = Math.floor(this.width / this.gridCellWidth);
         this.nbBtnLines = Math.floor(this.height / this.gridCellHeight);
+        this.btnStyle = {
+            strokeColor: 'white',
+            textSize: 20,
+            color: 'white',
+            colorHover: 'grey',
+            textColor: 'black'
+        };
+        this.deactivatedBtnColor = 'grey';
         this.rebuildPages();
         this.gotoPage(0);
-    }
-    protected displayContent(): void {
-        this.modaleElements.forEach(elem => elem.display());
     }
     protected resizeContent(): void {
         let newBtnPerLine = Math.floor(this.width / this.gridCellWidth);
@@ -35,7 +44,7 @@ export class MapSelectionModale extends ModaleContent {
         }
     }
     private rebuildPages(): void {
-        let mapIds = MapEdition.getMapList();
+        let mapIds = MapManager.getMapList();
         let hasPagination = mapIds.length > this.btnPerLine * this.nbBtnLines - 1; // -1 for 'new map' button
         this.pages = [];
         if (this.btnPerLine < 1 || this.nbBtnLines < 1 || (hasPagination && this.btnPerLine < 3)) return;
@@ -55,9 +64,8 @@ export class MapSelectionModale extends ModaleContent {
                         this.gotoPage(index - 1);
                     },
                     {
-                        text: '<',
-                        strokeColor: 'white',
-                        textSize: 20
+                        ...this.btnStyle,
+                        text: '<'
                     }
                 );
                 if (index < nbPages - 1) this.pages[index].addButton(
@@ -67,9 +75,8 @@ export class MapSelectionModale extends ModaleContent {
                         this.gotoPage(index + 1);
                     },
                     {
-                        text: '>',
-                        strokeColor: 'white',
-                        textSize: 20
+                        ...this.btnStyle,
+                        text: '>'
                     }
                 );
             }
@@ -87,12 +94,16 @@ export class MapSelectionModale extends ModaleContent {
                 i + ignoreCols,
                 j + ignoreRows,
                 () => {
-                    // Select id
+                    if (id != MapManager.currentMapId) {
+                        MapManager.loadMap(id);
+                        Modale.closeModale();
+                    }
                 },
                 {
+                    ...this.btnStyle,
                     text: id,
-                    strokeColor: 'white',
-                    textSize: 20
+                    color: id != MapManager.currentMapId ? this.btnStyle.color : this.deactivatedBtnColor,
+                    colorHover: id != MapManager.currentMapId && this.btnStyle.colorHover
                 }
             );
             i++;
@@ -121,12 +132,14 @@ export class MapSelectionModale extends ModaleContent {
             newMapBtnI + ignoreCols,
             newMapBtnJ + ignoreRows,
             () => {
-                // Add New Map
+                Modale.openModale(new InputModale('Id de la nouvelle map', (value: string) => {
+                    console.log('New map id', value);
+                    // Add New Map
+                }));
             },
             {
-                text: 'Nouvelle Map',
-                strokeColor: 'white',
-                textSize: 20
+                ...this.btnStyle,
+                text: 'Nouvelle Map'
             }
         );
     }

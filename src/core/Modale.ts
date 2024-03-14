@@ -21,16 +21,17 @@ export abstract class ModaleContent extends EngineObject {
         Graphics.ctx.fillRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);
         Graphics.ctx.fillStyle = 'black';
         Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
-        this.displayContent();
+        this.modaleElements.forEach(elem => elem.display());
+        this.displayCustomContent();
     }
 
-    protected abstract displayContent(): void;
+    protected displayCustomContent(): void {}
 
     public mousePressed(x: number, y: number): void {
         if (this.isInbound(x, y)) {
             this.modaleElements.forEach(elem => elem.mousePressed(x, y));
         } else {
-            Modale.exitModale();
+            Modale.closeModale();
         }
     }
 
@@ -48,6 +49,14 @@ export abstract class ModaleContent extends EngineObject {
         this.y = Graphics.canvas.height / 2 - this.height / 2;
     }
 
+    public keyPressed(key: number): void {
+        this.modaleElements.forEach(elem => elem.keyPressed(key));
+    }
+
+    public originalKeyPressed(key: string): void {
+        this.modaleElements.forEach(elem => elem.originalKeyPressed(key));
+    }
+
     /**
      * Returns true if x,y is inside button
      * @param x 
@@ -62,6 +71,6 @@ export abstract class ModaleContent extends EngineObject {
 export class Modale {
     public static content: ModaleContent;
     public static get showModale(): boolean { return !!Modale.content; }
-    public static openModale(content: ModaleContent): void { if (!Modale.content) Modale.content = content; }
-    public static exitModale(): void { delete Modale.content; }
+    public static openModale(content: ModaleContent): void { Modale.content = content; }
+    public static closeModale(): void { delete Modale.content; }
 }

@@ -1,7 +1,8 @@
 import { RawMaps } from "@game/content/RawMaps";
 
-export class MapEdition {
-    private static currentMapId: string;
+export class MapManager {
+    private static _currentMapId: string;
+    public static get currentMapId(): string { return this._currentMapId; }
     private static mapList: string[] = Object.keys(RawMaps);
     
     static MAX_BLOCK_WIDTH_VIEW = 30;
@@ -13,27 +14,27 @@ export class MapEdition {
 
     public static loadMap(mapId: string) {
         console.log(`loading map <${mapId}>`)
-        MapEdition.MapTiles = [];
-        MapEdition.MapWidth = 0;
-        MapEdition.MapHeight = 0;
+        MapManager.MapTiles = [];
+        MapManager.MapWidth = 0;
+        MapManager.MapHeight = 0;
         
         if (!this.mapList.includes(mapId)) {
             console.log(`can't find map <${mapId}>, loading <main>`);
             mapId = 'main';
         }
 
-        this.currentMapId = mapId;
+        this._currentMapId = mapId;
         const lines = RawMaps[mapId].split('\n');
         for (let i = 0; i < lines.length; i++) {
             const cells = lines[i].split('\t');
-            MapEdition.MapWidth >= cells.length ? null : MapEdition.MapWidth = cells.length;
-            MapEdition.MapTiles[i] = [];
+            MapManager.MapWidth >= cells.length ? null : MapManager.MapWidth = cells.length;
+            MapManager.MapTiles[i] = [];
             for (let j = 0; j < cells.length; j++) {
-                MapEdition.MapTiles[i][j] = parseInt(cells[j]);
+                MapManager.MapTiles[i][j] = parseInt(cells[j]);
             }
         }
-        MapEdition.MapHeight = lines.length;
-        console.log(`${MapEdition.MapWidth} x ${MapEdition.MapHeight} map loaded`);
+        MapManager.MapHeight = lines.length;
+        console.log(`${MapManager.MapWidth} x ${MapManager.MapHeight} map loaded`);
     }
 
     public static addNewMap(mapId): void {

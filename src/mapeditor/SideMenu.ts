@@ -23,6 +23,10 @@ export abstract class SideMenu extends EngineObject {
         super.keyPressed(key);
         this.menuElements.forEach(elem => elem.keyPressed(key));
     }
+    public originalKeyPressed(key: string): void {
+        super.originalKeyPressed(key);
+        this.menuElements.forEach(elem => elem.originalKeyPressed(key));
+    }
     public mousePressed(x: number, y: number): void {
         super.mousePressed(x, y);
         this.menuElements.forEach(elem => elem.mousePressed(x, y));
