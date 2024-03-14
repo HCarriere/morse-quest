@@ -2,18 +2,23 @@ import { Graphics } from "./Graphics";
 import { EngineObject } from "./EngineObject"
 
 export abstract class ModaleContent extends EngineObject {
-    public height: number = 500;
-    public width: number = 1000;
+    protected height: number;
+    protected width: number;
+    protected x: number;
+    protected y: number;
     protected modaleElements: EngineObject[] = [];
 
     constructor() {
         super();
+        this.updateSizeAndPosition();
         this.initContent();
     }
 
     protected abstract initContent(): void;
 
     public display() {
+        Graphics.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        Graphics.ctx.fillRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);
         Graphics.ctx.fillStyle = 'black';
         Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
         this.displayContent();
@@ -29,12 +34,18 @@ export abstract class ModaleContent extends EngineObject {
         }
     }
 
-    public get x() : number {
-        return Graphics.canvas.width / 2 - this.width / 2;
+    public resize(): void {
+        this.updateSizeAndPosition();
+        this.resizeContent();
     }
+
+    protected abstract resizeContent(): void;
     
-    public get y() : number {
-        return Graphics.canvas.height / 2 - this.height / 2
+    protected updateSizeAndPosition(): void {
+        this.width = Graphics.canvas.width * 2 / 3;
+        this.height = Graphics.canvas.height * 2 / 3;
+        this.x = Graphics.canvas.width / 2 - this.width / 2;
+        this.y = Graphics.canvas.height / 2 - this.height / 2;
     }
 
     /**
