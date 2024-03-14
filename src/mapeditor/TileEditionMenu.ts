@@ -6,7 +6,16 @@ export class TileEditionMenu extends SideMenu {
     private static padding = 10;
     private tileValueInput: Input;
     protected initMenu(): void {
-        this.tileValueInput = new Input(this.startX + TileEditionMenu.padding, TileEditionMenu.padding, Graphics.canvas.width - (this.startX + 2 * TileEditionMenu.padding), 50);
+        this.tileValueInput = new Input(
+            this.startX + TileEditionMenu.padding,
+            TileEditionMenu.padding,
+            Graphics.canvas.width - (this.startX + 2 * TileEditionMenu.padding),
+            50,
+            (char: string) => !Number.isNaN(parseInt(char)),
+            (value: string) => {
+                // TODO update tile value
+            }
+        );
         this.menuElements.push(this.tileValueInput);
     }
     public displayMenu(startY: number): number {

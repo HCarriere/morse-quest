@@ -132,10 +132,14 @@ export class MapSelectionModale extends ModaleContent {
             newMapBtnI + ignoreCols,
             newMapBtnJ + ignoreRows,
             () => {
-                Modale.openModale(new InputModale('Id de la nouvelle map', (value: string) => {
-                    console.log('New map id', value);
-                    // Add New Map
-                }));
+                Modale.openModale(new InputModale(
+                    'Id de la nouvelle map',
+                    (value: string) => {
+                        console.log('New map id', value);
+                        // Add New Map
+                    },
+                    (char: string) => char != ' '
+                ));
             },
             {
                 ...this.btnStyle,

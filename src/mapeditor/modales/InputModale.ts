@@ -10,7 +10,7 @@ export class InputModale extends ModaleContent {
     private okBtnWidth: number;
     private okBtnHeight: number;
     private okBtnPadding: number;
-    constructor(private text: string, private onValidate: (value: string) => void) {
+    constructor(private text: string, private onOk: (value: string) => void, private valideChar: (char: string) => boolean = () => true) {
         super();
     }
     protected initContent(): void {
@@ -24,14 +24,14 @@ export class InputModale extends ModaleContent {
         this.okBtnWidth = 200;
         this.okBtnHeight = 50;
         this.okBtnPadding = 10;
-        this.input = new Input(this.x + 10, this.y + this.height / 2 - 25, this.width - 20, 50);
+        this.input = new Input(this.x + 10, this.y + this.height / 2 - 25, this.width - 20, 50, (char: string) => this.valideChar(char));
         this.okBtn = new Button(
             this.x + this.width - (this.okBtnWidth + this.okBtnPadding),
             this.y + this.height - (this.okBtnHeight + this.okBtnPadding),
             this.okBtnWidth,
             this.okBtnHeight,
             () => {
-                this.onValidate(this.input.value);
+                this.onOk(this.input.value);
                 Modale.closeModale();
             },
             {
