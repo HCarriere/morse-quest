@@ -4,13 +4,12 @@ export class MapManager {
     private static _currentMapId: string;
     public static get currentMapId(): string { return this._currentMapId; }
     private static mapList: string[] = Object.keys(RawMaps);
-    
-    static MAX_BLOCK_WIDTH_VIEW = 30;
-    static MAX_BLOCK_HEIGHT_VIEW = 30;
 
     static MapTiles: number[][];
     static MapWidth: number;
     static MapHeight: number;
+
+    private static loadListeners: (() => void)[] = [];
 
     public static loadMap(mapId: string) {
         console.log(`loading map <${mapId}>`)
@@ -35,6 +34,7 @@ export class MapManager {
         }
         MapManager.MapHeight = lines.length;
         console.log(`${MapManager.MapWidth} x ${MapManager.MapHeight} map loaded`);
+        this.loadListeners.forEach(listener => listener());
     }
 
     public static addNewMap(mapId): void {
@@ -48,5 +48,9 @@ export class MapManager {
 
     public static mapExists(mapId): boolean {
         return this.mapList.includes(mapId);
+    }
+
+    public static addLoadListener(listener: () => void): void {
+        this.loadListeners.push(listener);
     }
 }

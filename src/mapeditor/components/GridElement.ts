@@ -1,3 +1,4 @@
 export interface GridElement {
-    recalculatePosition(gridX: number, gridY: number): void;
+    updatePosition(newX: number, newY: number, newWidth: number, newHeight: number): void;
+    updateValue(value: string): void;
 }

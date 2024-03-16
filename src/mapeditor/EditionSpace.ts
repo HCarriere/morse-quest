@@ -2,13 +2,19 @@ import { Graphics } from "@game/core/Graphics";
 import { EngineObject } from "@game/core/EngineObject";
 import { MapManager } from "./MapManager";
 import { Grid } from "./components/Grid";
+import { Pen } from "./Pen";
+import { TileManager } from "./TileManager";
 
 export class EditionSpace extends EngineObject {
-    public static EditionGridNbCols: number = 80;
-    public static EditionGridNbRows: number = 40;
+    public nbCols: number = 80;
+    public nbRows: number = 40;
     private headerHeight: number = 70;
     private get editionGridHeight(): number { return Graphics.canvas.height - this.headerHeight; }
+    private get cellWidth(): number { return this.endX / this.nbCols; }
+    private get cellHeight(): number { return this.editionGridHeight / this.nbRows;  }
     private editionGrid: Grid;
+    private pressedCellI: number;
+    private pressedCellJ: number;
     constructor(public endX: number) {
         super();
         this.editionGrid = new Grid(
@@ -16,14 +22,16 @@ export class EditionSpace extends EngineObject {
             this.headerHeight,
             this.endX,
             this.editionGridHeight,
-            this.endX / EditionSpace.EditionGridNbCols,
-            this.editionGridHeight / EditionSpace.EditionGridNbRows,
+            this.cellWidth,
+            this.cellHeight,
             0,
             0
         );
-    }
-    public init(): void {
+        MapManager.addLoadListener(() => this.loadMapInGrid());
         MapManager.loadMap(MapManager.getMapList()[0]);
+        Pen.addDragListener((x: number, y: number) => this.onDrag(x, y));
+        Pen.addDropListener((x: number, y: number) => this.onDrop(x, y));
+        Pen.addClickListener((x: number, y: number) => this.onClick(x, y));
     }
     public display() {
         Graphics.ctx.save();
@@ -42,10 +50,44 @@ export class EditionSpace extends EngineObject {
         }
         Graphics.ctx.restore();
         this.editionGrid.drawGrid();
+        this.editionGrid.getEngineObjects().forEach(elem => elem.display());
         this.editionGrid.drawHoveredCell();
     }
     public resize(): void {
         this.editionGrid.recalculatePosition(0, this.headerHeight, this.endX, this.editionGridHeight);
-        this.editionGrid.updateCellSize(this.endX / EditionSpace.EditionGridNbCols, this.editionGridHeight / EditionSpace.EditionGridNbRows, 0, 0);
+        this.editionGrid.updateCellSize(this.cellWidth, this.cellHeight, 0, 0);
+    }
+    private loadMapInGrid(): void {
+        this.editionGrid.clear();
+        let nbEmptyCols = Math.floor((this.nbCols - MapManager.MapWidth) / 2);
+        let nbEmtpyRows = Math.floor((this.nbRows - MapManager.MapHeight) / 2);
+        for (let i = 0; i < MapManager.MapWidth; i++) {
+            for (let j = 0; j < MapManager.MapHeight; j++) {
+                let value = MapManager.MapTiles[j][i];
+                this.editionGrid.addTile(nbEmptyCols + i, nbEmtpyRows + j, `${isNaN(value) ? '' : value}`);
+            }
+        }
+    }
+    private onDrag(x: number, y: number): void {
+        this.updateValue(x, y);
+    }
+    private onDrop(x: number, y: number): void {
+        this.unsetPressedCell();
+    }
+    private onClick(x: number, y: number): void {
+        this.updateValue(x, y);
+        this.unsetPressedCell();
+    }
+    private updateValue(x: number, y: number): void {
+        let i = this.editionGrid.getCellI(x);
+        let j = this.editionGrid.getCellJ(y);
+        if (isNaN(i) || isNaN(j) || (i == this.pressedCellI && j == this.pressedCellJ)) return;
+        this.pressedCellI = i;
+        this.pressedCellJ = j;
+        this.editionGrid.updateTile(i, j, TileManager.editionTileValue);
+    }
+    private unsetPressedCell(): void {
+        delete this.pressedCellI;
+        delete this.pressedCellJ;
     }
 }

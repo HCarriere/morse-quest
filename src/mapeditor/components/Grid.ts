@@ -4,6 +4,7 @@ import { GridButton } from "./GridButton";
 import { EngineObject } from "@game/core/EngineObject";
 import { Graphics } from "@game/core/Graphics";
 import { EngineController } from "@game/core/EngineController";
+import { GridTile } from "./GridTile";
 
 class GridCell {
     constructor(public i:number, public j: number, public gridElement: GridElement, public engineObject: EngineObject) {}
@@ -26,17 +27,13 @@ export class Grid {
     private get nbRows(): number {
         return Math.floor(this.height / this.cellHeight);
     }
+    private gridColToElementPositionX(i: number): number { return this.x + i * this.cellWidth + this.elementPaddingX; }
+    private gritRowToElementPositionY(j: number): number { return this.y + j * this.cellHeight + this.elementPaddingY; }
     public addButton(i: number, j: number, onClick: () => void, style: ButtonStyle = {}): void {
         if (i < 0 || i > this.nbCols - 1 || j < 0 || j > this.nbRows - 1) return;
         let btn = new GridButton(
-            i,
-            j,
-            this.cellWidth,
-            this.cellHeight,
-            this.elementPaddingX,
-            this.elementPaddingY,
-            this.x + i * this.cellWidth + this.elementPaddingX,
-            this.y + j * this.cellHeight + this.elementPaddingY,
+            this.gridColToElementPositionX(i),
+            this.gritRowToElementPositionY(j),
             this.elementWidth,
             this.elementHeight,
             onClick,
@@ -44,12 +41,23 @@ export class Grid {
         );
         this.cells.push(new GridCell(i, j, btn, btn));
     }
+    public addTile(i: number, j: number, value: string): void {
+        if (i < 0 || i > this.nbCols - 1 || j < 0 || j > this.nbRows - 1) return;
+        let tile = new GridTile(
+            value,
+            this.gridColToElementPositionX(i),
+            this.gritRowToElementPositionY(j),
+            this.elementWidth,
+            this.elementHeight
+        );
+        this.cells.push(new GridCell(i, j, tile, tile));
+    }
     public recalculatePosition(newX: number, newY: number, newWidth: number, newHeight: number): void {
         this.x = newX;
         this.y = newY;
         this.width = newWidth;
         this.height = newHeight;
-        this.cells.forEach(cell => cell.gridElement.recalculatePosition(newX, newY));
+        this.cells.forEach(cell => cell.gridElement.updatePosition(this.gridColToElementPositionX(cell.i), this.gritRowToElementPositionY(cell.j), this.elementWidth, this.elementHeight));
     }
     public getEngineObjects(): EngineObject[] {
         return this.cells.map(cell => cell.engineObject);
@@ -76,12 +84,18 @@ export class Grid {
         this.elementPaddingY = newElementPaddingY;
     }
     public getHoveredCellI(): number {
-        if (EngineController.mouseX < this.x || EngineController.mouseX > this.x + this.width) return NaN;
-        return Math.floor((EngineController.mouseX - this.x) / this.cellWidth);
+        return this.getCellI(EngineController.mouseX);
     }
     public getHoveredCellJ(): number {
-        if (EngineController.mouseY < this.y || EngineController.mouseY > this.y + this.height) return NaN;
-        return Math.floor((EngineController.mouseY - this.y) / this.cellHeight);
+        return this.getCellJ(EngineController.mouseY);
+    }
+    public getCellI(positionX: number): number {
+        if (positionX < this.x || positionX > this.x + this.width) return NaN;
+        return Math.floor((positionX - this.x) / this.cellWidth);
+    }
+    public getCellJ(positionY: number): number {
+        if (positionY < this.y || positionY > this.y + this.height) return NaN;
+        return Math.floor((positionY - this.y) / this.cellHeight);
     }
     public drawHoveredCell(): void {
         let hoveredCellI = this.getHoveredCellI();
@@ -92,5 +106,16 @@ export class Grid {
         Graphics.ctx.fillStyle = 'rgba(255, 255, 255, 0.1';
         Graphics.ctx.fillRect(hoveredCellI * this.cellWidth, hoveredCellJ * this.cellHeight, this.cellWidth, this.cellHeight);
         Graphics.ctx.restore();
+    }
+    public clear(): void {
+        this.cells = [];
+    }
+    public updateTile(i: number, j: number, value: string): void {
+        let cell: GridCell = this.cells.find(cell => cell.i == i && cell.j == j );
+        if (!!cell) {
+            cell.gridElement.updateValue(value);
+        } else {
+            this.addTile(i, j, value);
+        }
     }
 }

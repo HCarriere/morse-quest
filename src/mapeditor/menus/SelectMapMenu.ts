@@ -2,8 +2,8 @@ import { Graphics } from "@game/core/Graphics";
 import { SideMenu } from "./SideMenu";
 import { Button, ButtonStyle } from "@game/interface/components/Button";
 import { Modale } from "@game/core/Modale";
-import { MapSelectionModale } from "./modales/MapSelectionModale";
-import { MapCreationModale } from "./modales/MapCreationModale";
+import { MapSelectionModale } from "../modales/MapSelectionModale";
+import { MapCreationModale } from "../modales/MapCreationModale";
 
 export class SelectMapMenu extends SideMenu {
     private static padding = 10;

@@ -1,6 +1,7 @@
 import { Graphics } from "@game/core/Graphics";
 import { SideMenu } from "./SideMenu";
-import { Input } from "./components/Input";
+import { Input } from "../components/Input";
+import { TileManager } from "../TileManager";
 
 export class TileEditionMenu extends SideMenu {
     private static padding = 10;
@@ -14,7 +15,7 @@ export class TileEditionMenu extends SideMenu {
             TileEditionMenu.elementHeight,
             (char: string) => !Number.isNaN(parseInt(char)),
             (value: string) => {
-                // TODO update tile value
+                TileManager.editionTileValue = value;
             }
         );
         this.menuElements.push(this.tileValueInput);
