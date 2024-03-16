@@ -4,6 +4,7 @@ import { Button, ButtonStyle } from "@game/interface/components/Button";
 import { Modale } from "@game/core/Modale";
 import { MapSelectionModale } from "../modales/MapSelectionModale";
 import { MapCreationModale } from "../modales/MapCreationModale";
+import { MapManager } from "../MapManager";
 
 export class SelectMapMenu extends SideMenu {
     private static padding = 10;
@@ -49,7 +50,7 @@ export class SelectMapMenu extends SideMenu {
             2 * SelectMapMenu.btnHeight + 5 * SelectMapMenu.padding,
             Graphics.canvas.width - this.startX - 2 * SelectMapMenu.padding,
             SelectMapMenu.btnHeight,
-            () => {},
+            () => {MapManager.saveMap();},
             {
                 ...this.btnStyle,
                 text: 'Sauvegarder la map'

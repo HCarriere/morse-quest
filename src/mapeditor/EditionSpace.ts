@@ -15,6 +15,7 @@ export class EditionSpace extends EngineObject {
     private editionGrid: Grid;
     private pressedCellI: number;
     private pressedCellJ: number;
+    private edited: boolean = false;
     constructor(public endX: number) {
         super();
         this.editionGrid = new Grid(
@@ -67,16 +68,22 @@ export class EditionSpace extends EngineObject {
                 this.editionGrid.addTile(nbEmptyCols + i, nbEmtpyRows + j, `${isNaN(value) ? '' : value}`);
             }
         }
+        this.edited = false;
     }
     private onDrag(x: number, y: number): void {
+        if (!this.editionGrid.isInbound(x, y)) return;
         this.updateValue(x, y);
     }
     private onDrop(x: number, y: number): void {
+        if (isNaN(this.pressedCellI) || isNaN(this.pressedCellJ)) return;
         this.unsetPressedCell();
+        this.updateMap();
     }
     private onClick(x: number, y: number): void {
+        if (!this.editionGrid.isInbound(x, y)) return;
         this.updateValue(x, y);
         this.unsetPressedCell();
+        this.updateMap();
     }
     private updateValue(x: number, y: number): void {
         let i = this.editionGrid.getCellI(x);
@@ -85,9 +92,26 @@ export class EditionSpace extends EngineObject {
         this.pressedCellI = i;
         this.pressedCellJ = j;
         this.editionGrid.updateTile(i, j, TileManager.editionTileValue);
+        this.edited = true;
     }
     private unsetPressedCell(): void {
         delete this.pressedCellI;
         delete this.pressedCellJ;
+    }
+    private updateMap(): void {
+        if (!this.edited) return;
+        let firstCol = this.editionGrid.getFirstNonEmptyCol();
+        let firstRow = this.editionGrid.getFirstNonEmptyRow();
+        let lastCol = this.editionGrid.getLastNonEmptyCol();
+        let lastRow = this.editionGrid.getLastNonEmptyRow();
+        let mapWidth = lastCol - firstCol + 1;
+        let mapHeight = lastRow - firstRow + 1;
+        MapManager.MapTiles = [];
+        for (let j = 0; j < mapHeight; j++) {
+            MapManager.MapTiles[j] = Array(mapWidth).fill(NaN);
+        }
+        this.editionGrid.getNonEmptyCells().forEach(cell => MapManager.MapTiles[cell.j - firstRow][cell.i - firstCol] = parseInt(cell.value));
+        MapManager.MapHeight = mapHeight;
+        MapManager.MapWidth = mapWidth;
     }
 }

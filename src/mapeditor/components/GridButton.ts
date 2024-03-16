@@ -16,4 +16,12 @@ export class GridButton extends Button implements GridElement {
     updateValue(value: string): void {
         console.log('cannot update value of grid button', this);
     }
+
+    hasValue(): boolean {
+        return true;
+    }
+
+    getValue(): string {
+        return this.style.text;
+    }
 }

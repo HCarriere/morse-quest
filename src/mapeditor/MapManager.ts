@@ -1,4 +1,5 @@
 import { RawMaps } from "@game/content/RawMaps";
+import { ServerApi } from "./ServerApi";
 
 export class MapManager {
     private static _currentMapId: string;
@@ -24,18 +25,26 @@ export class MapManager {
 
         this._currentMapId = mapId;
         const lines = RawMaps[mapId].split('\n');
-        for (let i = 0; i < lines.length; i++) {
-            const cells = lines[i].split('\t');
-            MapManager.MapWidth >= cells.length ? null : MapManager.MapWidth = cells.length;
-            MapManager.MapTiles[i] = [];
-            for (let j = 0; j < cells.length; j++) {
-                MapManager.MapTiles[i][j] = parseInt(cells[j]);
+        for (let j = 0; j < lines.length; j++) {
+            const cells = lines[j].split('\t');
+            if (MapManager.MapWidth < cells.length) MapManager.MapWidth = cells.length;
+            MapManager.MapTiles[j] = [];
+            for (let i = 0; i < cells.length; i++) {
+                MapManager.MapTiles[j][i] = parseInt(cells[i]);
             }
         }
         MapManager.MapHeight = lines.length;
         console.log(`${MapManager.MapWidth} x ${MapManager.MapHeight} map loaded`);
         this.loadListeners.forEach(listener => listener());
     }
+
+    public static saveMap(): void {
+        RawMaps[this.currentMapId] = MapManager.MapTiles.reduce((lines, newLine) => !lines ? this.serializeLine(newLine) : `${lines}\n${this.serializeLine(newLine)}`, '');
+        ServerApi.saveRawMaps(RawMaps);
+    }
+
+    private static serializeLine(line: number[]): string { return line.reduce((cells, newCell) => !cells ? this.serializeCell(newCell) : `${cells}\t${this.serializeCell(newCell)}`, ''); }
+    private static serializeCell(cell: number): string { return isNaN(cell) ? '' : `${cell}`; }
 
     public static addNewMap(mapId): void {
         this.mapList.push(mapId);

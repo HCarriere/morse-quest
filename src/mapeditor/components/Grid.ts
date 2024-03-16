@@ -63,7 +63,7 @@ export class Grid {
         return this.cells.map(cell => cell.engineObject);
     }
     public getNbNonEmptyCellsInRange(startI: number, startJ: number, endI: number, endJ: number): number {
-        return this.cells.filter(cell => cell.i >= startI && cell.i < endI && cell.j >= startJ && cell.j < endJ).length;
+        return this.cells.filter(cell => cell.i >= startI && cell.i < endI && cell.j >= startJ && cell.j < endJ && cell.gridElement.hasValue()).length;
     }
     public drawGrid(): void {
         Graphics.ctx.save();
@@ -117,5 +117,29 @@ export class Grid {
         } else {
             this.addTile(i, j, value);
         }
+    }
+    public getFirstNonEmptyCol(): number {
+        let nonEmptyCells = this.cells.filter(cell => cell.gridElement.hasValue());
+        return !!nonEmptyCells ? nonEmptyCells.map(cell => cell.i).sort((a, b) => a - b)[0] : -1;
+    }
+    public getFirstNonEmptyRow(): number {
+        let nonEmptyCells = this.cells.filter(cell => cell.gridElement.hasValue());
+        return !!nonEmptyCells ? nonEmptyCells.map(cell => cell.j).sort((a, b) => a - b)[0] : -1;
+    }
+    public getLastNonEmptyCol(): number {
+        let nonEmptyCells = this.cells.filter(cell => cell.gridElement.hasValue());
+        return !!nonEmptyCells ? nonEmptyCells.map(cell => cell.i).sort((a, b) => b - a)[0] : -1;
+    }
+    public getLastNonEmptyRow(): number {
+        let nonEmptyCells = this.cells.filter(cell => cell.gridElement.hasValue());
+        return !!nonEmptyCells ? nonEmptyCells.map(cell => cell.j).sort((a, b) => b - a)[0] : -1;
+    }
+    public getNonEmptyCells(): {i: number, j: number, value: string}[] {
+        let nonEmptyCells = this.cells.filter(cell => cell.gridElement.hasValue());
+        return nonEmptyCells.map(cell => ({i: cell.i, j: cell.j, value: cell.gridElement.getValue()}));
+    }
+    public isInbound(x: number, y: number): boolean {
+        return (x > this.x && x < this.x + this.width && 
+                y > this.y && y < this.y + this.height);
     }
 }

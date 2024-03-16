@@ -18,6 +18,14 @@ export class GridTile extends EngineObject implements GridElement {
         this.value = value;
     }
 
+    hasValue(): boolean {
+        return !!this.value;
+    }
+
+    getValue(): string {
+        return this.value;
+    }
+
     public display() {
         Graphics.ctx.save();
         Graphics.ctx.fillStyle = 'white';
@@ -35,7 +43,7 @@ export class GridTile extends EngineObject implements GridElement {
     }
 
     /**
-     * Returns true if x,y is inside button
+     * Returns true if x,y is inside tile
      * @param x 
      * @param y 
      */
