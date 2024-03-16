@@ -12,8 +12,10 @@ export class SideMenus extends EngineObject {
         this.menus.push(new TileEditionMenu(this.startX));
     }
     public display() {
-        Graphics.ctx.fillStyle = 'green';
+        Graphics.ctx.fillStyle = 'black';
         Graphics.ctx.fillRect(this.startX, 0, Graphics.canvas.width - this.startX, Graphics.canvas.height);
+        Graphics.ctx.strokeStyle = 'white';
+        Graphics.ctx.strokeRect(this.startX, 0, Graphics.canvas.width - this.startX, Graphics.canvas.height);
         let startY = 0;
         this.menus.forEach(menu => {
             startY = menu.displayMenu(startY);
@@ -26,6 +28,10 @@ export class SideMenus extends EngineObject {
     public keyPressed(key: number): void {
         super.keyPressed(key);
         this.menus.forEach(menu => menu.keyPressed(key));
+    }
+    public originalKeyPressed(key: string): void {
+        super.originalKeyPressed(key);
+        this.menus.forEach(menu => menu.originalKeyPressed(key));
     }
     public mousePressed(x: number, y: number): void {
         super.mousePressed(x, y);

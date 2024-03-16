@@ -27,6 +27,12 @@ export abstract class EngineObject {
     public keyPressed(key: number) {}
 
     /**
+     * Each keypress event
+     * @param key 
+     */
+    public originalKeyPressed(key: string) {}
+
+    /**
      * Each mouse pressed event
      * @param x 
      * @param y 
