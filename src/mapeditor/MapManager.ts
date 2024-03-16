@@ -43,7 +43,7 @@ export class MapManager {
         ServerApi.saveRawMaps(RawMaps);
     }
 
-    private static serializeLine(line: number[]): string { return line.reduce((cells, newCell) => !cells ? this.serializeCell(newCell) : `${cells}\t${this.serializeCell(newCell)}`, ''); }
+    private static serializeLine(line: number[]): string { return line.reduce((cells, newCell, index) => index > 0 ? `${cells}\t${this.serializeCell(newCell)}` : this.serializeCell(newCell), ''); }
     private static serializeCell(cell: number): string { return isNaN(cell) ? '' : `${cell}`; }
 
     public static addNewMap(mapId): void {
