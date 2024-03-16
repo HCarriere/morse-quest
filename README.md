@@ -82,13 +82,16 @@ https://hcarriere.github.io/morse-quest/
         - spells from the class pool
         - a stat up (hp, energy, slots ...)
     - [ ] Inventory
+    - [ ] Equipment
+    - [ ] Usables
+    - [ ] Keys ?
 - [ ] World
     - [ ] Map builder
     - [ ] Player death
     - [ ] Encounter spawners ? random ? handcrafted ?
     - [ ] Pathfinding
     - [ ] Enemy agro & follow player
-    - [ ] Activables (traps, enigmas ...)
+    - [ ] Activables (traps, enigmas, locked doors ...)
     - [ ] Iminent death
     - [ ] Saves
 - [ ] Hub
