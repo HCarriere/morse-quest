@@ -22,8 +22,8 @@ export class MapEditor extends Engine {
         // TODO
     }
     protected override resize(): void {
-        super.resize();
         this.updateFrontier();
+        super.resize();
     }
     private updateFrontier(): void {
         let frontierX = Graphics.canvas.width * 4/5;
