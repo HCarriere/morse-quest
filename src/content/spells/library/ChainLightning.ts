@@ -4,9 +4,9 @@ import { Spell, DamageType, TargetType } from "../Spell";
 
 export class SpellChainLightning extends Spell {
     public name = "Chaine d'éclairs";
-    public description = ["Envoie une chaine d'éclair sur deux ennemies au choix."];
+    public description = ["Envoie une chaine d'éclair sur deux ennemies au choix.", 'Inflige 12 dégats.'];
     public energyCost = 2;
-    public cooldown = 1;
+    public cooldown = 2;
     
     public icon = {text: "🜁", color: '#205099'};
     public targetType = TargetType.Multiple;
@@ -18,7 +18,7 @@ export class SpellChainLightning extends Spell {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(60, DamageType.Lightning);
+                t.stat.damage(12, DamageType.Lightning);
             }
         }
 

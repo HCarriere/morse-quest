@@ -17,6 +17,7 @@ export enum SkinType {
 export interface Icon {
     text: string;
     color: string;
+    backgroundColor?: string;
 }
 
 /**
@@ -103,9 +104,13 @@ export class GameGraphics extends Graphics {
      */
     public static displayIcon(icon: Icon, x: number, y: number, size: number) {
         GameGraphics.ctx.fillStyle = icon.color;
-        GameGraphics.ctx.font = `bold ${size}px Luminari`
+        GameGraphics.ctx.font = `bold ${size}px ${GameGraphics.FONT}`
         GameGraphics.ctx.textAlign = "left";
         GameGraphics.ctx.textBaseline = "top";
-        GameGraphics.ctx.fillText(icon.text, x, y);
+        GameGraphics.ctx.fillText(icon.text, x, y, size);
+        if (icon.backgroundColor) {
+            GameGraphics.ctx.fillStyle = icon.backgroundColor;
+            GameGraphics.ctx.fillRect(x, y, size, size);
+        }
     }
 }

@@ -3,6 +3,8 @@ import { DamageType, Spell } from "./spells/Spell";
 import { Skill } from "./skills/Skill";
 import { InventorySlot, Item } from "./items/Item";
 import { SpellFireball } from "./spells/library/Fireball";
+import { Buff } from "./buffs/Buff";
+import { SpellCreateShield } from "./spells/library/CreateShield";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -20,17 +22,10 @@ export class GameStats {
      */
     public energy: number;
 
-    // base stats (no modifiers)
-    public baseConstitution: number;
-    public baseStrengh: number;
-    public baseDexterity: number;
-    public baseIntelligence: number;
-    public baseWisdom: number;
+    public baseHp: number;
+    public baseEnergy = 4;
 
     // advanced stats
-
-    // multiply this to obtain final hp
-    public classHpMultiplicator: number;
 
     public flatDamageReductor = 0;
 
@@ -52,55 +47,49 @@ export class GameStats {
     public activeSkillScore = 0;
     public passiveSkillsMax = 4;
 
-    public initiative: number;
-
     // unused inventory
-    public iventory: Item[];
-
+    public inventory: Item[] = [];
     // equiped items
-    public equiped: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
+    public equipedItems: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
 
     public currentXp = 0;
     public targetXp: number;
     public level = 1;
-
     public gold = 0;
+
     // animations values
+
+    /**
+     * Buffs and debuff
+     */
+    public buffs: Buff[] = [];
 
     private animTargetHealth: number;
     private animTargetEnergy: number;
     
-    constructor(mult = 1) {
-        this.baseConstitution = 1*mult;
-        this.baseStrengh = 1*mult;
-        this.baseDexterity = 1*mult;
-        this.baseIntelligence = 1*mult;
-        this.baseWisdom = 1*mult;
+    constructor(baseHp = 30) {
+        this.baseHp = baseHp;
 
-        this.initiative = 1*mult;
-        
-        this.classHpMultiplicator = 1;
-        
         this.hp = this.maxHp;
         this.energy = this.maxEnergy;
-
         this.targetXp = GameStats.calculateNextXpTarget(this.level + 1);
         
         this.cancelAnimation();
 
         this.spells = [
             new SpellFireball(),
+            new SpellCreateShield(),
         ];
 
         this.skills = [];
     }
 
     public get maxHp(): number {
-        return Math.floor((1 + this.baseConstitution) * 10 * this.classHpMultiplicator + 100);
+        return this.baseHp;
     }
 
     public get maxEnergy(): number {
-        return Math.floor((1 + this.baseWisdom) + 4);
+        return this.baseEnergy;
     }
 
     public healFullHp() {
@@ -122,9 +111,72 @@ export class GameStats {
     }
 
     public damage(amount: number, type: DamageType) {
-        amount = Math.max(0, amount - this.flatDamageReductor);
-        this.hp -= amount;
+        // apply reduction
+        const modAmount = Math.max(0, amount - this.flatDamageReductor);
+
+        // notify buffs
+        for (const buff of this.buffs) {
+            buff.onBuffRecipientHit(this, amount);
+        }
+        
+        // remove hp
+        this.hp -= modAmount;
+        // constrain to 0
         this.hp = Math.max(this.hp, 0);
+    }
+
+    /**
+     * Apply a buff, with that many stacks.
+     * @param buff 
+     * @param stack 
+     */
+    public applyBuff(buff: Buff, stacks: number) {
+        const sBuff = this.buffs.find(b => b.name == buff.name);
+        if (sBuff) {
+            // already applied
+            sBuff.applyNewStack(this, stacks);
+        } else {
+            buff.onBuffed(this);
+            if (stacks > 1) {
+                buff.applyNewStack(this, stacks - 1);
+            }
+            this.buffs.push(buff);
+        }
+    }
+
+    /**
+     * Advance buffs depletion AND plays their "onnewTurn" event.
+     * To be played each new turn.
+     */
+    public advanceBuffDepletion() {
+        for (const b of this.buffs) {
+            b.onNewTurn(this);
+            b.duration -= 1;
+        }
+        this.clearNecessaryBuffs();
+    }
+
+    /**
+     * Clear buffs that have no more duration OR no more stacks
+     */
+    public clearNecessaryBuffs() {
+        for (let i = this.buffs.length - 1; i >= 0; i--) {
+            if (this.buffs[i].duration == 0 
+                || this.buffs[i].stack == 0) {
+                this.buffs[i].onUnbuffed(this);
+                this.buffs.splice(i, 1);
+            }
+        }
+    }
+
+    /**
+     * Force clear af all buffs
+     */
+    public clearAllBuffs() {
+        for (let i = this.buffs.length - 1; i >= 0; i--) {
+            this.buffs[i].onUnbuffed(this);
+        }
+        this.buffs = [];
     }
 
     /**
@@ -216,6 +268,11 @@ export class GameStats {
     }
 
 
+    public resetAllCooldowns() {
+        for (const s of this.spells) {
+            s.currentCooldown = 0;
+        }
+    }
 
     private static calculateNextXpTarget(nextLevel: number): number {
         return (nextLevel-1) * 1000;
@@ -294,6 +351,7 @@ export class GameStats {
      */
     public cancelAnimation() {
         this.animTargetHealth = this.hp;
+        this.animTargetEnergy = this.energy;
     }
     
 }
