@@ -41,6 +41,7 @@ export class DialoguesTuto {
                         () => {
                             // on combat win
                             GameMap.removeGameObjectById('tuto_fight');
+                            GameMap.removeGameObjectById('tuto_wall');
                         }))}
                 }
             ]

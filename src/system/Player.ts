@@ -106,6 +106,15 @@ export class Player extends EngineObject {
             return;
         }
 
+        const gameobject = GameMap.getMapObject({x: coordinates.x, y: coordinates.y})
+        if (gameobject) {
+            // get id solid
+            if (gameobject.solid) {
+                return;
+            }
+            gameobject.onWalk();
+        }
+
         // process movement
         Player.x = coordinates.x;
         Player.y = coordinates.y;
@@ -113,9 +122,6 @@ export class Player extends EngineObject {
         Camera.targetCoordinates = {x: Player.x, y: Player.y};
 
         this.tilt = this.tilt <= 0 ? this.tilt = 30 : this.tilt = -30;
-
-        // process walk tile event
-        Player.processGameEvent(GameMap.getMapObject({x: coordinates.x, y: coordinates.y}));
     }
 
     public display() {
@@ -155,7 +161,7 @@ export class Player extends EngineObject {
     private static canMoveTo(x: number, y: number): boolean {
         // too far
         if (Math.abs(Player.x - x) + Math.abs(Player.y - y) != 1) return false;
-        // solid
+        // tile solid
         const tile = GameMap.getCollision({x, y});
         if (!tile || tile.solid) {
             // cancel movement
@@ -173,13 +179,6 @@ export class Player extends EngineObject {
         Player.move({x: GameController.mouseTileX, y: GameController.mouseTileY});
     }
 
-    private static processGameEvent(object: MapObject) {
-        if (!object) return;
-
-        if (object.onWalk) {
-            object.onWalk();
-        }
-    }
 
     public static die() {
         console.log('Death');

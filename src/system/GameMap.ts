@@ -28,6 +28,10 @@ export interface MapObject {
     y?: number;
     skin?: Skin;
     onWalk?: () => void;
+    /**
+     * If true, player can't cross this object
+     */
+    solid?: boolean;
 }
 
 export interface TileSettings {
@@ -91,9 +95,15 @@ export class GameMap extends EngineObject {
                 const mapObject = GameMap.getMapObjectFromRaw({x: j, y: i});
                 if (mapObject) {
                     // init mapobject coordinates
-                    mapObject.x = j;
-                    mapObject.y = i;
-                    GameMap.MapObjects.push(GameMap.getMapObjectFromRaw({x: j, y: i}));
+                    const mo: MapObject = {
+                        id: mapObject.id,
+                        x: j,
+                        y: i,
+                        onWalk: mapObject.onWalk,
+                        skin: mapObject.skin,
+                        solid: mapObject.solid,
+                    }
+                    GameMap.MapObjects.push(mo);
                 }
             }
         }
@@ -184,11 +194,15 @@ export class GameMap extends EngineObject {
         return null;
     }
 
+    /**
+     * Remove all gameobjects sharing this id
+     * @param id 
+     * @returns 
+     */
     public static removeGameObjectById(id: string) {
         for (let i=GameMap.MapObjects.length-1; i>=0; i--) {
             if (GameMap.MapObjects[i].id && GameMap.MapObjects[i].id == id) {
                 GameMap.MapObjects.splice(i, 1);
-                return;
             }
         }
     }

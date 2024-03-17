@@ -9,6 +9,7 @@ import { SkinDrone } from "./skins/enemies/Drone";
 import { RawMaps } from "./RawMaps";
 import { SkinInfo } from "./skins/objects/Info";
 import { SkinPortal } from "./skins/objects/Portal";
+import { SkinLock } from "./skins/objects/Lock";
 
 
 export enum Biome {
@@ -60,6 +61,11 @@ export class Maps {
 
     private static MAP_TUTO: MapInfo = {
         objects: new Map<number, MapObject>([
+            [800, {
+                id: 'tuto_wall',
+                skin: new SkinLock(),
+                solid: true,
+            }],
             [900, {
                 onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
                 skin: new SkinInfo(),
