@@ -2,7 +2,6 @@ import { Biome, Maps } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { EngineObject } from "../core/EngineObject";
 import { GameGraphics, ObjectSkin } from "./GameGraphics";
-import { GameEncounter, GameEvents } from "@game/content/GameEvents";
 import { Skin } from "@game/content/Skin";
 
 export interface Coordinates {
@@ -18,10 +17,15 @@ export interface MapInfo {
     biome?: Biome;
 }
 
+/**
+ * Displays an non-tile objects (enemies, traps, events, doors ...)
+ */
 export interface MapObject {
+    x?: number;
+    y?: number;
     skin?: ObjectSkin;
     enemySkin?: Skin;
-    onWalk: () => void;
+    onWalk?: () => void;
 }
 
 export interface TileSettings {
@@ -42,7 +46,7 @@ export class GameMap extends EngineObject {
     static MapWidth: number;
     static MapHeight: number;
     static SpawnPoints: Coordinates[];
-    static Encounters: Map<string, GameEncounter>;
+    static MapObjects: MapObject[];
 
     private static currentMapInfo: MapInfo;
 
@@ -56,10 +60,10 @@ export class GameMap extends EngineObject {
         console.log(`loading map <${mapId}>`)
         GameMap.MapTiles = [];
         GameMap.SpawnPoints = [];
+        GameMap.MapObjects = [];
         GameMap.MapWidth = 0;
         GameMap.MapHeight = 0;
         GameMap.currentMapInfo = null;
-        GameMap.Encounters = new Map<string, GameEncounter>();
         
         if (!Maps.MapIDS[mapId]) {
             console.log(`can't find map <${mapId}>, loading <main>`);
@@ -80,19 +84,21 @@ export class GameMap extends EngineObject {
                 if (GameMap.getTileSetting(GameMap.MapTiles[i][j]).respawn) {
                     GameMap.SpawnPoints.push({x: j, y: i});
                 }
-                // encounter
-                if (GameMap.getTileSetting(GameMap.MapTiles[i][j]).randomEncounter) {
-                    const encounter = GameEvents.generateMapEncounters(GameMap.currentMapInfo);
-                    if (encounter) {
-                        GameMap.Encounters.set(`${j}:${i}`, encounter);
-                    }
+
+                // map objects
+                const mapObject = GameMap.getMapObjectFromRaw({x: j, y: i});
+                if (mapObject) {
+                    // init mapobject coordinates
+                    mapObject.x = j;
+                    mapObject.y = i;
+                    GameMap.MapObjects.push(GameMap.getMapObjectFromRaw({x: j, y: i}));
                 }
             }
         }
         GameMap.MapHeight = lines.length;
         console.log(`${GameMap.MapWidth} x ${GameMap.MapHeight} map loaded`);
         console.log('spawn points', GameMap.SpawnPoints);
-        console.log('encounters', GameMap.Encounters);
+        console.log('map objects', GameMap.MapObjects);
     }
 
     public display() {
@@ -109,14 +115,24 @@ export class GameMap extends EngineObject {
                 const tile = GameMap.getCollision({x, y});
                 if (tile) GameGraphics.displayTile(tile, x, y);
 
-                const obj = GameMap.getMapObject({x, y});
-                if (obj && obj.skin) GameGraphics.displayObject(obj, x, y);
-                if (obj && obj.enemySkin) obj.enemySkin.display(
-                    x * Camera.cellSize - Camera.offsetX, 
-                    y * Camera.cellSize - Camera.offsetY, 
-                    Camera.cellSize
-                );
+                /*const obj = GameMap.getMapObject({x, y});
+                */
             }
+        }
+
+        // display gameobjects
+        for (const mo of GameMap.MapObjects) {
+            
+            // inside camera ?
+            if (!Camera.isVisible({x: mo.x, y: mo.y})) continue;
+            // display skin
+            if (mo.skin) GameGraphics.displayObject(mo, mo.x, mo.y);
+            // display enemy skin
+            /*if (mo.enemySkin) mo.enemySkin.display(
+                mo.x * Camera.cellSize - Camera.offsetX, 
+                mo.y * Camera.cellSize - Camera.offsetY, 
+                Camera.cellSize
+            );*/
         }
     }
 
@@ -139,9 +155,30 @@ export class GameMap extends EngineObject {
         }
     }
 
+    /**
+     * Returns the first MapObject in this coordinate
+     * @param coordinates 
+     * @returns 
+     */
     public static getMapObject(coordinates: Coordinates): MapObject {
+        for (const mo of GameMap.MapObjects) {
+            if (mo.x == coordinates.x && mo.y == coordinates.y) {
+                return mo;
+            }
+        }
+    }
+
+    /**
+     * Get a configured mapobject from raw coordinates.
+     * @param coordinates 
+     * @returns 
+     */
+    private static getMapObjectFromRaw(coordinates: Coordinates): MapObject {
         const n = GameMap.MapTiles[coordinates.y][coordinates.x];
+        // not an object / invalid tile ID
         if (n <= 1 || !GameMap.currentMapInfo.objects) return;
+        
+        // this map has a definition for this ID
         if (GameMap.currentMapInfo.objects.has(n)) {
             return GameMap.currentMapInfo.objects.get(n);
         }

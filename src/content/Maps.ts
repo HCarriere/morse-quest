@@ -20,13 +20,16 @@ export enum Biome {
  */
 export class Maps {
 
+    /**
+     * Generic tiles descriptions
+     */
     public static TilesInfo = new Map<number, TileSettings>([
         // tiles
-        [1, {solid: true, visible: true, color: '#010289'}],
-        [11, {solid: true, visible: true, color: '#0102CC'}],
+        [1, {solid: true, visible: true, color: '#666'}],
+        [11, {solid: true, visible: true, color: '#777'}],
         // events & flags
         [2, {respawn: true}],
-        [21, {randomEncounter: true, visible: true, color: '#010203'}], // meant to be invisible
+        [21, {randomEncounter: true, visible: true}],
     ]);
 
     private static MAP_MAIN: MapInfo = {
@@ -65,12 +68,8 @@ export class Maps {
                 skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
             }],
             [902, {
-                onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test ALPHA', new SkinDrone(), new GameStats()), 
-                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats())].slice(Math.floor(Math.random() * 4))))},
-                enemySkin: new SkinDrone()
+                onWalk: () => {GameInterface.addDialogue(DialoguesTuto.FIRST_FIGHT)},
+                enemySkin: new SkinDrone('orange')
             }]
         ]), 
         raw: RawMaps.tuto

@@ -37,6 +37,19 @@ export class Camera extends EngineObject {
     }
 
     /**
+     * Returns true if the coordinates are inside camera scope
+     * @param coordinates 
+     */
+    public static isVisible(co: Coordinates): boolean {
+        const x = co.x * Camera.cellSize - Camera.offsetX;
+        const y = co.y * Camera.cellSize - Camera.offsetY;
+        if (x < Camera.cellSize || y < Camera.cellSize || 
+            x > GameGraphics.canvas.width || y > GameGraphics.canvas.height) return false;
+        
+        return true;
+    }
+
+    /**
      * Directly snap camera towards its target
      */
     public static snap() {

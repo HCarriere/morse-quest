@@ -35,6 +35,9 @@ export abstract class Engine {
         Graphics.canvas.width = Graphics.canvas.parentElement.clientWidth;
         Graphics.canvas.height = Graphics.canvas.parentElement.clientHeight;
 
+        // background color
+        Graphics.canvas.style.backgroundColor = '#e1e1e1';
+
         this.engineObjects = [];
 
         return true;
@@ -43,8 +46,8 @@ export abstract class Engine {
     private loop() {
         Graphics.ctx.clearRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);
         // background test
-        Graphics.ctx.fillStyle = '#111';
-        Graphics.ctx.fillRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);
+        /*Graphics.ctx.fillStyle = '#111';
+        Graphics.ctx.fillRect(0, 0, Graphics.canvas.width, Graphics.canvas.height);*/
         
         for (const obj of this.engineObjects) {
             obj.display();

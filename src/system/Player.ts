@@ -62,7 +62,6 @@ export class Player extends EngineObject {
 
         Player.x = coordinates.x;
         Player.y = coordinates.y;
-
         
         Camera.targetCoordinates = {x: Player.x, y: Player.y};
 

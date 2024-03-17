@@ -3,7 +3,6 @@ import { Camera } from "./system/Camera";
 import { GameController } from "./system/GameController";
 import { Engine } from "./core/Engine";
 import { GameMap } from "./system/GameMap";
-import { EngineObject } from "./core/EngineObject";
 import { GameGraphics } from "./system/GameGraphics";
 import { Player } from "./system/Player";
 

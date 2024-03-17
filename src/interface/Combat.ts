@@ -278,6 +278,18 @@ export class Combat extends EngineObject {
     }
 
     private doPlayerAction(spell: Spell) {
+        console.log(spell)
+        // check if already is targeting something
+        if (this.targetSelectionToChoose) {
+            this.targetSelectionToChoose = 0;
+            return;
+        }
+
+        // check if action is not already running 
+        if (this.currentSpellPlayed) {
+            return;
+        }
+
         // check cooldown
         if (spell.currentCooldown > 0) {
             // cooldown not ready
@@ -289,42 +301,54 @@ export class Combat extends EngineObject {
             return;
         } 
         
-        // process cooldown
-        spell.currentCooldown = spell.cooldown;
-        
-        // process energy
-        Player.stats.energy -= spell.energyCost;
-        
         switch(spell.targetType) {
             case TargetType.NoTarget:
+                // process cooldown & energy
+                spell.currentCooldown = spell.cooldown;
+                Player.stats.energy -= spell.energyCost;
                 this.playSpellAnimation(spell, [], 'player', () => {
                     this.checkCombatState();
                 });
             break;
             case TargetType.Self:
+                // process cooldown & energy
+                spell.currentCooldown = spell.cooldown;
+                Player.stats.energy -= spell.energyCost;
                 this.playSpellAnimation(spell, ['player'], 'player', () => {
                     this.checkCombatState();
                 });
             break;
             case TargetType.Single:
                 this.chooseTargets(1, (targets) => {
+                    // process cooldown & energy
+                    spell.currentCooldown = spell.cooldown;
+                    Player.stats.energy -= spell.energyCost;
                     this.playSpellAnimation(spell, targets, 'player', () => {
                         this.checkCombatState();
                     });
                 });
             break;
             case TargetType.AllEnemies:
+                // process cooldown & energy
+                spell.currentCooldown = spell.cooldown;
+                Player.stats.energy -= spell.energyCost;
                 this.playSpellAnimation(spell, this.enemies, 'player', () => {
                     this.checkCombatState();
                 });
             break;
             case TargetType.All:
+                // process cooldown & energy
+                spell.currentCooldown = spell.cooldown;
+                Player.stats.energy -= spell.energyCost;
                 this.playSpellAnimation(spell, [...this.enemies, "player"], 'player', () => {
                     this.checkCombatState();
                 });
             break;
             case TargetType.Multiple:
                 this.chooseTargets(spell.targetMax, (targets) => {
+                    // process cooldown & energy
+                    spell.currentCooldown = spell.cooldown;
+                    Player.stats.energy -= spell.energyCost;
                     this.playSpellAnimation(spell, targets, 'player', () => {
                         this.checkCombatState();
                     });
@@ -549,7 +573,6 @@ export class Combat extends EngineObject {
                     return;
                 }
             }
-            return;
         }
 
         // if its player turn & no animation running
