@@ -12,10 +12,6 @@ import { SkinPortal } from "./skins/objects/Portal";
 import { SkinLock } from "./skins/objects/Lock";
 
 
-export enum Biome {
-    Normal = 0,
-}
-
 /**
  * - Tiles are for decoration, flags, generic events
  * - Map Objects are for specific and scripted events
@@ -31,12 +27,9 @@ export class Maps {
         [11, {solid: true, visible: true, color: '#777'}],
         // events & flags
         [2, {respawn: true}],
-        [21, {randomEncounter: true, visible: true}],
     ]);
 
     private static MAP_MAIN: MapInfo = {
-        encounterLevel: 1,
-        biome: Biome.Normal,
         objects: new Map<number, MapObject>([
             [901, {
                 onWalk: () => {Player.teleport(null, 'tuto')},

@@ -1,4 +1,4 @@
-import { Biome, Maps } from "@game/content/Maps";
+import { Maps } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { EngineObject } from "../core/EngineObject";
 import { GameGraphics } from "./GameGraphics";
@@ -12,8 +12,6 @@ export interface Coordinates {
 export interface MapInfo {
     objects?: Map<number, MapObject>;
     raw: string;
-    encounterLevel?: number;
-    biome?: Biome;
 }
 
 /**
@@ -24,23 +22,22 @@ export interface MapObject {
      * Used to identify unique mapobjects and act on them. 
      */
     id?: string;
-    x?: number;
-    y?: number;
-    skin?: Skin;
-    onWalk?: () => void;
     /**
      * If true, player can't cross this object
      */
     solid?: boolean;
+    x?: number;
+    y?: number;
+    skin?: Skin;
+    onWalk?: () => void;
+    onDelete?: () => void;
 }
 
 export interface TileSettings {
     visible?: boolean;
     color?: string;
     solid?: boolean;
-
     respawn?: boolean;
-    randomEncounter?: boolean;
 }
 
 export class GameMap extends EngineObject {
@@ -100,6 +97,7 @@ export class GameMap extends EngineObject {
                         x: j,
                         y: i,
                         onWalk: mapObject.onWalk,
+                        onDelete: mapObject.onDelete,
                         skin: mapObject.skin,
                         solid: mapObject.solid,
                     }
@@ -202,6 +200,11 @@ export class GameMap extends EngineObject {
     public static removeGameObjectById(id: string) {
         for (let i=GameMap.MapObjects.length-1; i>=0; i--) {
             if (GameMap.MapObjects[i].id && GameMap.MapObjects[i].id == id) {
+                // play delete event
+                if (GameMap.MapObjects[i].onDelete) {
+                    GameMap.MapObjects[i].onDelete();
+                }
+                // remove
                 GameMap.MapObjects.splice(i, 1);
             }
         }
