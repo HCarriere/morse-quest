@@ -1,13 +1,14 @@
 import { GameInterface } from "@game/interface/GameInterface";
 import { Player } from "@game/system/Player";
-import { SkinType } from "@game/system/GameGraphics";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
 import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 import { Combat } from "@game/interface/Combat";
 import { Enemy } from "./Enemy";
 import { GameStats } from "./GameStats";
-import { SkinDrone } from "./skins/Drone";
+import { SkinDrone } from "./skins/enemies/Drone";
 import { RawMaps } from "./RawMaps";
+import { SkinInfo } from "./skins/objects/Info";
+import { SkinPortal } from "./skins/objects/Portal";
 
 
 export enum Biome {
@@ -38,11 +39,11 @@ export class Maps {
         objects: new Map<number, MapObject>([
             [901, {
                 onWalk: () => {Player.teleport(null, 'tuto')},
-                skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
+                skin: new SkinPortal()
             }],
             [900, {
                 onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
-                skin: {type: SkinType.AttentionMark, primaryColor: 'red', secondaryColor: 'white'}
+                skin: new SkinInfo()
             }],
             [902, {
                 onWalk: () => {GameInterface.setCombat(new Combat(
@@ -51,7 +52,7 @@ export class Maps {
                     new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats(120)),
                     new Enemy('Mr. Test #3', new SkinDrone(), new GameStats()),
                     new Enemy('Mr. Test #4', new SkinDrone(), new GameStats())]))},
-                enemySkin: new SkinDrone()
+                skin: new SkinDrone()
             }]
         ]),
         raw: RawMaps.main
@@ -61,15 +62,15 @@ export class Maps {
         objects: new Map<number, MapObject>([
             [900, {
                 onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},
-                skin: {type: SkinType.AttentionMark, primaryColor: 'red', secondaryColor: 'white'}
+                skin: new SkinInfo(),
             }],
             [901, {
                 onWalk: () => {Player.teleport(null, 'main')},
-                skin: {type: SkinType.Portal, primaryColor: 'white', secondaryColor: 'blue'}
+                skin: new SkinPortal(),
             }],
             [902, {
                 onWalk: () => {GameInterface.addDialogue(DialoguesTuto.FIRST_FIGHT)},
-                enemySkin: new SkinDrone('orange')
+                skin: new SkinDrone('orange'),
             }]
         ]), 
         raw: RawMaps.tuto

@@ -1,8 +1,8 @@
 import { Biome, Maps } from "@game/content/Maps";
 import { Camera } from "./Camera";
 import { EngineObject } from "../core/EngineObject";
-import { GameGraphics, ObjectSkin } from "./GameGraphics";
-import { Skin } from "@game/content/Skin";
+import { GameGraphics } from "./GameGraphics";
+import { Skin } from "@game/content/skins/Skin";
 
 export interface Coordinates {
     x: number;
@@ -12,7 +12,6 @@ export interface Coordinates {
 export interface MapInfo {
     objects?: Map<number, MapObject>;
     raw: string;
-
     encounterLevel?: number;
     biome?: Biome;
 }
@@ -23,8 +22,7 @@ export interface MapInfo {
 export interface MapObject {
     x?: number;
     y?: number;
-    skin?: ObjectSkin;
-    enemySkin?: Skin;
+    skin?: Skin;
     onWalk?: () => void;
 }
 
@@ -126,13 +124,10 @@ export class GameMap extends EngineObject {
             // inside camera ?
             if (!Camera.isVisible({x: mo.x, y: mo.y})) continue;
             // display skin
-            if (mo.skin) GameGraphics.displayObject(mo, mo.x, mo.y);
-            // display enemy skin
-            /*if (mo.enemySkin) mo.enemySkin.display(
+            if (mo.skin) mo.skin.display(
                 mo.x * Camera.cellSize - Camera.offsetX, 
                 mo.y * Camera.cellSize - Camera.offsetY, 
-                Camera.cellSize
-            );*/
+                Camera.cellSize);
         }
     }
 

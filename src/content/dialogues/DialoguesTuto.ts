@@ -2,7 +2,7 @@ import { Combat } from "@game/interface/Combat";
 import { DialoguePiece } from "@game/interface/Dialogue"
 import { GameInterface } from "@game/interface/GameInterface";
 import { Player } from "@game/system/Player";
-import { SkinDrone } from "../skins/Drone";
+import { SkinDrone } from "../skins/enemies/Drone";
 import { GameStats } from "../GameStats";
 import { Enemy } from "../Enemy";
 

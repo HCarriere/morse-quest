@@ -1,6 +1,6 @@
 import { GameStats } from "./GameStats";
 import { Combat } from "@game/interface/Combat";
-import { Skin } from "./Skin";
+import { Skin } from "./skins/Skin";
 import { TargetType } from "./spells/Spell";
 
 export class Enemy {

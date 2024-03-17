@@ -3,16 +3,6 @@ import { GameInterface } from "@game/interface/GameInterface";
 import { MapObject, TileSettings } from "./GameMap";
 import { Graphics } from "@game/core/Graphics";
 
-export interface ObjectSkin {
-    type: SkinType;
-    primaryColor: string;
-    secondaryColor: string;
-}
-
-export enum SkinType {
-    AttentionMark = 1,
-    Portal = 2,
-}
 
 export interface Icon {
     text: string;
@@ -49,50 +39,6 @@ export class GameGraphics extends Graphics {
             Math.floor(y * Camera.cellSize - Camera.offsetY), 
             Camera.cellSize, Camera.cellSize);
         GameGraphics.ctx.restore();
-    }
-
-    public static displayObject(object: MapObject, x: number, y: number) {
-        if (!object.skin) return;
-
-        /**
-         * Attention mark graphics
-         */
-        if (object.skin.type == SkinType.AttentionMark) {
-            GameGraphics.ctx.fillStyle = object.skin.secondaryColor;
-            GameGraphics.ctx.save();
-            GameGraphics.ctx.translate(
-                x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
-                y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2);
-            GameGraphics.ctx.rotate(45 * Math.PI/180);
-            GameGraphics.ctx.fillRect(-Camera.cellSize / 2, -Camera.cellSize / 2, Camera.cellSize, Camera.cellSize);
-            GameGraphics.ctx.restore();
-            GameGraphics.ctx.fillStyle = object.skin.primaryColor;
-            GameGraphics.ctx.textAlign = "center";
-            GameGraphics.ctx.font = "30px "+GameGraphics.FONT;
-            GameGraphics.ctx.textBaseline = "middle";
-            GameGraphics.ctx.fillText('!', 
-                x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2, 
-                y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2);
-        }
-        /**
-         * Portal graphics
-         */
-        if (object.skin.type == SkinType.Portal) {
-            GameGraphics.ctx.fillStyle = object.skin.primaryColor;
-            GameGraphics.ctx.beginPath();
-            GameGraphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
-                    y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2,
-                    Camera.cellSize / 2, 0, 2 * Math.PI, false);
-                    GameGraphics.ctx.fill();
-                    GameGraphics.ctx.beginPath();
-                    GameGraphics.ctx.strokeStyle = object.skin.secondaryColor;
-                    GameGraphics.ctx.lineWidth = Camera.cellSize / 10;
-                    GameGraphics.ctx.arc(x * Camera.cellSize - Camera.offsetX + Camera.cellSize / 2,
-                    y * Camera.cellSize - Camera.offsetY + Camera.cellSize / 2,
-                    Camera.cellSize/2, 
-                    GameInterface.frame / 10, GameInterface.frame / 10 + Math.PI, false);
-                    GameGraphics.ctx.stroke();
-        }
     }
 
     /**
