@@ -499,7 +499,8 @@ export class Combat extends EngineObject {
     private end() {
         Player.stats.resetAllCooldowns();
         Player.stats.clearAllBuffs();
-
+        Player.stats.healFullEnergy();
+        
         GameInterface.endCombat();
     }
 

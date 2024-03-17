@@ -16,6 +16,7 @@ export class SpellFireball extends Spell {
 
     constructor(private power = 1) {
         super();
+        if (power > 1) this.icon.color = 'purple';
     }
 
     public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {

@@ -69,12 +69,12 @@ https://hcarriere.github.io/morse-quest/
     - [x] Multiple attacks per round (mana gestion)
     - [x] Spells cooldown
     - [x] Buffs / Debuffs
-    - [ ] Simple Class
     - [ ] Fight reward interface.
         - random XP
         - random gold
         - random item
-    - [ ] Improve fight interface (floating numbers, etc)
+    - [ ] Simple Class
+    - [ ] Improve fight interface (floating numbers, etc) => implement ParticleProcessor 
     - [ ] Random events every few turns ? (buff / debuff / action ...)
 - [ ] Player capabilities
     - [ ] Level up interface.

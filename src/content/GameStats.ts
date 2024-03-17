@@ -290,19 +290,20 @@ export class GameStats {
      */
     public displayHp(x: number, y: number, size: number) {
         // hp bar
-        GameGraphics.ctx.lineWidth = 3;
-        GameGraphics.ctx.strokeStyle = 'white';
+        // GameGraphics.ctx.lineWidth = 3;
+        // GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        // GameGraphics.ctx.strokeStyle = 'white';
         GameGraphics.ctx.fillStyle = 'green';
-        GameGraphics.ctx.fillRect(x, y, this.animTargetHealth * size / this.maxHp, GameStats.HP_BAR_HEIGHT);
-        GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
-        
+        GameGraphics.ctx.beginPath();
+        GameGraphics.ctx.roundRect(x, y, this.animTargetHealth * size / this.maxHp, GameStats.HP_BAR_HEIGHT, [10,10,10,10]);
+        GameGraphics.ctx.fill();
         // text
         GameGraphics.ctx.fillStyle = 'white';
         GameGraphics.ctx.font = '14px '+ GameGraphics.FONT;
         GameGraphics.ctx.fillStyle = 'white';
         GameGraphics.ctx.textAlign = 'left'
         GameGraphics.ctx.textBaseline = 'top';
-        GameGraphics.ctx.fillText(`${this.hp} / ${this.maxHp}`, x + 5, y + 5);
+        GameGraphics.ctx.fillText(`${this.hp} / ${this.maxHp}`, x + 10, y + 5);
 
         if (this.animTargetHealth < this.hp - 1) {
             this.animTargetHealth += 2;
@@ -323,11 +324,13 @@ export class GameStats {
      */
     public displayEnergy(x: number, y: number, size: number) {
         // hp bar
-        GameGraphics.ctx.lineWidth = 3;
-        GameGraphics.ctx.strokeStyle = 'white';
+        // GameGraphics.ctx.lineWidth = 3;
+        // GameGraphics.ctx.strokeStyle = 'white';
+        // GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.beginPath();
         GameGraphics.ctx.fillStyle = 'rgb(5,118,231)';
-        GameGraphics.ctx.fillRect(x, y, this.animTargetEnergy * size / this.maxEnergy, GameStats.HP_BAR_HEIGHT);
-        GameGraphics.ctx.strokeRect(x, y, size, GameStats.HP_BAR_HEIGHT);
+        GameGraphics.ctx.roundRect(x, y, this.animTargetEnergy * size / this.maxEnergy, GameStats.HP_BAR_HEIGHT, [10,10,10,10]);
+        GameGraphics.ctx.fill();
         
         // text
         GameGraphics.ctx.fillStyle = 'white';
@@ -335,7 +338,7 @@ export class GameStats {
         GameGraphics.ctx.fillStyle = 'white';
         GameGraphics.ctx.textAlign = 'left'
         GameGraphics.ctx.textBaseline = 'top';
-        GameGraphics.ctx.fillText(`${this.energy} / ${this.maxEnergy}`, x + 5, y + 5);
+        GameGraphics.ctx.fillText(`${this.energy} / ${this.maxEnergy}`, x + 10, y + 5);
 
         if (this.animTargetEnergy < this.energy - 1) {
             this.animTargetEnergy += 2;
