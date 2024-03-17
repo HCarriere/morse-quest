@@ -14,11 +14,15 @@ export class SpellFireball extends Spell {
 
     private fireTrail: {x: number, y: number, initialSize: number, initialRotate: number, birthFrame: number, deathFrame: number}[];
 
+    constructor(private power = 1) {
+        super();
+    }
+
     public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(15, DamageType.Fire);
+                t.stat.damage(15 * this.power, DamageType.Fire);
             }
         }
 

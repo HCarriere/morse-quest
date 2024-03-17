@@ -34,7 +34,7 @@ export class Player extends EngineObject {
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellIcebolt());
         Player.stats.spells.push(new SpellCreateShield());
-        Player.stats.spells.push(new SpellFireball());
+        Player.stats.spells.push(new SpellFireball(300));
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellIcebolt());
         Player.stats.selectActiveSpell(0);
@@ -112,7 +112,6 @@ export class Player extends EngineObject {
             if (gameobject.solid) {
                 return;
             }
-            gameobject.onWalk();
         }
 
         // process movement
@@ -122,6 +121,8 @@ export class Player extends EngineObject {
         Camera.targetCoordinates = {x: Player.x, y: Player.y};
 
         this.tilt = this.tilt <= 0 ? this.tilt = 30 : this.tilt = -30;
+
+        if (gameobject) gameobject.onWalk();
     }
 
     public display() {
