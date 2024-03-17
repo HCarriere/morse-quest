@@ -20,6 +20,10 @@ export interface MapInfo {
  * Displays an non-tile objects (enemies, traps, events, doors ...)
  */
 export interface MapObject {
+    /**
+     * Used to identify unique mapobjects and act on them. 
+     */
+    id?: string;
     x?: number;
     y?: number;
     skin?: Skin;
@@ -178,6 +182,15 @@ export class GameMap extends EngineObject {
             return GameMap.currentMapInfo.objects.get(n);
         }
         return null;
+    }
+
+    public static removeGameObjectById(id: string) {
+        for (let i=GameMap.MapObjects.length-1; i>=0; i--) {
+            if (GameMap.MapObjects[i].id && GameMap.MapObjects[i].id == id) {
+                GameMap.MapObjects.splice(i, 1);
+                return;
+            }
+        }
     }
 
 }

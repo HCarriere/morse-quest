@@ -1,7 +1,7 @@
 import { GameInterface } from "@game/interface/GameInterface";
 import { Player } from "@game/system/Player";
 import { DialoguesTuto } from "./dialogues/DialoguesTuto";
-import { MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
+import { GameMap, MapInfo, MapObject, TileSettings } from "@game/system/GameMap";
 import { Combat } from "@game/interface/Combat";
 import { Enemy } from "./Enemy";
 import { GameStats } from "./GameStats";
@@ -69,7 +69,17 @@ export class Maps {
                 skin: new SkinPortal(),
             }],
             [902, {
+                id: 'tuto_fight',
                 onWalk: () => {GameInterface.addDialogue(DialoguesTuto.FIRST_FIGHT)},
+                skin: new SkinDrone('orange'),
+            }],
+            [903, {
+                id: 'tuto_fight2',
+                onWalk: () => {GameInterface.setCombat(new Combat(
+                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats()),
+                    new Enemy('Mr. Test #1', new SkinDrone(), new GameStats())], () => {
+                        GameMap.removeGameObjectById('tuto_fight2');
+                    }))},
                 skin: new SkinDrone('orange'),
             }]
         ]), 

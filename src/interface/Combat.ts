@@ -34,6 +34,9 @@ export class Combat extends EngineObject {
     private enemiesSize: number;
     private playerSize: number;
 
+    private onCombatWin: () => void;
+    private onCombatLose: () => void;
+
     private frameAnim: number;
 
     private static MARGIN = 50;
@@ -65,10 +68,15 @@ export class Combat extends EngineObject {
     private targetSelectionCurrent: number[];
     private targetSelectionCallback: (targets: Enemy[])=>void;
 
-    constructor(enemies: Enemy[]) {
+    constructor(enemies: Enemy[],
+                onCombatWin?: () => void,
+                onCombatLose?: () => void,) {
         super();
         
         this.enemies = enemies;
+        this.onCombatWin = onCombatWin;
+        this.onCombatLose = onCombatLose;
+
         this.resize();
         this.frameAnim = 1.0;
         this.buildActions();
@@ -451,7 +459,11 @@ export class Combat extends EngineObject {
         
         // check death
         if (Player.stats.hp <= 0) {
-            Player.die();
+            if (this.onCombatLose) {
+                this.onCombatLose();
+            } else {
+                Player.die();
+            }
             this.end();
             return;
         }
@@ -473,8 +485,11 @@ export class Combat extends EngineObject {
      * Player win
      */
     private winFight() {
-        console.log('you won bro')
+        console.log('you won bro');
         this.end();
+        if (this.onCombatWin) {
+            this.onCombatWin();
+        }
     }
 
     /**
