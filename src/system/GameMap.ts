@@ -141,6 +141,8 @@ export class GameMap extends EngineObject {
                 mo.y * Camera.cellSize - Camera.offsetY, 
                 Camera.cellSize);
         }
+
+        GameGraphics.displayTerrainParticles();
     }
 
     public static getRandomSpawnPoint(): Coordinates {

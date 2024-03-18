@@ -1,6 +1,5 @@
 import { Camera } from "./Camera";
-import { GameInterface } from "@game/interface/GameInterface";
-import { MapObject, TileSettings } from "./GameMap";
+import { TileSettings } from "./GameMap";
 import { Graphics } from "@game/core/Graphics";
 import { Spell, SpellType } from "@game/content/spells/Spell";
 
@@ -11,10 +10,41 @@ export interface Icon {
     backgroundColor?: string;
 }
 
+export interface Particle {
+    /**
+     * A particle can be text. If it's empty, a simple square will be displayed.
+     */
+    text?: string;
+    /**
+     * Each loop (60/s) will decrement life. When <=0, the particle disappear.
+     */
+    life: number;
+    size: number;
+    color: string;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    /**
+     * Particle speed will be multiplied by this amount each frame.
+     * So 0.999 to not lose to much speed.
+     * < 1 to lose speed.
+     * > 1 to add speed.
+     */
+    friction: number;
+    /**
+     * Particle will lose this size each frame.
+     */
+    sizeLosePerFrame?: number;
+}
+
 /**
  * Simple graphics, only animated with frames number (stateless)
  */
 export class GameGraphics extends Graphics {
+
+    private static terrainParticles: Particle[] = [];
+    private static interfaceParticles: Particle[] = [];
 
     /**
      * Display a single standard tile
@@ -64,7 +94,7 @@ export class GameGraphics extends Graphics {
     /**
      * Displays a spell intent.
      * Will be on top of an enemy for its turn.
-     * Aligned center bottom.
+     * Aligned left bottom.
      * @param spell 
      * @param x 
      * @param y 
@@ -73,11 +103,11 @@ export class GameGraphics extends Graphics {
         if (!spell) return;
 
         GameGraphics.ctx.font = `bold 16px ${GameGraphics.FONT}`;
-        GameGraphics.ctx.textAlign = "center";
+        GameGraphics.ctx.textAlign = "left";
         GameGraphics.ctx.textBaseline = "bottom";
 
         if (spell.spellType == SpellType.Damage) {
-            GameGraphics.ctx.fillStyle = 'red';
+            GameGraphics.ctx.fillStyle = 'white';
             GameGraphics.ctx.fillText(`⚔ ${spell.plannedDamage}`, x, y);
         } 
         else if (spell.spellType == SpellType.Shield) {
@@ -95,6 +125,68 @@ export class GameGraphics extends Graphics {
         else if (spell.spellType == SpellType.Other) {
             GameGraphics.ctx.fillStyle = 'white';
             GameGraphics.ctx.fillText(`???`, x, y);
+        }
+    }
+
+
+    /**
+     * Add a particle to be displayed on the terrain.
+     * @param particle 
+     */
+    public static addTerrainParticle(particle: Particle) {
+        GameGraphics.terrainParticles.push(particle);
+    }
+
+    /**
+     * Add a particle to be displayed on top of the interface.
+     * @param particle 
+     */
+    public static addInterfaceParticle(particle: Particle) {
+        GameGraphics.interfaceParticles.push(particle);
+    }
+
+    /**
+     * Display and process all particles on the terrain.
+     */
+    public static displayTerrainParticles() {
+        GameGraphics.displayParticles(GameGraphics.terrainParticles, true);
+    }
+
+    /**
+     * Display and process all particles on the terrain.
+     */
+    public static displayInterfaceParticles() {
+        GameGraphics.displayParticles(GameGraphics.interfaceParticles);
+    }
+
+    private static displayParticles(array: Particle[], moveWithCamera = false) {
+        GameGraphics.ctx.textAlign = "left";
+        GameGraphics.ctx.textBaseline = "top";
+
+        for (let i = array.length - 1; i >= 0; i--) {
+            const p = array[i];
+            // display
+            GameGraphics.ctx.fillStyle = p.color;
+            
+            if (p.text) {
+                GameGraphics.ctx.font = `bold ${Math.ceil(p.size)}px ${GameGraphics.FONT}`;
+                if (moveWithCamera) GameGraphics.ctx.fillText(p.text, p.x - Camera.offsetX, p.y - Camera.offsetY);
+                if (!moveWithCamera) GameGraphics.ctx.fillText(p.text, p.x, p.y);
+            } else {
+                if (moveWithCamera) GameGraphics.ctx.fillRect(p.x - Camera.offsetX, p.y - Camera.offsetY, p.size, p.size);
+                if (!moveWithCamera) GameGraphics.ctx.fillRect(p.x, p.y, p.size, p.size);
+            }
+            // move
+            p.size -= p.sizeLosePerFrame;
+            p.life -= 1;
+            p.vx *= p.friction;
+            p.vy *= p.friction;
+            p.x += p.vx;
+            p.y += p.vy;
+            // remove on end
+            if (p.life <= 0 || p.size <= 0) {
+                array.splice(i, 1);
+            }
         }
     }
 }

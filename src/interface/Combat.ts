@@ -628,11 +628,14 @@ export class Combat extends EngineObject {
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
         this.abilitiesHeight = this.height / 3 - 3;
 
+        Player.stats.x = this.x + this.playerSize/2;
+        Player.stats.y = this.abilitiesY - this.playerSize/2;
+
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
-            this.enemies[i].x = this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize);
-            this.enemies[i].y = this.y + Combat.PADDING + this.enemiesSize;
-            this.enemies[i].size = this.enemiesSize;
+            this.enemies[i].stats.x = this.width - Combat.PADDING - i*(Combat.PADDING+this.enemiesSize);
+            this.enemies[i].stats.y = this.y + Combat.PADDING + this.enemiesSize;
+            this.enemies[i].stats.size = this.enemiesSize;
         }
 
         this.endTurnButton = new Button(

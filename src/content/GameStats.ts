@@ -2,9 +2,7 @@ import { GameGraphics } from "@game/system/GameGraphics";
 import { DamageType, Spell } from "./spells/Spell";
 import { Skill } from "./skills/Skill";
 import { InventorySlot, Item } from "./items/Item";
-import { SpellFireball } from "./spells/library/Fireball";
 import { Buff } from "./buffs/Buff";
-import { SpellCreateShield } from "./spells/library/CreateShield";
 
 /**
  * Represents game statistics (like strengh, life, etc ...)
@@ -12,6 +10,12 @@ import { SpellCreateShield } from "./spells/library/CreateShield";
 export class GameStats {
 
     private static HP_BAR_HEIGHT = 22;
+
+    // for combat placement //
+    public x: number;
+    public y: number;
+    public size: number;
+    //////////////////////////
 
     /**
      * Current player hp
@@ -120,6 +124,19 @@ export class GameStats {
         this.hp -= modAmount;
         // constrain to 0
         this.hp = Math.max(this.hp, 0);
+
+        GameGraphics.addInterfaceParticle({
+            life: 120,
+            size: 25,
+            color: "red",
+            text: `-${modAmount} ♡`,
+            x: this.x,
+            y: this.y,
+            vx: Math.random()*4-2,
+            vy: Math.random()*2-6,
+            friction: 0.97,
+            sizeLosePerFrame: 0,
+        });
     }
 
     /**

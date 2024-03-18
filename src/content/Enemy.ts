@@ -6,9 +6,9 @@ import { Spell, TargetType } from "./spells/Spell";
 export class Enemy {
 
     // used for combat placement
-    public x: number;
+    /*public x: number;
     public y: number;
-    public size: number;
+    public size: number;*/
 
     /**
      * Used to display what this unit will be doing when 
@@ -94,5 +94,17 @@ export class Enemy {
      */
     public get isDead(): boolean {
         return this.stats.hp <=0;
+    }
+
+    public get x() {
+        return this.stats.x;
+    }
+
+    public get y() {
+        return this.stats.y;
+    }
+
+    public get size() {
+        return this.stats.size;
     }
 }

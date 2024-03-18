@@ -3,6 +3,7 @@ import { Dialogue, DialoguePiece } from "./Dialogue";
 import { Combat } from "./Combat";
 import { CharacterSheet } from "./CharacterSheet";
 import { Button } from "./components/Button";
+import { GameGraphics } from "@game/system/GameGraphics";
 
 export class GameInterface extends EngineObject {
 
@@ -71,6 +72,8 @@ export class GameInterface extends EngineObject {
 
         // process first dialogue
         if (GameInterface.dialogues.length > 0) GameInterface.dialogues[0].display();
+
+        GameGraphics.displayInterfaceParticles();
 
         GameInterface.frame++;
     }

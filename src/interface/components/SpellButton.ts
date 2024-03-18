@@ -54,6 +54,8 @@ export class SpellButton extends EngineObject {
 
         // icon
         GameGraphics.displayIcon(this.spell.icon, this.x + 5, this.y + 5, 18);
+        // planned effect
+        GameGraphics.displayTurnIntent(this.spell, this.x + 25, this.y + 21);
 
         // title
         GameGraphics.ctx.font = "14px "+GameGraphics.FONT;

@@ -77,7 +77,7 @@ https://hcarriere.github.io/morse-quest/
     - [ ] Simple Class
     - [ ] Improve fight interface (floating numbers, etc) => implement ParticleProcessor 
     - [ ] Random events every few turns ? (buff / debuff / action ...)
-    - [ ] Enemy intent
+    - [x] Enemy intent
 - [ ] Player capabilities
     - [ ] Level up interface.
         Random between : 
