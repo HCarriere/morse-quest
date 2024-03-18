@@ -120,10 +120,8 @@ export class Combat extends EngineObject {
         if (this.frameAnim > 0) return;
 
         // player
-        // (placeholder)
-        GameGraphics.ctx.fillStyle = '#804d32';
-        GameGraphics.ctx.fillRect(this.x + Combat.PADDING, this.abilitiesY - Combat.PADDING - this.playerSize, 
-            this.playerSize, this.playerSize);
+        GameGraphics.displayHero(this.x + Combat.PADDING, this.abilitiesY - Combat.PADDING - this.playerSize, 
+            this.playerSize);
         // player energy
         Player.stats.displayHp(
             this.x + Combat.PADDING + this.playerSize + Combat.PADDING, 

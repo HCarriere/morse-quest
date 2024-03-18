@@ -134,20 +134,8 @@ export class Player extends EngineObject {
     }
 
     public display() {
-        const halfsize = (Camera.cellSize - 3) / 2;
 
-        // display Player on map
-        GameGraphics.ctx.fillStyle = '#804d32';
-        GameGraphics.ctx.save();
-        GameGraphics.ctx.translate(
-            Math.floor(Player.x * Camera.cellSize - Camera.offsetX) + halfsize,
-            Math.floor(Player.y * Camera.cellSize - Camera.offsetY) + halfsize
-            );
-        GameGraphics.ctx.rotate(Player.tilt*0.005);
-        GameGraphics.ctx.fillRect(
-            -halfsize, -halfsize,
-            halfsize*2, halfsize*2);
-        GameGraphics.ctx.restore();
+        GameGraphics.displayHeroOnTerrain(Player.x, Player.y, Player.tilt);
         if (Player.tilt > 0) Player.tilt--;
         if (Player.tilt < 0) Player.tilt++;
 

@@ -6,6 +6,10 @@ import { GameMap } from "./system/GameMap";
 import { GameGraphics } from "./system/GameGraphics";
 import { Player } from "./system/Player";
 
+export interface GameParameters {
+    heroSprite?: string;
+}
+
 export class Game extends Engine {
 
     private gameMap: GameMap;
@@ -17,8 +21,18 @@ export class Game extends Engine {
     private fpsLastMeasures: number[] = [];
     private enableDebug = false;
 
-    constructor(canvasid = 'morsequest') {
+    public static parameters: GameParameters;
+
+    constructor(
+        canvasid = 'morsequest',
+        parameters: GameParameters = {}
+        ) {
+        
+        Game.parameters = parameters;
+        console.log('game parameters', parameters);
+        
         super(canvasid);
+        
     }
 
     protected override initCanvas(canvasid: string): boolean {
@@ -34,6 +48,13 @@ export class Game extends Engine {
         this.engineObjects.push(this.camera);
         this.engineObjects.push(this.gameInterface);
         
+        // init game parameters
+        if (Game.parameters && Game.parameters.heroSprite) {
+            console.log('init hero sprite', Game.parameters.heroSprite)
+            GameGraphics.imgHero = new Image;
+            GameGraphics.imgHero.src = Game.parameters.heroSprite;
+        }
+
         Player.teleport(GameMap.getRandomSpawnPoint());
 
         this.resize();

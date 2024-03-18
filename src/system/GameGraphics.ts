@@ -2,6 +2,7 @@ import { Camera } from "./Camera";
 import { TileSettings } from "./GameMap";
 import { Graphics } from "@game/core/Graphics";
 import { Spell, SpellType } from "@game/content/spells/Spell";
+import { Game } from "@game/Game";
 
 
 export interface Icon {
@@ -45,6 +46,8 @@ export class GameGraphics extends Graphics {
 
     private static terrainParticles: Particle[] = [];
     private static interfaceParticles: Particle[] = [];
+
+    public static imgHero: CanvasImageSource;
 
     /**
      * Display a single standard tile
@@ -125,6 +128,56 @@ export class GameGraphics extends Graphics {
         else if (spell.spellType == SpellType.Other) {
             GameGraphics.ctx.fillStyle = 'white';
             GameGraphics.ctx.fillText(`???`, x, y);
+        }
+    }
+
+
+    public static loadImg(param: CanvasImageSource, url: string) {
+        let img = new Image;
+        img.src = url;
+        param = img;
+    }
+
+    /**
+     * Displays the hero on the grid/terrain
+     * @param x on grid
+     * @param y on grid
+     */
+    public static displayHeroOnTerrain(x: number, y: number, tilt: number = 0) {
+        const halfsize = (Camera.cellSize - 3) / 2;
+        
+        GameGraphics.ctx.save();
+        GameGraphics.ctx.translate(
+            Math.floor(x * Camera.cellSize - Camera.offsetX) + halfsize,
+            Math.floor(y * Camera.cellSize - Camera.offsetY) + halfsize
+            );
+        GameGraphics.ctx.rotate(tilt*0.005);
+        
+        if (Game.parameters && Game.parameters.heroSprite && this.imgHero) {
+            GameGraphics.ctx.drawImage(this.imgHero, -halfsize, -halfsize, halfsize*2, halfsize*2);
+        }
+        else {
+            GameGraphics.ctx.fillStyle = '#804d32';
+            GameGraphics.ctx.fillRect(
+                -halfsize, -halfsize,
+                halfsize*2, halfsize*2);
+        }
+        GameGraphics.ctx.restore();
+    }
+
+    /**
+     * Displays the hero
+     * @param x top left
+     * @param y top left
+     * @param size = width = height
+     */
+    public static displayHero(x: number, y: number, size: number) {
+        if (Game.parameters && Game.parameters.heroSprite && this.imgHero) {
+            GameGraphics.ctx.drawImage(this.imgHero, x, y, size, size);
+        }
+        else {
+            GameGraphics.ctx.fillStyle = '#804d32';
+            GameGraphics.ctx.fillRect(x, y, size, size);
         }
     }
 
