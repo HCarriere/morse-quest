@@ -22,7 +22,6 @@ export class Combat extends EngineObject {
      * If == 0, then its player turn.
      */
     private currentRound = 0;
-    // private turnOrder: (Enemy|'player')[];
 
     // display
     private x: number;
@@ -90,9 +89,14 @@ export class Combat extends EngineObject {
         }
         */
 
-       Player.stats.healFullEnergy();
-       Player.stats.resetAllCooldowns();
-       Player.stats.clearAllBuffs();
+        Player.stats.healFullEnergy();
+        Player.stats.resetAllCooldowns();
+        Player.stats.clearAllBuffs();
+
+        // prepare enemies turns
+        for (const e of this.enemies) {
+            e.prepareTurn();
+        }
     }
 
     /**
@@ -143,6 +147,10 @@ export class Combat extends EngineObject {
                 this.enemies[i].size
             );
 
+            // turn intent
+            GameGraphics.displayTurnIntent(this.enemies[i].turnIntent,this.enemies[i].x, this.enemies[i].y - this.enemies[i].size/2);
+
+            // target selection
             if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)) {
                 // display selectionitivity
                 GameGraphics.ctx.fillStyle = 'yellow';
@@ -409,6 +417,11 @@ export class Combat extends EngineObject {
 
         if (this.enemies.length < this.currentRound) {
             // new turn
+            // prepare enemies turns
+            for (const e of this.enemies) {
+                e.prepareTurn();
+            }
+            // init player turn
             this.newPlayerTurn();
             this.currentRound = 0;
         }

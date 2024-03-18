@@ -52,6 +52,7 @@ https://hcarriere.github.io/morse-quest/
 # Help
 - Icons are (for now) emoji & web symbols. Use https://symbl.cc/
 - Spells Icons are alchemic symbols https://symbl.cc/fr/unicode/blocks/alchemical-symbols/ 
+- Items https://symbl.cc/fr/unicode/blocks/phaistos-disc/ 
 
 
 # TODO
@@ -76,6 +77,7 @@ https://hcarriere.github.io/morse-quest/
     - [ ] Simple Class
     - [ ] Improve fight interface (floating numbers, etc) => implement ParticleProcessor 
     - [ ] Random events every few turns ? (buff / debuff / action ...)
+    - [ ] Enemy intent
 - [ ] Player capabilities
     - [ ] Level up interface.
         Random between : 

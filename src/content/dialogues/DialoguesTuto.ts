@@ -6,6 +6,7 @@ import { SkinDrone } from "../skins/enemies/Drone";
 import { GameStats } from "../GameStats";
 import { Enemy } from "../Enemy";
 import { GameMap } from "@game/system/GameMap";
+import { SpellNPCAttack } from "../spells/library/NPCAttack";
 
 export class DialoguesTuto {
     public static INTRODUCTION: DialoguePiece[] = [
@@ -37,7 +38,7 @@ export class DialoguesTuto {
                     text: "Se préparer au combat !",
                     goto: -1,
                     onAnswer: () => {GameInterface.setCombat(new Combat(
-                        [new Enemy('Mr. Test ALPHA', new SkinDrone('orange'), new GameStats(50))],
+                        [new Enemy('Mr. Test ALPHA', new SkinDrone('orange'), new GameStats([new SpellNPCAttack(15)], 50))],
                         () => {
                             // on combat win
                             GameMap.removeGameObjectById('tuto_fight');

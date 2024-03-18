@@ -29,11 +29,12 @@ export class Player extends EngineObject {
     private static tilt = 0;
 
     public init() {
-        Player.stats = new GameStats(100);
+        Player.stats = new GameStats([], 100);
         Player.stats.healFullHp();        
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellIcebolt());
         Player.stats.spells.push(new SpellCreateShield());
+        Player.stats.spells.push(new SpellFireball());
         Player.stats.spells.push(new SpellFireball(300));
         Player.stats.spells.push(new SpellChainLightning());
         Player.stats.spells.push(new SpellIcebolt());

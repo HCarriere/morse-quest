@@ -1,12 +1,15 @@
 import { GameGraphics } from "@game/system/GameGraphics";
 import { GameStats } from "@game/content/GameStats";
-import { Spell, DamageType, TargetType } from "../Spell";
+import { Spell, DamageType, TargetType, SpellType } from "../Spell";
 
 export class SpellFireball extends Spell {
     public name = "Boule de feu";
     public description = ["Envoie une boule de feu sur les ennemis.", "Inflige 15 dégats."];
     public energyCost = 3;
     public cooldown = 2;
+
+    public spellType = SpellType.Damage;
+    public plannedDamage = 15;
     
     public icon = {text: "🜂", color: '#FF9922'};
     public targetType = TargetType.AllEnemies;
@@ -23,7 +26,7 @@ export class SpellFireball extends Spell {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(15 * this.power, DamageType.Fire);
+                t.stat.damage(this.plannedDamage * this.power, DamageType.Fire);
             }
         }
 

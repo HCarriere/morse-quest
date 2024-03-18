@@ -1,5 +1,5 @@
 import { GameGraphics } from "@game/system/GameGraphics";
-import { Spell, DamageType, TargetType } from "../Spell";
+import { Spell, DamageType, TargetType, SpellType } from "../Spell";
 import { GameStats } from "@game/content/GameStats";
 
 export class SpellIcebolt extends Spell {
@@ -8,6 +8,9 @@ export class SpellIcebolt extends Spell {
     public energyCost = 1;
     public cooldown = 1;
     
+    public spellType = SpellType.Damage;
+    public plannedDamage = 10;
+
     public icon = {text: "🜄", color: 'lightblue'};
     public targetType = TargetType.Single;
     public frameAnimationMax = 80;
@@ -17,7 +20,7 @@ export class SpellIcebolt extends Spell {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(10, DamageType.Ice);
+                t.stat.damage(this.plannedDamage, DamageType.Ice);
             }
         }
 

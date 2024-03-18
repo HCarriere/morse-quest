@@ -67,7 +67,7 @@ export class GameStats {
     private animTargetHealth: number;
     private animTargetEnergy: number;
     
-    constructor(baseHp = 30) {
+    constructor(spells: Spell[] = [], baseHp = 30) {
         this.baseHp = baseHp;
 
         this.hp = this.maxHp;
@@ -76,10 +76,7 @@ export class GameStats {
         
         this.cancelAnimation();
 
-        this.spells = [
-            new SpellFireball(),
-            new SpellCreateShield(),
-        ];
+        this.spells = spells;
 
         this.skills = [];
     }

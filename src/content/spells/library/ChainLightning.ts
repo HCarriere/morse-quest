@@ -1,6 +1,6 @@
 import { GameGraphics } from "@game/system/GameGraphics";
 import { GameStats } from "@game/content/GameStats";
-import { Spell, DamageType, TargetType } from "../Spell";
+import { Spell, DamageType, TargetType, SpellType } from "../Spell";
 
 export class SpellChainLightning extends Spell {
     public name = "Chaine d'éclairs";
@@ -13,12 +13,15 @@ export class SpellChainLightning extends Spell {
     public frameAnimationMax = 80;
     public targetMax = 2;
 
+    public spellType = SpellType.Damage;
+    public plannedDamage = 12;
+
     
     public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
-                t.stat.damage(12, DamageType.Lightning);
+                t.stat.damage(this.plannedDamage, DamageType.Lightning);
             }
         }
 

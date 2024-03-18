@@ -1,7 +1,7 @@
 import { GameStats } from "./GameStats";
 import { Combat } from "@game/interface/Combat";
 import { Skin } from "./skins/Skin";
-import { TargetType } from "./spells/Spell";
+import { Spell, TargetType } from "./spells/Spell";
 
 export class Enemy {
 
@@ -10,9 +10,17 @@ export class Enemy {
     public y: number;
     public size: number;
 
-    public primaryColor: string;
+    /**
+     * Used to display what this unit will be doing when 
+     * it's its turn to play.
+     */
+    public turnIntent: Spell;
 
-    constructor(public name: string, public skin: Skin, public stats: GameStats) {}
+    constructor(
+        public name: string, 
+        public skin: Skin, 
+        public stats: GameStats,
+    ) {}
 
     /**
      * Display enemy on x,y NON RELATIVE, top left
@@ -24,31 +32,55 @@ export class Enemy {
         this.skin.display(this.x - this.size/2, this.y - this.size/2, this.size);
     }
 
+    /**
+     * Played when the enemy do its turn
+     * @param combat 
+     * @param onEnd 
+     * @returns 
+     */
     public playTurn(combat: Combat, onEnd: () => void): void {
         if (this.isDead) return;
-        // do a random spell
-        // TODO implement a good AI
-        const iSpell = Math.floor(Math.random() * this.stats.spells.length);
-        const spell = this.stats.spells[iSpell];
         
-        if (spell.targetType == TargetType.Self) {
+        console.log('enemy is playing ', this.turnIntent);
+        
+        // nothing is planned, so do nothing
+        if (!this.turnIntent) {
+            onEnd();
+            return;
+        }
+
+        if (this.turnIntent.targetType == TargetType.Self) {
             // buffs, if any
-            combat.playSpellAnimation(spell, [this], this, () => {
+            combat.playSpellAnimation(this.turnIntent, [this], this, () => {
                 onEnd();
             });
         } else {
             // target offensive spells
-            combat.playSpellAnimation(spell, ['player'], this, () => {
+            combat.playSpellAnimation(this.turnIntent, ['player'], this, () => {
                 onEnd();
             });
         }
 
-        console.log('Enemy '+this.name + ' do : ' + spell);
+        // reset turn intent
+        this.turnIntent = null;
     }
 
+    /**
+     * Played on the start of the turn
+     * @returns 
+     */
+    public prepareTurn() {
+        if (this.isDead) return;
+
+        const iSpell = Math.floor(Math.random() * this.stats.spells.length);
+        const spell = this.stats.spells[iSpell];
+
+        this.turnIntent = spell;
+    }
 
     /**
-     * Returns true if x,y is inside button
+     * Returns true if x,y is inside button.
+     * Used to select enemy for target selection.
      * @param x 
      * @param y 
      */

@@ -10,6 +10,8 @@ import { RawMaps } from "./RawMaps";
 import { SkinInfo } from "./skins/objects/Info";
 import { SkinPortal } from "./skins/objects/Portal";
 import { SkinLock } from "./skins/objects/Lock";
+import { SpellNPCAttack } from "./spells/library/NPCAttack";
+import { SpellCreateShield } from "./spells/library/CreateShield";
 
 
 /**
@@ -41,11 +43,11 @@ export class Maps {
             }],
             [902, {
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats(120)),
-                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats())]))},
+                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15)])),
+                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats([new SpellNPCAttack(15)])),
+                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats([new SpellNPCAttack(15)], 120)),
+                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats([new SpellNPCAttack(15)])),
+                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats([new SpellNPCAttack(15)]))]))},
                 skin: new SkinDrone()
             }]
         ]),
@@ -75,8 +77,8 @@ export class Maps {
             [903, {
                 id: 'tuto_fight2',
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats()),
-                    new Enemy('Mr. Test #1', new SkinDrone(), new GameStats())], () => {
+                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15), new SpellCreateShield(15)])),
+                    new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15), new SpellCreateShield(15)]))], () => {
                         GameMap.removeGameObjectById('tuto_fight2');
                     }))},
                 skin: new SkinDrone('orange'),

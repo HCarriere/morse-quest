@@ -1,16 +1,18 @@
 import { GameStats } from "@game/content/GameStats";
-import { Spell, TargetType } from "../Spell";
+import { Spell, SpellType, TargetType } from "../Spell";
 import { BuffProtection } from "@game/content/buffs/library/Protection";
 
 export class SpellCreateShield extends Spell {
     public name = "Bouclier magique";
     public description: string[];
-    public energyCost = 1;
+    public energyCost = 2;
     
     public icon = {text: "S", color: 'grey'};
     public targetType = TargetType.Self;
     public frameAnimationMax = 10;
-    public cooldown = 1;
+    public cooldown = 0;
+
+    public spellType = SpellType.Shield;
 
     private strengh: number;
 

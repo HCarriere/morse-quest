@@ -23,6 +23,14 @@ export enum DamageType {
     Acid = 10,
 }
 
+export enum SpellType {
+    Damage = 1,
+    Shield = 2,
+    Buff = 3,
+    Debuff = 4,
+    Other = 5,
+}
+
 export abstract class Spell {
     
     constructor(){}
@@ -62,13 +70,14 @@ export abstract class Spell {
     public targetMax: number;
 
     /**
-     * effect to be played to targets.
-     * 
-     * If there is no targets, *target* will be empty.
-     * @param target 
+     * Used for turn intent
      */
-    // public abstract effect(targets: GameStats[]): void;
+    public plannedDamage = 0;
 
+    /**
+     * Used for turn intent
+     */
+    public abstract spellType: SpellType;
 
     /**
      * Play an animation (frameLeft = number of frame, until 0)
