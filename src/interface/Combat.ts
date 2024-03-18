@@ -9,6 +9,7 @@ import { SpellButton } from "./components/SpellButton";
 import { Button } from "./components/Button";
 import { GameStats } from "@game/content/GameStats";
 import { BuffIcons } from "./components/BuffIcons";
+import { Camera } from "@game/system/Camera";
 
 /**
  * Displays and process combats
@@ -148,7 +149,7 @@ export class Combat extends EngineObject {
             );
 
             // turn intent
-            GameGraphics.displayTurnIntent(this.enemies[i].turnIntent,this.enemies[i].x, this.enemies[i].y - this.enemies[i].size/2);
+            GameGraphics.displayTurnIntent(this.enemies[i].turnIntent,this.enemies[i].x, this.enemies[i].y - this.enemies[i].size/2 - 20);
 
             // target selection
             if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)) {
@@ -495,10 +496,38 @@ export class Combat extends EngineObject {
     }
 
     /**
-     * Player win
+     * Player win.
+     * Earn XP, Gold, Objects
      */
     private winFight() {
-        console.log('you won bro');
+        // rewards
+        // xp
+        Player.xp += 100;
+        GameGraphics.addInterfaceParticle({
+            life: 120,
+            size: 20,
+            text: `+${100} xp`,
+            color: "orange",
+            x: Player.x * Camera.cellSize - Camera.offsetX,
+            y: Player.y * Camera.cellSize - Camera.offsetY,
+            vx: -1,
+            vy: -2,
+            friction: 0.98,
+        });
+        // gold
+        Player.gold += 10;
+        GameGraphics.addInterfaceParticle({
+            life: 120,
+            size: 20,
+            text: `+${10} gold`,
+            color: "orange",
+            x: Player.x * Camera.cellSize - Camera.offsetX,
+            y: Player.y * Camera.cellSize - Camera.offsetY,
+            vx: 1,
+            vy: -2,
+            friction: 0.98,
+        });
+        // end fight
         this.end();
         if (this.onCombatWin) {
             this.onCombatWin();

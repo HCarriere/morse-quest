@@ -177,7 +177,7 @@ export class GameGraphics extends Graphics {
                 if (!moveWithCamera) GameGraphics.ctx.fillRect(p.x, p.y, p.size, p.size);
             }
             // move
-            p.size -= p.sizeLosePerFrame;
+            if (p.sizeLosePerFrame) p.size -= p.sizeLosePerFrame;
             p.life -= 1;
             p.vx *= p.friction;
             p.vy *= p.friction;

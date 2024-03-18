@@ -56,18 +56,13 @@ export class GameStats {
     // equiped items
     public equipedItems: Map<InventorySlot, Item> = new Map<InventorySlot, Item>();
 
-    public currentXp = 0;
-    public targetXp: number;
-    public level = 1;
-    public gold = 0;
-
-    // animations values
-
+    
     /**
      * Buffs and debuff
-     */
-    public buffs: Buff[] = [];
-
+    */
+   public buffs: Buff[] = [];
+   
+   // animations values
     private animTargetHealth: number;
     private animTargetEnergy: number;
     
@@ -76,7 +71,6 @@ export class GameStats {
 
         this.hp = this.maxHp;
         this.energy = this.maxEnergy;
-        this.targetXp = GameStats.calculateNextXpTarget(this.level + 1);
         
         this.cancelAnimation();
 
@@ -135,7 +129,6 @@ export class GameStats {
             vx: Math.random()*4-2,
             vy: Math.random()*2-6,
             friction: 0.97,
-            sizeLosePerFrame: 0,
         });
     }
 
@@ -286,10 +279,6 @@ export class GameStats {
         for (const s of this.spells) {
             s.currentCooldown = 0;
         }
-    }
-
-    private static calculateNextXpTarget(nextLevel: number): number {
-        return (nextLevel-1) * 1000;
     }
 
     // Animations

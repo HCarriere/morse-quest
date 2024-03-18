@@ -20,8 +20,15 @@ export class Player extends EngineObject {
     public static stats: GameStats;
 
     // public static location: Coordinates;
+
+    // map coordinates
     public static x: number;
     public static y: number;
+
+    public static xp = 0;
+    public static targetXp: number;
+    public static level = 1;
+    public static gold = 0;
 
     /**
      * used for animation
