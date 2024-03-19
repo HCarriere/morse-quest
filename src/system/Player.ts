@@ -130,7 +130,7 @@ export class Player extends EngineObject {
 
         this.tilt = this.tilt <= 0 ? this.tilt = 30 : this.tilt = -30;
 
-        if (gameobject) gameobject.onWalk();
+        if (gameobject) gameobject.onWalk(gameobject);
     }
 
     public display() {

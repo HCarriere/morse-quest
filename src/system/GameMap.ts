@@ -26,11 +26,17 @@ export interface MapObject {
      * If true, player can't cross this object
      */
     solid?: boolean;
+    /**
+     * Map coordinate
+     */
     x?: number;
+    /**
+     * Map coordinate
+     */
     y?: number;
     skin?: Skin;
-    onWalk?: () => void;
-    onDelete?: () => void;
+    onWalk?: (o: MapObject) => void;
+    onDelete?: (o: MapObject) => void;
 }
 
 export interface TileSettings {
@@ -204,7 +210,7 @@ export class GameMap extends EngineObject {
             if (GameMap.MapObjects[i].id && GameMap.MapObjects[i].id == id) {
                 // play delete event
                 if (GameMap.MapObjects[i].onDelete) {
-                    GameMap.MapObjects[i].onDelete();
+                    GameMap.MapObjects[i].onDelete(GameMap.MapObjects[i]);
                 }
                 // remove
                 GameMap.MapObjects.splice(i, 1);

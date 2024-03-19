@@ -12,6 +12,8 @@ import { SkinPortal } from "./skins/objects/Portal";
 import { SkinLock } from "./skins/objects/Lock";
 import { SpellNPCAttack } from "./spells/library/NPCAttack";
 import { SpellCreateShield } from "./spells/library/CreateShield";
+import { GameGraphics } from "@game/system/GameGraphics";
+import { Camera } from "@game/system/Camera";
 
 
 /**
@@ -60,6 +62,19 @@ export class Maps {
                 id: 'tuto_wall',
                 skin: new SkinLock(),
                 solid: true,
+                onDelete: (o) => {
+                    GameGraphics.addTerrainParticle({
+                        life: 200,
+                        size: Camera.cellSize/2,
+                        color: "grey",
+                        x: o.x * Camera.cellSize - Camera.offsetX,
+                        y: o.y * Camera.cellSize - Camera.offsetY,
+                        vx: Math.random()-0.5,
+                        vy: Math.random()-0.5,
+                        friction: 1,
+                        sizeLosePerFrame: 0.5,
+                    });
+                },
             }],
             [900, {
                 onWalk: () => {GameInterface.addDialogue(DialoguesTuto.INTRODUCTION)},

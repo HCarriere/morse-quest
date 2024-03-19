@@ -30,22 +30,22 @@ export class DialoguesTuto {
     }];
 
     public static FIRST_FIGHT: DialoguePiece[] = [
-        {
-            id: 0,
-            textLines: ["Le drone ne fait pas attention à vous.", "Cependant, en vous approchant, son attitude change."],
-            answers: [
-                {
-                    text: "Se préparer au combat !",
-                    goto: -1,
-                    onAnswer: () => {GameInterface.setCombat(new Combat(
-                        [new Enemy('Mr. Test ALPHA', new SkinDrone('orange'), new GameStats([new SpellNPCAttack(15)], 50))],
-                        () => {
-                            // on combat win
-                            GameMap.removeGameObjectById('tuto_fight');
-                            GameMap.removeGameObjectById('tuto_wall');
-                        }))}
-                }
-            ]
-        }];
+    {
+        id: 0,
+        textLines: ["Le drone ne fait pas attention à vous.", "Cependant, en vous approchant, son attitude change."],
+        answers: [
+            {
+                text: "Se préparer au combat !",
+                goto: -1,
+                onAnswer: () => {GameInterface.setCombat(new Combat(
+                    [new Enemy('Mr. Test ALPHA', new SkinDrone('orange'), new GameStats([new SpellNPCAttack(15)], 50))],
+                    () => {
+                        // on combat win
+                        GameMap.removeGameObjectById('tuto_fight');
+                        GameMap.removeGameObjectById('tuto_wall');
+                    }))}
+            }
+        ]
+    }];
 
 }
