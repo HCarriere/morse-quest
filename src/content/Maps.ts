@@ -45,11 +45,11 @@ export class Maps {
             }],
             [902, {
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15)])),
-                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats([new SpellNPCAttack(15)])),
-                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats([new SpellNPCAttack(15)], 120)),
-                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats([new SpellNPCAttack(15)])),
-                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats([new SpellNPCAttack(15)]))]))},
+                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15)]), { gold: 50, xp: 50, drops: [] }),
+                    new Enemy('Mr. Test #2', new SkinDrone(), new GameStats([new SpellNPCAttack(15)]), { gold: 50, xp: 50, drops: [] }),
+                    new Enemy('Mr. Test ALPHA', new SkinDrone('purple'), new GameStats([new SpellNPCAttack(15)], 120), { gold: 100, xp: 100, drops: [] }),
+                    new Enemy('Mr. Test #3', new SkinDrone(), new GameStats([new SpellNPCAttack(15)]), { gold: 50, xp: 50, drops: [] }),
+                    new Enemy('Mr. Test #4', new SkinDrone(), new GameStats([new SpellNPCAttack(15)]), { gold: 50, xp: 50, drops: [] })]))},
                 skin: new SkinDrone()
             }]
         ]),
@@ -92,8 +92,11 @@ export class Maps {
             [903, {
                 id: 'tuto_fight2',
                 onWalk: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15), new SpellCreateShield(15)])),
-                    new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15), new SpellCreateShield(15)]))], () => {
+                    [
+                        new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15), new SpellCreateShield(15)]), { gold: 50, xp: 50, drops: [] }),
+                        new Enemy('Mr. Test #1', new SkinDrone(), new GameStats([new SpellNPCAttack(15), new SpellCreateShield(15)]), { gold: 50, xp: 50, drops: [] })
+                    ],
+                    () => {
                         GameMap.removeGameObjectById('tuto_fight2');
                     }))},
                 skin: new SkinDrone('orange'),

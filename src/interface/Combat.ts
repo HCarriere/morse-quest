@@ -10,6 +10,7 @@ import { Button } from "./components/Button";
 import { GameStats } from "@game/content/GameStats";
 import { BuffIcons } from "./components/BuffIcons";
 import { Camera } from "@game/system/Camera";
+import { Reward } from "@game/content/Reward";
 
 /**
  * Displays and process combats
@@ -17,6 +18,7 @@ import { Camera } from "@game/system/Camera";
 export class Combat extends EngineObject {
 
     private enemies: Enemy[]; // vs Player
+    private reward: Reward;
 
     /**
      * Reset to 0 each turn.
@@ -74,6 +76,7 @@ export class Combat extends EngineObject {
         super();
         
         this.enemies = enemies;
+        this.reward = Reward.fromEnemies(enemies);
         this.onCombatWin = onCombatWin;
         this.onCombatLose = onCombatLose;
 
@@ -500,11 +503,10 @@ export class Combat extends EngineObject {
     private winFight() {
         // rewards
         // xp
-        Player.xp += 100;
         GameGraphics.addInterfaceParticle({
             life: 120,
             size: 20,
-            text: `+${100} xp`,
+            text: `+${this.reward.xp} xp`,
             color: "orange",
             x: Player.x * Camera.cellSize - Camera.offsetX,
             y: Player.y * Camera.cellSize - Camera.offsetY,
@@ -513,11 +515,10 @@ export class Combat extends EngineObject {
             friction: 0.98,
         });
         // gold
-        Player.gold += 10;
         GameGraphics.addInterfaceParticle({
             life: 120,
             size: 20,
-            text: `+${10} gold`,
+            text: `+${this.reward.gold} gold`,
             color: "orange",
             x: Player.x * Camera.cellSize - Camera.offsetX,
             y: Player.y * Camera.cellSize - Camera.offsetY,
@@ -525,6 +526,22 @@ export class Combat extends EngineObject {
             vy: -2,
             friction: 0.98,
         });
+        Player.give(this.reward);
+        if (Player.shouldLevelUp()) {
+            // level up
+            GameGraphics.addInterfaceParticle({
+                life: 120,
+                size: 20,
+                text: `level up`,
+                color: "lightgreen",
+                x: Player.x * Camera.cellSize - Camera.offsetX,
+                y: Player.y * Camera.cellSize - Camera.offsetY,
+                vx: 0,
+                vy: -1,
+                friction: 0.98,
+            });
+            Player.levelUp();
+        }
         // end fight
         this.end();
         if (this.onCombatWin) {

@@ -10,6 +10,7 @@ import { SpellIcebolt } from "@game/content/spells/library/Icebolt";
 import { SpellFireball } from "@game/content/spells/library/Fireball";
 import { SkillIronSkill } from "@game/content/skills/library/IronSkin";
 import { SpellCreateShield } from "@game/content/spells/library/CreateShield";
+import { Reward } from "@game/content/Reward";
 
 /**
  * Represents the player
@@ -50,7 +51,7 @@ export class Player extends EngineObject {
         Player.stats.selectActiveSpell(2);
         Player.stats.selectActiveSpell(3);
         Player.stats.skills.push(new SkillIronSkill());
-        
+        Player.targetXp = Player.requiredExperienceToLevelUp();
     }
 
     /**
@@ -197,5 +198,29 @@ export class Player extends EngineObject {
                 id: 1,
                 textLines: ["... Pour réapparaitre à son point de départ.", "Comme toujours."],   
             }]);
+    }
+    
+    // Experience management
+
+    public static shouldLevelUp(): boolean {
+        return this.xp >= this.targetXp;
+    }
+    
+    public static requiredExperienceToLevelUp(): number {
+        return 100 * Math.pow(this.level, 2);
+    }
+    
+    public static levelUp(): void {
+        this.level++;
+        this.targetXp = this.requiredExperienceToLevelUp();
+        if (this.shouldLevelUp()) this.levelUp();
+    }
+
+    // Reward management
+
+    public static give(reward: Reward): void {
+        this.gold += reward.gold;
+        this.xp += reward.xp;
+        this.stats.inventory.push(...reward.items);
     }
 }

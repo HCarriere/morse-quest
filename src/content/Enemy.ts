@@ -2,6 +2,18 @@ import { GameStats } from "./GameStats";
 import { Combat } from "@game/interface/Combat";
 import { Skin } from "./skins/Skin";
 import { Spell, TargetType } from "./spells/Spell";
+import { Item } from "./items/Item";
+
+export interface Drop {
+    item: Item,
+    chance: number,
+}
+
+export interface DropTable {
+    gold: number,
+    xp: number,
+    drops: Drop[],
+}
 
 export class Enemy {
 
@@ -20,6 +32,7 @@ export class Enemy {
         public name: string, 
         public skin: Skin, 
         public stats: GameStats,
+        public dropTable?: DropTable,
     ) {}
 
     /**

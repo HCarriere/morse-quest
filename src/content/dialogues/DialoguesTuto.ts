@@ -38,7 +38,7 @@ export class DialoguesTuto {
                 text: "Se préparer au combat !",
                 goto: -1,
                 onAnswer: () => {GameInterface.setCombat(new Combat(
-                    [new Enemy('Mr. Test ALPHA', new SkinDrone('orange'), new GameStats([new SpellNPCAttack(15)], 50))],
+                    [new Enemy('Mr. Test ALPHA', new SkinDrone('orange'), new GameStats([new SpellNPCAttack(15)], 50), { gold: 50, xp: 50, drops: [] })],
                     () => {
                         // on combat win
                         GameMap.removeGameObjectById('tuto_fight');
