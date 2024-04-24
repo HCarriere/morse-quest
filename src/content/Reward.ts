@@ -15,7 +15,7 @@ export class Reward {
         enemies.forEach(enemy => {
             gold += enemy.dropTable?.gold;
             xp += enemy.dropTable?.xp;
-            let droppedItems = enemy.dropTable?.drops.filter(drop => drop.chance < Math.random()).map(drop => drop.item);
+            let droppedItems = enemy.dropTable?.drops.filter(drop => drop.chance > Math.random()).map(drop => drop.item);
             if (!!droppedItems) {
                 items.push(...droppedItems);
             }

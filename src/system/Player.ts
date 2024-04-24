@@ -213,7 +213,6 @@ export class Player extends EngineObject {
     public static levelUp(): void {
         this.level++;
         this.targetXp = this.requiredExperienceToLevelUp();
-        if (this.shouldLevelUp()) this.levelUp();
     }
 
     // Reward management

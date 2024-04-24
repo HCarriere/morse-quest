@@ -11,6 +11,7 @@ import { GameStats } from "@game/content/GameStats";
 import { BuffIcons } from "./components/BuffIcons";
 import { Camera } from "@game/system/Camera";
 import { Reward } from "@game/content/Reward";
+import { RewardScreen } from "./RewardScreen";
 
 /**
  * Displays and process combats
@@ -19,6 +20,8 @@ export class Combat extends EngineObject {
 
     private enemies: Enemy[]; // vs Player
     private reward: Reward;
+    private showRewardScreen: boolean = false;
+    private rewardScreen: RewardScreen;
 
     /**
      * Reset to 0 each turn.
@@ -45,6 +48,8 @@ export class Combat extends EngineObject {
     private static PADDING = 20;
     private static SPELL_WIDTH = 200;
     private static SPELL_HEIGHT = 65;
+    private static REWARD_MARGIN_X = 300;
+    private static REWARD_MARGIN_Y = 20;
 
     private endTurnButton: Button;
     private spellsButtons: SpellButton[];
@@ -136,6 +141,11 @@ export class Combat extends EngineObject {
             this.abilitiesY - Combat.PADDING - this.playerSize+25, 
             Math.max(this.width / 6-5, this.playerSize-5)
         );
+
+        if (this.showRewardScreen) {
+            this.rewardScreen.display();
+            return;
+        }
         
         // enemies
         for (let i = 0; i<this.enemies.length; i++) {
@@ -490,8 +500,15 @@ export class Combat extends EngineObject {
             }
         }
         if (this.enemies.length == 0) {
-            // win the fight
-            this.winFight();
+            this.rewardScreen = new RewardScreen(
+                this.reward,
+                this.x + Combat.REWARD_MARGIN_X,
+                this.y + Combat.REWARD_MARGIN_Y,
+                this.width - 2*Combat.REWARD_MARGIN_X,
+                this.height - 2*Combat.REWARD_MARGIN_Y,
+                () => this.winFight()
+            );
+            this.showRewardScreen = true;
             return;
         }
     }
@@ -527,19 +544,23 @@ export class Combat extends EngineObject {
             friction: 0.98,
         });
         Player.give(this.reward);
-        if (Player.shouldLevelUp()) {
+        let newLevels = 0;
+        while (Player.shouldLevelUp()) {
+            newLevels++;
             // level up
-            GameGraphics.addInterfaceParticle({
-                life: 120,
-                size: 20,
-                text: `level up`,
-                color: "lightgreen",
-                x: Player.x * Camera.cellSize - Camera.offsetX,
-                y: Player.y * Camera.cellSize - Camera.offsetY,
-                vx: 0,
-                vy: -1,
-                friction: 0.98,
-            });
+            setTimeout(() => {
+                GameGraphics.addInterfaceParticle({
+                    life: 120,
+                    size: 20,
+                    text: `level up`,
+                    color: "lightgreen",
+                    x: Player.x * Camera.cellSize - Camera.offsetX,
+                    y: Player.y * Camera.cellSize - Camera.offsetY,
+                    vx: 0,
+                    vy: -1,
+                    friction: 0.98,
+                });
+            }, 500 * newLevels);
             Player.levelUp();
         }
         // end fight
@@ -658,6 +679,8 @@ export class Combat extends EngineObject {
             // end turn
             this.endTurnButton.mousePressed(x, y);
         }
+
+        if (!!this.rewardScreen && this.showRewardScreen) this.rewardScreen.mousePressed(x, y);
     }
 
     public resize(): void {
@@ -694,5 +717,13 @@ export class Combat extends EngineObject {
                 colorHover: '#332222',
                 text: 'Fin du tour'
             });
+        
+        if (!!this.rewardScreen) {
+            this.rewardScreen.x = this.x + Combat.REWARD_MARGIN_X;
+            this.rewardScreen.y = this.y + Combat.REWARD_MARGIN_Y;
+            this.rewardScreen.width = this.width - 2*Combat.REWARD_MARGIN_X;
+            this.rewardScreen.height = this.height - 2*Combat.REWARD_MARGIN_Y;
+            this.rewardScreen.resize();
+        }
     }
 }
