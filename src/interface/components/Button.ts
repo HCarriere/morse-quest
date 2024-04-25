@@ -20,6 +20,7 @@ export class Button extends EngineObject {
     }
 
     public display() {
+        Graphics.ctx.save();
         if (this.style.colorHover && this.isInbound(EngineController.mouseX, EngineController.mouseY)) {
             Graphics.ctx.fillStyle = this.style.colorHover;
         } else {
@@ -31,13 +32,14 @@ export class Button extends EngineObject {
             Graphics.ctx.textAlign = "center";
             Graphics.ctx.font = this.style.textSize + "px "+Graphics.FONT;
             Graphics.ctx.textBaseline = "middle";
-            Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2);
+            Graphics.ctx.fillText(this.style.text, this.x + this.width/2, this.y + this.height/2, this.width - 2);
         }
         if (this.style.strokeColor) {
             Graphics.ctx.lineWidth = 1;
             Graphics.ctx.strokeStyle = this.style.strokeColor;
             Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
         }
+        Graphics.ctx.restore();
     }
 
     public mousePressed(x: number, y: number): void {
