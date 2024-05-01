@@ -211,6 +211,8 @@ export class Player extends EngineObject {
         this.class.onLevelUp();
         let newSpell = this.class.getRandomSpellFromPool();
         if (!!newSpell) this.stats.spells.push(newSpell);
+        if (this.class.skills.length >= this.level) this.stats.skills.push(...this.class.skills[this.level - 1]);
+        GameInterface.onNewCharacterData();
     }
 
     // Reward management

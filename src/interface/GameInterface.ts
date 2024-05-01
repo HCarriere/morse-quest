@@ -165,4 +165,8 @@ export class GameInterface extends EngineObject {
     public static hideCharacterSheet() {
         GameInterface.displayCharacterSheet = false;
     }
+
+    public static onNewCharacterData() {
+        GameInterface.characterSheetButton.style.text = '☰ Personnage ❗';
+    }
 }

@@ -11,5 +11,7 @@ export class ClassElementalSorcerer extends Class {
     ];
     public skills: Skill[][] = [
         [new SkillIronSkill()],
+        [],
+        [new SkillIronSkill()],
     ];
 }
