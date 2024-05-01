@@ -1,16 +1,12 @@
 import { Camera } from "./Camera";
 import { GameController } from "./GameController";
-import { Coordinates, GameMap, MapObject } from "./GameMap";
+import { Coordinates, GameMap } from "./GameMap";
 import { EngineObject } from "../core/EngineObject";
 import { GameInterface } from "@game/interface/GameInterface";
 import { GameGraphics } from "./GameGraphics";
 import { GameStats } from "@game/content/GameStats";
-import { SpellChainLightning } from "@game/content/spells/library/ChainLightning";
-import { SpellIcebolt } from "@game/content/spells/library/Icebolt";
-import { SpellFireball } from "@game/content/spells/library/Fireball";
-import { SkillIronSkill } from "@game/content/skills/library/IronSkin";
-import { SpellCreateShield } from "@game/content/spells/library/CreateShield";
 import { Reward } from "@game/content/Reward";
+import { Class, ClassElementalSorcerer } from "@game/content/classes";
 
 /**
  * Represents the player
@@ -19,6 +15,7 @@ export class Player extends EngineObject {
     
 
     public static stats: GameStats;
+    public static class: Class;
 
     // public static location: Coordinates;
 
@@ -37,21 +34,19 @@ export class Player extends EngineObject {
     private static tilt = 0;
 
     public init() {
-        Player.stats = new GameStats([], 100);
-        Player.stats.healFullHp();        
-        Player.stats.spells.push(new SpellChainLightning());
-        Player.stats.spells.push(new SpellIcebolt());
-        Player.stats.spells.push(new SpellCreateShield());
-        Player.stats.spells.push(new SpellFireball());
-        Player.stats.spells.push(new SpellFireball(300));
-        Player.stats.spells.push(new SpellChainLightning());
-        Player.stats.spells.push(new SpellIcebolt());
-        Player.stats.selectActiveSpell(0);
-        Player.stats.selectActiveSpell(1);
-        Player.stats.selectActiveSpell(2);
-        Player.stats.selectActiveSpell(3);
-        Player.stats.skills.push(new SkillIronSkill());
+        Player.setClass(new ClassElementalSorcerer());
+        Player.class.init();
         Player.targetXp = Player.requiredExperienceToLevelUp();
+    }
+
+    public static setClass(playerClass: Class): void {
+        this.class = playerClass;
+        this.stats = new GameStats(playerClass.initialSpells, playerClass.baseHealth);
+        this.stats.healFullHp();
+        for (let index = 0; index < playerClass.initialSpells.length; index++) {
+            this.stats.selectActiveSpell(index);
+        }
+        if (playerClass.skills.length > 0) this.stats.skills.push(...playerClass.skills[0]);
     }
 
     /**
@@ -213,6 +208,11 @@ export class Player extends EngineObject {
     public static levelUp(): void {
         this.level++;
         this.targetXp = this.requiredExperienceToLevelUp();
+        this.class.onLevelUp();
+        let newSpell = this.class.getRandomSpellFromPool();
+        if (!!newSpell) this.stats.spells.push(newSpell);
+        if (this.class.skills.length >= this.level) this.stats.skills.push(...this.class.skills[this.level - 1]);
+        GameInterface.onNewCharacterData();
     }
 
     // Reward management
