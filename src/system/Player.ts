@@ -7,6 +7,7 @@ import { GameGraphics } from "./GameGraphics";
 import { GameStats } from "@game/content/GameStats";
 import { Reward } from "@game/content/Reward";
 import { Class, ClassElementalSorcerer } from "@game/content/classes";
+import { Pool } from "@game/core/Pool";
 
 /**
  * Represents the player
@@ -16,6 +17,10 @@ export class Player extends EngineObject {
 
     public static stats: GameStats;
     public static class: Class;
+
+    public static classPool: Pool<Class> = Pool.fromArray([
+        new ClassElementalSorcerer(),
+    ], 'Class Pool');
 
     // public static location: Coordinates;
 
@@ -34,13 +39,12 @@ export class Player extends EngineObject {
     private static tilt = 0;
 
     public init() {
-        Player.setClass(new ClassElementalSorcerer());
-        Player.class.init();
         Player.targetXp = Player.requiredExperienceToLevelUp();
     }
 
     public static setClass(playerClass: Class): void {
         this.class = playerClass;
+        this.class.init();
         this.stats = new GameStats(playerClass.initialSpells, playerClass.baseHealth);
         this.stats.healFullHp();
         for (let index = 0; index < playerClass.initialSpells.length; index++) {

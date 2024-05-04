@@ -1,29 +1,25 @@
+import { Pool } from "@game/core/Pool";
 import { Skill } from "../skills";
 import { Spell } from "../spells";
+import { Icon } from "@game/system/GameGraphics";
 
 export abstract class Class {
+    public abstract name: string;
+    public abstract icon: Icon;
     public abstract baseHealth: number;
     public abstract initialSpells: Spell[];
     public abstract spells: Spell[][];
     public abstract skills: Skill[][];
-    private spellPool: Spell[] = [];
+    private spellPool: Pool<Spell> = new Pool<Spell>('Spell Pool');
     private levelTracker: number = 1;
     public init(): void {
-        this.spellPool.push(...this.spells[0]);
-        console.log('Spell Pool', this.spellPool);
+        this.spellPool.add(this.spells[0]);
     }
     public onLevelUp(): void {
         this.levelTracker++;
-        if (this.spells.length >= this.levelTracker) this.spellPool.push(...this.spells[this.levelTracker - 1]);
-        console.log('Spell Pool', this.spellPool);
+        if (this.spells.length >= this.levelTracker) this.spellPool.add(this.spells[this.levelTracker - 1]);
     }
     public getRandomSpellFromPool(): Spell {
-        if (this.spellPool.length == 0) {
-            return null;
-        }
-        let spellIndex = Math.floor(Math.random() * this.spellPool.length);
-        let spell = this.spellPool.splice(spellIndex, 1)[0];
-        console.log('Spell Pool', this.spellPool);
-        return spell;
+        return this.spellPool.drawRandomItem();
     }
 }

@@ -5,6 +5,7 @@ import { Engine } from "./core/Engine";
 import { GameMap } from "./system/GameMap";
 import { GameGraphics } from "./system/GameGraphics";
 import { Player } from "./system/Player";
+import { GameStartWindow } from "./interface/GameStartWindow";
 
 export interface GameParameters {
     heroSprite?: string;
@@ -16,6 +17,7 @@ export class Game extends Engine {
     private player: Player;
     private camera: Camera;
     private gameInterface: GameInterface;
+    private gameStartWindow: GameStartWindow;
 
     private fpsLastCallTime: number;
     private fpsLastMeasures: number[] = [];
@@ -42,12 +44,26 @@ export class Game extends Engine {
         this.player = new Player();
         this.camera = new Camera();
         this.gameInterface = new GameInterface();
+        this.gameStartWindow = new GameStartWindow(() => {
+            this.engineObjects = []; // it contains only gameStartWindow
+            delete this.gameStartWindow;
 
-        this.engineObjects.push(this.gameMap);
-        this.engineObjects.push(this.player);
-        this.engineObjects.push(this.camera);
-        this.engineObjects.push(this.gameInterface);
+            this.engineObjects.push(this.gameMap);
+            this.engineObjects.push(this.player);
+            this.engineObjects.push(this.camera);
+            this.engineObjects.push(this.gameInterface);
+
+            this.initRun();
+        });
+
+        this.resize();
         
+        this.engineObjects.push(this.gameStartWindow);
+
+        return true;
+    }
+
+    private initRun(): void {
         // init game parameters
         if (Game.parameters && Game.parameters.heroSprite) {
             console.log('init hero sprite', Game.parameters.heroSprite)
@@ -60,8 +76,6 @@ export class Game extends Engine {
         this.resize();
 
         Camera.snap();
-
-        return true;
     }
 
     protected override onLoop(): void {
