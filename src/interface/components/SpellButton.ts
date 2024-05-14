@@ -5,31 +5,12 @@ import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
 
 export class SpellButton extends EngineObject {
-    
-    private x: number;
-    private y: number;
-    private width: number;
-    private height: number;
-    private spell: Spell;
-    private index: number;
-
-    private onClick: (index: number, sb: SpellButton) => void;
-
-    private onHover: (spell: Spell) => void;
 
     constructor(
-        x: number, y: number, width: number, height: number, spell: Spell, 
-        index: number, onClick: (n: number, sb: SpellButton) => void, onHover: (spell: Spell) => void,
+        public x: number, public y: number, public width: number, public height: number, public spell: Spell, 
+        public index: number, private onClick: (n: number, sb: SpellButton) => void, private onHover: (spell: Spell) => void,
         ) {
         super();
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.spell = spell;
-        this.index = index;
-        this.onClick = onClick;
-        this.onHover = onHover;
     }
 
     public display() {
@@ -76,7 +57,7 @@ export class SpellButton extends EngineObject {
 
         // mana costs
         GameGraphics.ctx.textAlign = "left";
-        if (this.spell.energyCost <= Player.stats.energy) {
+        if (!Player.stats || this.spell.energyCost <= Player.stats.energy) {
             // enough mana
             GameGraphics.ctx.fillStyle = 'aqua';
         } else {
