@@ -76,7 +76,7 @@ https://hcarriere.github.io/morse-quest/
         - [x] random item
         - [ ] item selection
     - [x] Simple Class
-        - [ ] Class selection when game start
+        - [x] Class selection when game start
     - [x] Improve fight interface (floating numbers, etc) => implement ParticleProcessor 
     - [ ] Random events every few turns ? (buff / debuff / action ...)
     - [x] Enemy intent
