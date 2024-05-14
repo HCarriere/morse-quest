@@ -18,9 +18,10 @@ export class Player extends EngineObject {
     public static stats: GameStats;
     public static class: Class;
 
-    public static classPool: Pool<Class> = Pool.fromArray([
+    public static availableClasses: Class[] = [
         new ClassElementalSorcerer(),
-    ], 'Class Pool');
+    ];
+    public static classPool: Pool<Class> = Pool.fromArray(this.availableClasses, 'Class Pool');
 
     // public static location: Coordinates;
 
