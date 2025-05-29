@@ -28,7 +28,8 @@ export enum SpellType {
     Shield = 2,
     Buff = 3,
     Debuff = 4,
-    Other = 5,
+    Invocation = 5,
+    Other = 6,
 }
 
 export abstract class Spell {

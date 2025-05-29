@@ -6,7 +6,7 @@ import { GameInterface } from "@game/interface/GameInterface";
 import { GameGraphics } from "./GameGraphics";
 import { GameStats } from "@game/content/GameStats";
 import { Reward } from "@game/content/Reward";
-import { Class, ClassElementalSorcerer } from "@game/content/classes";
+import { Class, ClassElementalSorcerer, ClassMetalomancer } from "@game/content/classes";
 import { Pool } from "@game/core/Pool";
 
 /**
@@ -20,6 +20,7 @@ export class Player extends EngineObject {
 
     public static availableClasses: Class[] = [
         new ClassElementalSorcerer(),
+        new ClassMetalomancer(),
     ];
     public static classPool: Pool<Class> = Pool.fromArray(this.availableClasses, 'Class Pool');
 
