@@ -67,6 +67,7 @@ export class Combat extends EngineObject {
     private currentSpellPlayedTargets: {x: number, y: number, stat: GameStats}[];
     private currentSpellPlayedOrig: {x: number, y: number, stat: GameStats};
     private currentSpellPlayedCallback: ()=>void;
+    private spellMissed = false;
 
     // private actionPlayed = false;
     
@@ -321,6 +322,12 @@ export class Combat extends EngineObject {
             this.currentSpellPlayed = null;
             this.currentSpellPlayedCallback();
         }
+
+        if (this.spellMissed) {
+            // If the spell missed, we still call the callback to advance the combat
+            this.spellMissed = false;
+            this.currentSpellPlayedCallback();
+        }
     }
 
     /**
@@ -341,19 +348,27 @@ export class Combat extends EngineObject {
      * @param onEnd 
      */
     public castSpell(spell: Spell, targets: CombatEntity[], origin: CombatEntity, onEnd: () => void) {
+        this.currentSpellPlayedCallback = onEnd;
         const stats = origin == 'player' ? Player.stats : origin.stats;
-        console.log('accuracy : ', stats.accuracy);
-        if (stats.accuracy < 100) {
+        if (stats.accuracy < 100 && spell.targetType != TargetType.NoTarget && spell.targetType != TargetType.Self) {
             // check if the spell hits its targets
             const hitChance = Math.random() * 100;
-            console.log('hit chance : ', hitChance);
             if (hitChance > stats.accuracy) {
-                console.log('Spell missed');
-                onEnd();
+                this.spellMissed = true;
+                GameGraphics.addInterfaceParticle({
+                        x: stats.x - stats.size / 2,
+                        y: stats.y - stats.size / 2,
+                        text: 'Missed',
+                        color: 'yellow',
+                        size: 25,
+                        life: 120,
+                        vx: Math.random()*4-2,
+                        vy: Math.random()*2-6,
+                        friction: 0.97,
+                    });
                 return;
             }
         }
-        this.currentSpellPlayedCallback = onEnd;
         this.currentSpellPlayedFrame = spell.frameAnimationMax;
         this.currentSpellPlayed = spell;
         console.log('playing spell animation : ', this.currentSpellPlayed);

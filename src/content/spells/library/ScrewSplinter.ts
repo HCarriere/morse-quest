@@ -37,7 +37,7 @@ export class SpellScrewSplinters extends Spell {
                         vx: Math.random()*4-2,
                         vy: Math.random()*2-6,
                         friction: 0.97,
-                    })
+                    });
                 }
             }
         }

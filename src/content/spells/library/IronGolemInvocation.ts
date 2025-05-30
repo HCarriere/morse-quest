@@ -3,8 +3,8 @@ import { Spell, SpellType, TargetType } from "../Spell";
 import { Ally } from "@game/content/Ally";
 import { IronGolem } from "@game/content/skins";
 import { GameStats } from "@game/content/GameStats";
-import { SpellFireball } from "./Fireball";
 import { SpellAllyShield } from "./AllyShield";
+import { SpellIronPunch } from "./IronPuch";
 
 export class SpellIronGolemInvocation extends Spell {
     public name = "Golem de fer";
@@ -25,7 +25,7 @@ export class SpellIronGolemInvocation extends Spell {
                 new IronGolem(),
                 new GameStats([
                     new SpellAllyShield(),
-                    new SpellFireball(300),
+                    new SpellIronPunch(),
                 ], 200),
                 []
             ));
