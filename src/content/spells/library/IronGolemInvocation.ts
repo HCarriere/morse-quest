@@ -5,6 +5,7 @@ import { IronGolem } from "@game/content/skins";
 import { GameStats } from "@game/content/GameStats";
 import { SpellAllyShield } from "./AllyShield";
 import { SpellIronPunch } from "./IronPunch";
+import { SkillIronSkin } from "@game/content/skills";
 
 export class SpellIronGolemInvocation extends Spell {
     public name = "Golem de fer";
@@ -27,7 +28,9 @@ export class SpellIronGolemInvocation extends Spell {
                     new SpellAllyShield(),
                     new SpellIronPunch(),
                 ], 200),
-                []
+                [
+                    new SkillIronSkin(3),
+                ]
             ));
         }
     }

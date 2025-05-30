@@ -1,4 +1,4 @@
-import { Skill, SkillIronSkill } from "@game/content/skills";
+import { Skill, SkillIronSkin } from "@game/content/skills";
 import { Spell, SpellChainLightning, SpellCreateShield, SpellFireball, SpellIcebolt } from "@game/content/spells";
 import { Class } from "../Class";
 
@@ -12,8 +12,8 @@ export class ClassElementalSorcerer extends Class {
         [new SpellFireball(), new SpellChainLightning(), new SpellIcebolt()],
     ];
     public skills: Skill[][] = [
-        [new SkillIronSkill()],
+        [new SkillIronSkin()],
         [],
-        [new SkillIronSkill()],
+        [new SkillIronSkin()],
     ];
 }
