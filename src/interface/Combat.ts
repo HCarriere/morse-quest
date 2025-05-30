@@ -932,4 +932,8 @@ export class Combat extends EngineObject {
                y >= this.abilitiesY - Combat.PADDING - this.playerSize &&
                y <= this.abilitiesY - Combat.PADDING;
     }
+
+    public getPlayerAndAllies(): CombatEntity[] {
+        return ['player', ...this.allies];
+    }
 }

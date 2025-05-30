@@ -69,7 +69,9 @@ export class Enemy {
             });
         } else {
             // target offensive spells
-            combat.castSpell(this.turnIntent, ['player'], this, () => {
+            const availableTargets = combat.getPlayerAndAllies();
+            const selectedTarget = availableTargets[Math.floor(Math.random() * availableTargets.length)];
+            combat.castSpell(this.turnIntent, [selectedTarget], this, () => {
                 onEnd();
             });
         }
