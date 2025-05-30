@@ -788,8 +788,8 @@ export class Combat extends EngineObject {
         for (const e of this.allies) {
             e.stats.clearNecessaryBuffs();
             this.buffIcons.push(new BuffIcons(
-                e.x - e.size/2, 
-                e.y + e.size/2 + 30,  
+                e.x - e.size/2,
+                e.y + e.size/2 + 50,
                 e.stats, (buff) => {
                 // on hover
                 this.tooltip = buff.description;
@@ -801,8 +801,8 @@ export class Combat extends EngineObject {
         for (const e of this.enemies) {
             e.stats.clearNecessaryBuffs();
             this.buffIcons.push(new BuffIcons(
-                e.x - e.size/2, 
-                e.y + e.size/2 + 30,  
+                e.x - e.size/2,
+                e.y + e.size/2 + 30,
                 e.stats, (buff) => {
                 // on hover
                 this.tooltip = buff.description;
@@ -873,7 +873,7 @@ export class Combat extends EngineObject {
         this.height = GameGraphics.canvas.height - Combat.MARGIN*2;
 
         this.enemiesSize = this.height / 5;
-        this.alliesSize = this.height / 5;
+        this.alliesSize = this.height / 6;
         this.playerSize = this.enemiesSize * 1.2;
         
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
@@ -885,7 +885,7 @@ export class Combat extends EngineObject {
         for (let i = 0; i<this.allies.length; i++) {
             // skin
             this.allies[i].stats.x = this.x + Combat.PADDING + this.playerSize + Combat.PADDING + this.width / 6 + Combat.PADDING + i * (this.alliesSize + Combat.PADDING) + this.alliesSize/2;
-            this.allies[i].stats.y = this.abilitiesY - this.alliesSize;
+            this.allies[i].stats.y = this.abilitiesY - this.alliesSize - 2 * Combat.PADDING;
             this.allies[i].stats.size = this.alliesSize;
         }
 
@@ -920,7 +920,7 @@ export class Combat extends EngineObject {
 
     addAlly(ally: Ally) {
         ally.stats.x = this.x + Combat.PADDING + this.playerSize + Combat.PADDING + this.width / 6 + Combat.PADDING + this.allies.length * (this.alliesSize + Combat.PADDING) + this.alliesSize/2;
-        ally.stats.y = this.abilitiesY - this.alliesSize;
+        ally.stats.y = this.abilitiesY - this.alliesSize - 2 * Combat.PADDING;
         ally.stats.size = this.alliesSize;
         ally.stats.healFullEnergy();
         this.allies.push(ally);
