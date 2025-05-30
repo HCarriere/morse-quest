@@ -1,5 +1,5 @@
 import { GameStats } from "@game/content/GameStats";
-import { Spell, DamageType, TargetType, SpellType } from "../Spell";
+import { Spell, DamageType, TargetType, SpellType, TargetAlignment } from "../Spell";
 import { GameGraphics } from "@game/system/GameGraphics";
 
 export class SpellNPCAttack extends Spell {
@@ -12,6 +12,7 @@ export class SpellNPCAttack extends Spell {
     public plannedDamage = 10;
 
     public icon = {text: "ATK", color: 'red'};
+    public targetAlignment = TargetAlignment.Allies;
     public targetType = TargetType.Single;
     public frameAnimationMax = 30;
 

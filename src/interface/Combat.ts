@@ -4,7 +4,7 @@ import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
 import { GameInterface } from "./GameInterface";
 import { GameController } from "@game/system/GameController";
-import { Spell, TargetType } from "@game/content/spells/Spell";
+import { Spell, TargetAlignment, TargetType } from "@game/content/spells/Spell";
 import { SpellButton } from "./components/SpellButton";
 import { Button } from "./components/Button";
 import { GameStats } from "@game/content/GameStats";
@@ -13,6 +13,8 @@ import { Camera } from "@game/system/Camera";
 import { Reward } from "@game/content/Reward";
 import { RewardScreen } from "./RewardScreen";
 import { Ally } from "@game/content/Ally";
+
+type CombatEntity = Enemy | 'player' | Ally;
 
 /**
  * Displays and process combats
@@ -75,8 +77,9 @@ export class Combat extends EngineObject {
     /**
      * From the enemies pool
      */
-    private targetSelectionCurrent: number[];
-    private targetSelectionCallback: (targets: Enemy[])=>void;
+    private targetSelectionAlignment: TargetAlignment;
+    private targetSelectionCurrent: CombatEntity[];
+    private targetSelectionCallback: (targets: CombatEntity[])=>void;
 
     constructor(enemies: Enemy[],
                 onCombatWin?: () => void,
@@ -90,7 +93,7 @@ export class Combat extends EngineObject {
 
         this.resize();
         this.frameAnim = 1.0;
-        this.buildActions(Player.stats);
+        this.buildActions();
         this.synchronizeBuffs();
         // this.buildTurnOrder();
         Player.stats.cancelAnimation();
@@ -150,6 +153,21 @@ export class Combat extends EngineObject {
             return;
         }
         
+        if (
+            this.targetSelectionToChoose > 0
+            && (this.targetSelectionAlignment == TargetAlignment.Allies || this.targetSelectionAlignment == TargetAlignment.Both)
+            && this.playerIsInbound(GameController.mouseX, GameController.mouseY)
+        ) {
+            // display selectionitivity
+            GameGraphics.ctx.fillStyle = 'yellow';
+            GameGraphics.ctx.strokeStyle = 'yellow';
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.strokeRect(
+                this.x + Combat.PADDING, 
+                this.abilitiesY - Combat.PADDING - this.playerSize, 
+                this.playerSize, this.playerSize);
+        }
+        
         // allies
         for (let i = 0; i<this.allies.length; i++) {
             // skin
@@ -168,7 +186,11 @@ export class Combat extends EngineObject {
             );
 
             // target selection
-            if (this.targetSelectionToChoose > 0 && this.allies[i].isInbound(GameController.mouseX, GameController.mouseY)) {
+            if (
+                this.targetSelectionToChoose > 0
+                && (this.targetSelectionAlignment == TargetAlignment.Allies || this.targetSelectionAlignment == TargetAlignment.Both)
+                && this.allies[i].isInbound(GameController.mouseX, GameController.mouseY)
+            ) {
                 // display selectionitivity
                 GameGraphics.ctx.fillStyle = 'yellow';
                 GameGraphics.ctx.strokeStyle = 'yellow';
@@ -196,7 +218,11 @@ export class Combat extends EngineObject {
             GameGraphics.displayTurnIntent(this.enemies[i].turnIntent,this.enemies[i].x, this.enemies[i].y - this.enemies[i].size/2 - 20);
 
             // target selection
-            if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)) {
+            if (
+                this.targetSelectionToChoose > 0
+                && (this.targetSelectionAlignment == TargetAlignment.Enemies || this.targetSelectionAlignment == TargetAlignment.Both)
+                && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)
+            ) {
                 // display selectionitivity
                 GameGraphics.ctx.fillStyle = 'yellow';
                 GameGraphics.ctx.strokeStyle = 'yellow';
@@ -226,15 +252,28 @@ export class Combat extends EngineObject {
 
             for (let i = 0;i<this.targetSelectionToChoose; i++) {
                 GameGraphics.ctx.strokeRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
-                if (this.targetSelectionCurrent[i] >= 0) {
+                if (i < this.targetSelectionCurrent.length) {
                     GameGraphics.ctx.fillRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
-
-                    // display on target
-                    const e = this.enemies[this.targetSelectionCurrent[i]];
-                    GameGraphics.ctx.strokeRect(
-                        e.x - e.size/2, 
-                        e.y - e.size/2, 
-                        e.size, e.size);
+                    let targetEntity = this.targetSelectionCurrent[i];
+                    if (targetEntity == 'player') {
+                        // display on player
+                        GameGraphics.ctx.strokeRect(
+                            this.x + Combat.PADDING, 
+                            this.abilitiesY - Combat.PADDING - this.playerSize, 
+                            this.playerSize, this.playerSize);
+                    } else if (targetEntity instanceof Ally) {
+                        // display on ally
+                        GameGraphics.ctx.strokeRect(
+                            targetEntity.x - targetEntity.size/2, 
+                            targetEntity.y - targetEntity.size/2, 
+                            targetEntity.size, targetEntity.size);
+                    } else {
+                        // display on enemy
+                        GameGraphics.ctx.strokeRect(
+                            targetEntity.x - targetEntity.size/2, 
+                            targetEntity.y - targetEntity.size/2, 
+                            targetEntity.size, targetEntity.size);
+                    }
                 }
             }
         }
@@ -301,7 +340,7 @@ export class Combat extends EngineObject {
      * @param origin 
      * @param onEnd 
      */
-    public playSpellAnimation(spell: Spell, targets: (Enemy|'player'|Ally)[], origin: Enemy|'player'|Ally, onEnd: () => void) {
+    public playSpellAnimation(spell: Spell, targets: CombatEntity[], origin: CombatEntity, onEnd: () => void) {
         this.currentSpellPlayedCallback = onEnd;
         this.currentSpellPlayedFrame = spell.frameAnimationMax;
         this.currentSpellPlayed = spell;
@@ -314,7 +353,11 @@ export class Combat extends EngineObject {
                 stat: Player.stats,
             };
         } else if (origin instanceof Ally) {
-            // TODO
+            this.currentSpellPlayedOrig = {
+                x: origin.x,
+                y: origin.y,
+                stat: origin.stats,
+            }
         } else {
             this.currentSpellPlayedOrig = {
                 x: origin.x,
@@ -331,7 +374,11 @@ export class Combat extends EngineObject {
                     stat: Player.stats,
                 });
             } else if (t instanceof Ally) {
-                // TODO
+                this.currentSpellPlayedTargets.push({
+                    x: t.x,
+                    y: t.y,
+                    stat: t.stats,
+                });
             } else {
                 this.currentSpellPlayedTargets.push({
                     x: t.x,
@@ -342,7 +389,10 @@ export class Combat extends EngineObject {
         }
     }
 
-    private doPlayerAction(stats: GameStats, spell: Spell) {
+    private doPlayerOrAllyAction(spell: Spell) {
+        const currentTurn = this.getCurrentTurn();
+        if (currentTurn instanceof Enemy) return; // not player or ally turn
+        const stats = currentTurn instanceof Ally ? currentTurn.stats : Player.stats;
         console.log(spell)
         // check if already is targeting something
         if (this.targetSelectionToChoose) {
@@ -364,14 +414,16 @@ export class Combat extends EngineObject {
         if (stats.energy < spell.energyCost) {
             // not enough energy
             return;
-        } 
+        }
+
+        this.targetSelectionAlignment = spell.targetAlignment;
         
         switch(spell.targetType) {
             case TargetType.NoTarget:
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [], 'player', () => {
+                this.playSpellAnimation(spell, [], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -379,7 +431,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, ['player'], 'player', () => {
+                this.playSpellAnimation(spell, [currentTurn], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -388,7 +440,7 @@ export class Combat extends EngineObject {
                     // process cooldown & energy
                     spell.currentCooldown = spell.cooldown;
                     stats.energy -= spell.energyCost;
-                    this.playSpellAnimation(spell, targets, 'player', () => {
+                    this.playSpellAnimation(spell, targets, currentTurn, () => {
                         this.checkCombatState();
                     });
                 });
@@ -397,7 +449,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, this.enemies, 'player', () => {
+                this.playSpellAnimation(spell, this.enemies, currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -405,7 +457,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [...this.enemies, "player"], 'player', () => {
+                this.playSpellAnimation(spell, [...this.enemies, "player", ...this.allies], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -414,7 +466,7 @@ export class Combat extends EngineObject {
                     // process cooldown & energy
                     spell.currentCooldown = spell.cooldown;
                     stats.energy -= spell.energyCost;
-                    this.playSpellAnimation(spell, targets, 'player', () => {
+                    this.playSpellAnimation(spell, targets, currentTurn, () => {
                         this.checkCombatState();
                     });
                 });
@@ -423,24 +475,26 @@ export class Combat extends EngineObject {
         }
     }
 
-    private chooseTargets(number: number, onTargetsAcquired: (targets: Enemy[])=>void) {
+    private chooseTargets(number: number, onTargetsAcquired: (targets: CombatEntity[])=>void) {
+        if (this.targetSelectionAlignment == TargetAlignment.NotApplicable) {
+            // no target selection
+            console.warn('No target selection available for this spell');
+            return;
+        }
         console.log('choosing targets ...')
         this.targetSelectionToChoose = number;
         this.targetSelectionCurrent = [];
         this.targetSelectionCallback = onTargetsAcquired;
     }
 
-    private selectTarget(i: number) {
-        console.log('selected target ', i)
-        this.targetSelectionCurrent.push(i);
+    private selectTarget(target: CombatEntity) {
+        console.log('selected target ', target)
+        this.targetSelectionCurrent.push(target);
 
         if (this.targetSelectionCurrent.length == this.targetSelectionToChoose) {
+
             // finished
-            const targets: Enemy[] = [];
-            for (const n of this.targetSelectionCurrent) {
-                targets.push(this.enemies[n]);
-            }
-            this.targetSelectionCallback(targets);
+            this.targetSelectionCallback(this.targetSelectionCurrent);
             // reset
             this.targetSelectionToChoose = 0;
             this.targetSelectionCurrent = [];
@@ -500,7 +554,7 @@ export class Combat extends EngineObject {
         for (const spellIndex of Player.stats.activeSpells) {
             Player.stats.spells[spellIndex].advanceCooldown();
         }
-        this.buildActions(Player.stats);
+        this.buildActions();
     }
 
     /**
@@ -516,7 +570,7 @@ export class Combat extends EngineObject {
         for (const spellIndex of ally.stats.activeSpells) {
             ally.stats.spells[spellIndex].advanceCooldown();
         }
-        this.buildActions(ally.stats);
+        this.buildActions();
     }
 
     /**
@@ -644,7 +698,10 @@ export class Combat extends EngineObject {
     /**
      * Build action buttons
      */
-    private buildActions(stats: GameStats) {
+    private buildActions() {
+        const currentTurn = this.getCurrentTurn();
+        if (currentTurn instanceof Enemy) return; // not player or ally turn
+        const stats = currentTurn instanceof Ally ? currentTurn.stats : Player.stats;
         this.spellsButtons = [];
         let cx=0;
         let cy=0;
@@ -656,7 +713,7 @@ export class Combat extends EngineObject {
                 Combat.SPELL_WIDTH, Combat.SPELL_HEIGHT, stats.spells[spellIndex], spellIndex,
                 (n, sb) => {
                     // on click
-                    this.doPlayerAction(stats, stats.spells[n]);
+                    this.doPlayerOrAllyAction(stats.spells[n]);
                 },
                 (s) => {
                     // on hover
@@ -724,7 +781,7 @@ export class Combat extends EngineObject {
     /**
      * Get the current entity playing.
      */
-    private getCurrentTurn(): Enemy|'player'|Ally {
+    private getCurrentTurn(): CombatEntity {
         if (this.currentRound == 0) return 'player';
         if (this.currentRound <= this.allies.length) return this.allies[this.currentRound - 1];
         return this.enemies[this.currentRound - 1 - this.allies.length];
@@ -735,10 +792,28 @@ export class Combat extends EngineObject {
 
         if (this.targetSelectionToChoose > 0) {
             // select first
-            for(let i = 0; i<this.enemies.length; i++) {
-                if (this.enemies[i].isInbound(x, y)) {
-                    // select this one
-                    this.selectTarget(i);
+            if (this.targetSelectionAlignment == TargetAlignment.Enemies || this.targetSelectionAlignment == TargetAlignment.Both) {
+                // select from enemies
+                for(let i = 0; i<this.enemies.length; i++) {
+                    if (this.enemies[i].isInbound(x, y)) {
+                        // select this one
+                        this.selectTarget(this.enemies[i]);
+                        return;
+                    }
+                }
+            }
+            if (this.targetSelectionAlignment == TargetAlignment.Allies || this.targetSelectionAlignment == TargetAlignment.Both) {
+                // select from allies
+                for(let i = 0; i<this.allies.length; i++) {
+                    if (this.allies[i].isInbound(x, y)) {
+                        // select this one
+                        this.selectTarget(this.allies[i]);
+                        return;
+                    }
+                }
+                // select player
+                if (this.playerIsInbound(x, y)) {
+                    this.selectTarget('player');
                     return;
                 }
             }
@@ -816,5 +891,12 @@ export class Combat extends EngineObject {
         ally.stats.size = this.alliesSize;
         ally.stats.healFullEnergy();
         this.allies.push(ally);
+    }
+
+    private playerIsInbound(x: number, y: number): boolean {
+        return x >= this.x + Combat.PADDING && 
+               x <= this.x + Combat.PADDING + this.playerSize &&
+               y >= this.abilitiesY - Combat.PADDING - this.playerSize &&
+               y <= this.abilitiesY - Combat.PADDING;
     }
 }

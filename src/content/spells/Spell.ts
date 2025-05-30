@@ -1,6 +1,13 @@
 import { GameStats } from "@game/content/GameStats";
 import { Icon } from "@game/system/GameGraphics";
 
+export enum TargetAlignment {
+    Enemies = 1,
+    Allies = 2,
+    Both = 3,
+    NotApplicable = 4,
+}
+
 export enum TargetType {
     NoTarget = 0,
     Self = 1,
@@ -53,6 +60,8 @@ export abstract class Spell {
      * Can be 0.
      */
     public abstract energyCost: number;
+
+    public targetAlignment: TargetAlignment = TargetAlignment.NotApplicable;
 
     public abstract targetType: TargetType;
 
