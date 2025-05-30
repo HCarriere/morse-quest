@@ -3,12 +3,14 @@ import { GameController } from "@game/system/GameController";
 import { EngineObject } from "@game/core/EngineObject";
 import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
+import { GameStats } from "@game/content/GameStats";
 
 export class SpellButton extends EngineObject {
 
     constructor(
         public x: number, public y: number, public width: number, public height: number, public spell: Spell, 
         public index: number, private onClick: (n: number, sb: SpellButton) => void, private onHover: (spell: Spell) => void,
+        private stats: GameStats = Player.stats
         ) {
         super();
     }
@@ -57,7 +59,7 @@ export class SpellButton extends EngineObject {
 
         // mana costs
         GameGraphics.ctx.textAlign = "left";
-        if (!Player.stats || this.spell.energyCost <= Player.stats.energy) {
+        if (!this.stats || this.spell.energyCost <= this.stats.energy) {
             // enough mana
             GameGraphics.ctx.fillStyle = 'aqua';
         } else {

@@ -1,5 +1,5 @@
 import { GameGraphics } from "@game/system/GameGraphics";
-import { Spell, DamageType, TargetType, SpellType } from "../Spell";
+import { Spell, DamageType, TargetType, SpellType, TargetAlignment } from "../Spell";
 import { GameStats } from "@game/content/GameStats";
 
 export class SpellIcebolt extends Spell {
@@ -12,10 +12,11 @@ export class SpellIcebolt extends Spell {
     public plannedDamage = 10;
 
     public icon = {text: "🜄", color: 'lightblue'};
+    public targetAlignment = TargetAlignment.Enemies;
     public targetType = TargetType.Single;
     public frameAnimationMax = 80;
 
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
 
         // effect
         if (frameLeft == 10) {

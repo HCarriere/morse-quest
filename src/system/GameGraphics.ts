@@ -125,6 +125,10 @@ export class GameGraphics extends Graphics {
             GameGraphics.ctx.fillStyle = 'lightgreen';
             GameGraphics.ctx.fillText(`💀`, x, y);
         }
+        else if (spell.spellType == SpellType.Invocation) {
+            GameGraphics.ctx.fillStyle = 'orange';
+            GameGraphics.ctx.fillText(`🕈`, x, y);
+        }
         else if (spell.spellType == SpellType.Other) {
             GameGraphics.ctx.fillStyle = 'white';
             GameGraphics.ctx.fillText(`???`, x, y);

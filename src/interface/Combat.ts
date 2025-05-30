@@ -4,7 +4,7 @@ import { GameGraphics } from "@game/system/GameGraphics";
 import { Player } from "@game/system/Player";
 import { GameInterface } from "./GameInterface";
 import { GameController } from "@game/system/GameController";
-import { Spell, TargetType } from "@game/content/spells/Spell";
+import { Spell, TargetAlignment, TargetType } from "@game/content/spells/Spell";
 import { SpellButton } from "./components/SpellButton";
 import { Button } from "./components/Button";
 import { GameStats } from "@game/content/GameStats";
@@ -12,6 +12,9 @@ import { BuffIcons } from "./components/BuffIcons";
 import { Camera } from "@game/system/Camera";
 import { Reward } from "@game/content/Reward";
 import { RewardScreen } from "./RewardScreen";
+import { Ally } from "@game/content/Ally";
+
+type CombatEntity = Enemy | 'player' | Ally;
 
 /**
  * Displays and process combats
@@ -19,6 +22,7 @@ import { RewardScreen } from "./RewardScreen";
 export class Combat extends EngineObject {
 
     private enemies: Enemy[]; // vs Player
+    private allies: Ally[] = []; // allies of player
     private reward: Reward;
     private showRewardScreen: boolean = false;
     private rewardScreen: RewardScreen;
@@ -37,6 +41,7 @@ export class Combat extends EngineObject {
     private abilitiesY: number;
     private abilitiesHeight: number;
     private enemiesSize: number;
+    private alliesSize: number;
     private playerSize: number;
 
     private onCombatWin: () => void;
@@ -62,6 +67,7 @@ export class Combat extends EngineObject {
     private currentSpellPlayedTargets: {x: number, y: number, stat: GameStats}[];
     private currentSpellPlayedOrig: {x: number, y: number, stat: GameStats};
     private currentSpellPlayedCallback: ()=>void;
+    private spellMissed = false;
 
     // private actionPlayed = false;
     
@@ -72,8 +78,9 @@ export class Combat extends EngineObject {
     /**
      * From the enemies pool
      */
-    private targetSelectionCurrent: number[];
-    private targetSelectionCallback: (targets: Enemy[])=>void;
+    private targetSelectionAlignment: TargetAlignment;
+    private targetSelectionCurrent: CombatEntity[];
+    private targetSelectionCallback: (targets: CombatEntity[])=>void;
 
     constructor(enemies: Enemy[],
                 onCombatWin?: () => void,
@@ -147,6 +154,55 @@ export class Combat extends EngineObject {
             return;
         }
         
+        if (
+            this.targetSelectionToChoose > 0
+            && (this.targetSelectionAlignment == TargetAlignment.Allies || this.targetSelectionAlignment == TargetAlignment.Both)
+            && this.playerIsInbound(GameController.mouseX, GameController.mouseY)
+        ) {
+            // display selectionitivity
+            GameGraphics.ctx.fillStyle = 'yellow';
+            GameGraphics.ctx.strokeStyle = 'yellow';
+            GameGraphics.ctx.lineWidth = 1;
+            GameGraphics.ctx.strokeRect(
+                this.x + Combat.PADDING, 
+                this.abilitiesY - Combat.PADDING - this.playerSize, 
+                this.playerSize, this.playerSize);
+        }
+        
+        // allies
+        for (let i = 0; i<this.allies.length; i++) {
+            // skin
+            this.allies[i].display();
+            
+            // energy
+            this.allies[i].stats.displayHp(
+                this.allies[i].x - this.allies[i].size/2,
+                this.allies[i].y + this.allies[i].size/2,
+                this.allies[i].size
+                );
+            this.allies[i].stats.displayEnergy(
+                this.allies[i].x - this.allies[i].size/2,
+                this.allies[i].y + this.allies[i].size/2 + 25,
+                this.allies[i].size
+            );
+
+            // target selection
+            if (
+                this.targetSelectionToChoose > 0
+                && (this.targetSelectionAlignment == TargetAlignment.Allies || this.targetSelectionAlignment == TargetAlignment.Both)
+                && this.allies[i].isInbound(GameController.mouseX, GameController.mouseY)
+            ) {
+                // display selectionitivity
+                GameGraphics.ctx.fillStyle = 'yellow';
+                GameGraphics.ctx.strokeStyle = 'yellow';
+                GameGraphics.ctx.lineWidth = 1;
+                GameGraphics.ctx.strokeRect(
+                    this.allies[i].x - this.allies[i].size/2, 
+                    this.allies[i].y - this.allies[i].size/2, 
+                    this.allies[i].size, this.allies[i].size);
+            }
+        }
+        
         // enemies
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
@@ -163,7 +219,11 @@ export class Combat extends EngineObject {
             GameGraphics.displayTurnIntent(this.enemies[i].turnIntent,this.enemies[i].x, this.enemies[i].y - this.enemies[i].size/2 - 20);
 
             // target selection
-            if (this.targetSelectionToChoose > 0 && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)) {
+            if (
+                this.targetSelectionToChoose > 0
+                && (this.targetSelectionAlignment == TargetAlignment.Enemies || this.targetSelectionAlignment == TargetAlignment.Both)
+                && this.enemies[i].isInbound(GameController.mouseX, GameController.mouseY)
+            ) {
                 // display selectionitivity
                 GameGraphics.ctx.fillStyle = 'yellow';
                 GameGraphics.ctx.strokeStyle = 'yellow';
@@ -193,15 +253,28 @@ export class Combat extends EngineObject {
 
             for (let i = 0;i<this.targetSelectionToChoose; i++) {
                 GameGraphics.ctx.strokeRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
-                if (this.targetSelectionCurrent[i] >= 0) {
+                if (i < this.targetSelectionCurrent.length) {
                     GameGraphics.ctx.fillRect(this.width / 2 + i*25, this.abilitiesY - 25, 20, 20);
-
-                    // display on target
-                    const e = this.enemies[this.targetSelectionCurrent[i]];
-                    GameGraphics.ctx.strokeRect(
-                        e.x - e.size/2, 
-                        e.y - e.size/2, 
-                        e.size, e.size);
+                    let targetEntity = this.targetSelectionCurrent[i];
+                    if (targetEntity == 'player') {
+                        // display on player
+                        GameGraphics.ctx.strokeRect(
+                            this.x + Combat.PADDING, 
+                            this.abilitiesY - Combat.PADDING - this.playerSize, 
+                            this.playerSize, this.playerSize);
+                    } else if (targetEntity instanceof Ally) {
+                        // display on ally
+                        GameGraphics.ctx.strokeRect(
+                            targetEntity.x - targetEntity.size/2, 
+                            targetEntity.y - targetEntity.size/2, 
+                            targetEntity.size, targetEntity.size);
+                    } else {
+                        // display on enemy
+                        GameGraphics.ctx.strokeRect(
+                            targetEntity.x - targetEntity.size/2, 
+                            targetEntity.y - targetEntity.size/2, 
+                            targetEntity.size, targetEntity.size);
+                    }
                 }
             }
         }
@@ -211,7 +284,7 @@ export class Combat extends EngineObject {
         GameGraphics.ctx.strokeStyle = 'white';
         GameGraphics.ctx.lineWidth = 1;
         GameGraphics.ctx.strokeRect(this.x+3, this.abilitiesY, this.width-6, this.abilitiesHeight);
-        if (this.getCurrentTurn() == 'player') {
+        if (!(this.getCurrentTurn() instanceof Enemy)) {
             for(const ob of this.spellsButtons) {
                 ob.display();
             }
@@ -249,6 +322,12 @@ export class Combat extends EngineObject {
             this.currentSpellPlayed = null;
             this.currentSpellPlayedCallback();
         }
+
+        if (this.spellMissed) {
+            // If the spell missed, we still call the callback to advance the combat
+            this.spellMissed = false;
+            this.currentSpellPlayedCallback();
+        }
     }
 
     /**
@@ -268,8 +347,28 @@ export class Combat extends EngineObject {
      * @param origin 
      * @param onEnd 
      */
-    public playSpellAnimation(spell: Spell, targets: (Enemy|'player')[], origin: Enemy|'player', onEnd: () => void) {
+    public castSpell(spell: Spell, targets: CombatEntity[], origin: CombatEntity, onEnd: () => void) {
         this.currentSpellPlayedCallback = onEnd;
+        const stats = origin == 'player' ? Player.stats : origin.stats;
+        if (stats.accuracy < 100 && spell.targetType != TargetType.NoTarget && spell.targetType != TargetType.Self) {
+            // check if the spell hits its targets
+            const hitChance = Math.random() * 100;
+            if (hitChance > stats.accuracy) {
+                this.spellMissed = true;
+                GameGraphics.addInterfaceParticle({
+                        x: stats.x - stats.size / 2,
+                        y: stats.y - stats.size / 2,
+                        text: 'Missed',
+                        color: 'yellow',
+                        size: 25,
+                        life: 120,
+                        vx: Math.random()*4-2,
+                        vy: Math.random()*2-6,
+                        friction: 0.97,
+                    });
+                return;
+            }
+        }
         this.currentSpellPlayedFrame = spell.frameAnimationMax;
         this.currentSpellPlayed = spell;
         console.log('playing spell animation : ', this.currentSpellPlayed);
@@ -280,6 +379,12 @@ export class Combat extends EngineObject {
                 y: this.abilitiesY - Combat.PADDING - this.playerSize + this.playerSize/2,
                 stat: Player.stats,
             };
+        } else if (origin instanceof Ally) {
+            this.currentSpellPlayedOrig = {
+                x: origin.x,
+                y: origin.y,
+                stat: origin.stats,
+            }
         } else {
             this.currentSpellPlayedOrig = {
                 x: origin.x,
@@ -295,6 +400,12 @@ export class Combat extends EngineObject {
                     y: this.abilitiesY - Combat.PADDING - this.playerSize + this.playerSize/2,
                     stat: Player.stats,
                 });
+            } else if (t instanceof Ally) {
+                this.currentSpellPlayedTargets.push({
+                    x: t.x,
+                    y: t.y,
+                    stat: t.stats,
+                });
             } else {
                 this.currentSpellPlayedTargets.push({
                     x: t.x,
@@ -305,7 +416,10 @@ export class Combat extends EngineObject {
         }
     }
 
-    private doPlayerAction(spell: Spell) {
+    private doPlayerOrAllyAction(spell: Spell) {
+        const currentTurn = this.getCurrentTurn();
+        if (currentTurn instanceof Enemy) return; // not player or ally turn
+        const stats = currentTurn instanceof Ally ? currentTurn.stats : Player.stats;
         console.log(spell)
         // check if already is targeting something
         if (this.targetSelectionToChoose) {
@@ -324,25 +438,27 @@ export class Combat extends EngineObject {
             return;
         }
         // check energy
-        if (Player.stats.energy < spell.energyCost) {
+        if (stats.energy < spell.energyCost) {
             // not enough energy
             return;
-        } 
+        }
+
+        this.targetSelectionAlignment = spell.targetAlignment;
         
         switch(spell.targetType) {
             case TargetType.NoTarget:
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
-                Player.stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [], 'player', () => {
+                stats.energy -= spell.energyCost;
+                this.castSpell(spell, [], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
             case TargetType.Self:
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
-                Player.stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, ['player'], 'player', () => {
+                stats.energy -= spell.energyCost;
+                this.castSpell(spell, [currentTurn], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -350,8 +466,8 @@ export class Combat extends EngineObject {
                 this.chooseTargets(1, (targets) => {
                     // process cooldown & energy
                     spell.currentCooldown = spell.cooldown;
-                    Player.stats.energy -= spell.energyCost;
-                    this.playSpellAnimation(spell, targets, 'player', () => {
+                    stats.energy -= spell.energyCost;
+                    this.castSpell(spell, targets, currentTurn, () => {
                         this.checkCombatState();
                     });
                 });
@@ -359,16 +475,16 @@ export class Combat extends EngineObject {
             case TargetType.AllEnemies:
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
-                Player.stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, this.enemies, 'player', () => {
+                stats.energy -= spell.energyCost;
+                this.castSpell(spell, this.enemies, currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
             case TargetType.All:
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
-                Player.stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [...this.enemies, "player"], 'player', () => {
+                stats.energy -= spell.energyCost;
+                this.castSpell(spell, [...this.enemies, "player", ...this.allies], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -376,8 +492,8 @@ export class Combat extends EngineObject {
                 this.chooseTargets(spell.targetMax, (targets) => {
                     // process cooldown & energy
                     spell.currentCooldown = spell.cooldown;
-                    Player.stats.energy -= spell.energyCost;
-                    this.playSpellAnimation(spell, targets, 'player', () => {
+                    stats.energy -= spell.energyCost;
+                    this.castSpell(spell, targets, currentTurn, () => {
                         this.checkCombatState();
                     });
                 });
@@ -386,24 +502,26 @@ export class Combat extends EngineObject {
         }
     }
 
-    private chooseTargets(number: number, onTargetsAcquired: (targets: Enemy[])=>void) {
+    private chooseTargets(number: number, onTargetsAcquired: (targets: CombatEntity[])=>void) {
+        if (this.targetSelectionAlignment == TargetAlignment.NotApplicable) {
+            // no target selection
+            console.warn('No target selection available for this spell');
+            return;
+        }
         console.log('choosing targets ...')
         this.targetSelectionToChoose = number;
         this.targetSelectionCurrent = [];
         this.targetSelectionCallback = onTargetsAcquired;
     }
 
-    private selectTarget(i: number) {
-        console.log('selected target ', i)
-        this.targetSelectionCurrent.push(i);
+    private selectTarget(target: CombatEntity) {
+        console.log('selected target ', target)
+        this.targetSelectionCurrent.push(target);
 
         if (this.targetSelectionCurrent.length == this.targetSelectionToChoose) {
+
             // finished
-            const targets: Enemy[] = [];
-            for (const n of this.targetSelectionCurrent) {
-                targets.push(this.enemies[n]);
-            }
-            this.targetSelectionCallback(targets);
+            this.targetSelectionCallback(this.targetSelectionCurrent);
             // reset
             this.targetSelectionToChoose = 0;
             this.targetSelectionCurrent = [];
@@ -427,7 +545,7 @@ export class Combat extends EngineObject {
         
         this.currentRound++;
 
-        if (this.enemies.length < this.currentRound) {
+        if (this.enemies.length + this.allies.length < this.currentRound) {
             // new turn
             // prepare enemies turns
             for (const e of this.enemies) {
@@ -439,7 +557,12 @@ export class Combat extends EngineObject {
         }
         const roundTo = this.getCurrentTurn();
 
-        if (roundTo != 'player') {
+        if (roundTo instanceof Ally) {
+            // new ally turn
+            this.newAllyTurn(roundTo);
+        }
+
+        if (roundTo instanceof Enemy) {
             // new enemy turn
             this.newEnemyTurn(roundTo);
         }
@@ -458,6 +581,23 @@ export class Combat extends EngineObject {
         for (const spellIndex of Player.stats.activeSpells) {
             Player.stats.spells[spellIndex].advanceCooldown();
         }
+        this.buildActions();
+    }
+
+    /**
+     * Happens when ally is playing
+     */
+    private newAllyTurn(ally: Ally) {
+        // refill ally energy
+        ally.stats.healFullEnergy();
+        // advance ally buffs
+        ally.stats.advanceBuffDepletion();
+        this.synchronizeBuffs();
+        // advance spells cooldown
+        for (const spellIndex of ally.stats.activeSpells) {
+            ally.stats.spells[spellIndex].advanceCooldown();
+        }
+        this.buildActions();
     }
 
     /**
@@ -493,6 +633,12 @@ export class Combat extends EngineObject {
             return;
         }
 
+        for (let i = this.allies.length - 1; i >= 0; i--) {
+            if (this.allies[i].isDead) {
+                console.log(this.allies[i].name + ' is dead')
+                this.allies.splice(i, 1);
+            }
+        }
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             if (this.enemies[i].isDead) {
                 console.log(this.enemies[i].name + ' is dead')
@@ -586,24 +732,29 @@ export class Combat extends EngineObject {
      * Build action buttons
      */
     private buildActions() {
+        const currentTurn = this.getCurrentTurn();
+        if (currentTurn instanceof Enemy) return; // not player or ally turn
+        const stats = currentTurn instanceof Ally ? currentTurn.stats : Player.stats;
         this.spellsButtons = [];
         let cx=0;
         let cy=0;
         let i=0;
-        for (const spellIndex of Player.stats.activeSpells) {
+        for (const spellIndex of stats.activeSpells) {
             this.spellsButtons.push(new SpellButton(
                 this.x + 10 + cx * (Combat.SPELL_WIDTH+10), 
                 this.abilitiesY + 10 + cy * (Combat.SPELL_HEIGHT+10), 
-                Combat.SPELL_WIDTH, Combat.SPELL_HEIGHT, Player.stats.spells[spellIndex], spellIndex,
+                Combat.SPELL_WIDTH, Combat.SPELL_HEIGHT, stats.spells[spellIndex], spellIndex,
                 (n, sb) => {
                     // on click
-                    this.doPlayerAction(Player.stats.spells[n]);
+                    this.doPlayerOrAllyAction(stats.spells[n]);
                 },
                 (s) => {
                     // on hover
                     this.tooltip = s.description;
                     this.tooltipDisplay = true;
-                }));
+                },
+                stats
+            ));
             i++;
             if (i%2==0) {
                 cx++;
@@ -633,6 +784,19 @@ export class Combat extends EngineObject {
             this.tooltipDisplay = true;
         }));
 
+        // allies buffs
+        for (const e of this.allies) {
+            e.stats.clearNecessaryBuffs();
+            this.buffIcons.push(new BuffIcons(
+                e.x - e.size/2, 
+                e.y + e.size/2 + 30,  
+                e.stats, (buff) => {
+                // on hover
+                this.tooltip = buff.description;
+                this.tooltipDisplay = true;
+            }, 3));
+        }
+
         // enemies buffs
         for (const e of this.enemies) {
             e.stats.clearNecessaryBuffs();
@@ -650,9 +814,10 @@ export class Combat extends EngineObject {
     /**
      * Get the current entity playing.
      */
-    private getCurrentTurn(): Enemy|'player' {
+    private getCurrentTurn(): CombatEntity {
         if (this.currentRound == 0) return 'player';
-        return this.enemies[this.currentRound - 1];
+        if (this.currentRound <= this.allies.length) return this.allies[this.currentRound - 1];
+        return this.enemies[this.currentRound - 1 - this.allies.length];
     }
     
     public mousePressed(x: number, y: number): void {
@@ -660,17 +825,35 @@ export class Combat extends EngineObject {
 
         if (this.targetSelectionToChoose > 0) {
             // select first
-            for(let i = 0; i<this.enemies.length; i++) {
-                if (this.enemies[i].isInbound(x, y)) {
-                    // select this one
-                    this.selectTarget(i);
+            if (this.targetSelectionAlignment == TargetAlignment.Enemies || this.targetSelectionAlignment == TargetAlignment.Both) {
+                // select from enemies
+                for(let i = 0; i<this.enemies.length; i++) {
+                    if (this.enemies[i].isInbound(x, y)) {
+                        // select this one
+                        this.selectTarget(this.enemies[i]);
+                        return;
+                    }
+                }
+            }
+            if (this.targetSelectionAlignment == TargetAlignment.Allies || this.targetSelectionAlignment == TargetAlignment.Both) {
+                // select from allies
+                for(let i = 0; i<this.allies.length; i++) {
+                    if (this.allies[i].isInbound(x, y)) {
+                        // select this one
+                        this.selectTarget(this.allies[i]);
+                        return;
+                    }
+                }
+                // select player
+                if (this.playerIsInbound(x, y)) {
+                    this.selectTarget('player');
                     return;
                 }
             }
         }
 
-        // if its player turn & no animation running
-        if (this.getCurrentTurn() == 'player' && this.currentSpellPlayedFrame <= 0) {
+        // if its player or ally turn & no animation running
+        if (!(this.getCurrentTurn() instanceof Enemy) && this.currentSpellPlayedFrame <= 0) {
             // abilities
             for(const ob of this.spellsButtons) {
                 ob.mousePressed(x, y);
@@ -690,6 +873,7 @@ export class Combat extends EngineObject {
         this.height = GameGraphics.canvas.height - Combat.MARGIN*2;
 
         this.enemiesSize = this.height / 5;
+        this.alliesSize = this.height / 5;
         this.playerSize = this.enemiesSize * 1.2;
         
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
@@ -697,6 +881,13 @@ export class Combat extends EngineObject {
 
         Player.stats.x = this.x + this.playerSize/2;
         Player.stats.y = this.abilitiesY - this.playerSize/2;
+
+        for (let i = 0; i<this.allies.length; i++) {
+            // skin
+            this.allies[i].stats.x = this.x + Combat.PADDING + this.playerSize + Combat.PADDING + this.width / 6 + Combat.PADDING + i * (this.alliesSize + Combat.PADDING) + this.alliesSize/2;
+            this.allies[i].stats.y = this.abilitiesY - this.alliesSize;
+            this.allies[i].stats.size = this.alliesSize;
+        }
 
         for (let i = 0; i<this.enemies.length; i++) {
             // skin
@@ -725,5 +916,20 @@ export class Combat extends EngineObject {
             this.rewardScreen.height = this.height - 2*Combat.REWARD_MARGIN_Y;
             this.rewardScreen.resize();
         }
+    }
+
+    addAlly(ally: Ally) {
+        ally.stats.x = this.x + Combat.PADDING + this.playerSize + Combat.PADDING + this.width / 6 + Combat.PADDING + this.allies.length * (this.alliesSize + Combat.PADDING) + this.alliesSize/2;
+        ally.stats.y = this.abilitiesY - this.alliesSize;
+        ally.stats.size = this.alliesSize;
+        ally.stats.healFullEnergy();
+        this.allies.push(ally);
+    }
+
+    private playerIsInbound(x: number, y: number): boolean {
+        return x >= this.x + Combat.PADDING && 
+               x <= this.x + Combat.PADDING + this.playerSize &&
+               y >= this.abilitiesY - Combat.PADDING - this.playerSize &&
+               y <= this.abilitiesY - Combat.PADDING;
     }
 }

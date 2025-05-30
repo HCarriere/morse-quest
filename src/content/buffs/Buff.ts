@@ -1,10 +1,12 @@
 import { GameStats } from "@game/content/GameStats";
 import { Icon } from "@game/system/GameGraphics";
+import { DamageType } from "../spells";
 
 /**
  * Accounts for buffs & debuffs (can be positive, negative, neutral)
  */
 export abstract class Buff {
+    public debuff = false;
     public abstract name: string;
 
     public abstract description: string[];
@@ -51,7 +53,7 @@ export abstract class Buff {
      * @param stats 
      * @param damage 
      */
-    public onBuffRecipientHit(stats: GameStats, damage: number) {}
+    public onBuffRecipientHit(stats: GameStats, damage: number, type: DamageType) {}
     
     /**
      * Happens when buff is *already* applied.

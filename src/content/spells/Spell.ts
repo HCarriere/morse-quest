@@ -1,6 +1,13 @@
 import { GameStats } from "@game/content/GameStats";
 import { Icon } from "@game/system/GameGraphics";
 
+export enum TargetAlignment {
+    Enemies = 1,
+    Allies = 2,
+    Both = 3,
+    NotApplicable = 4,
+}
+
 export enum TargetType {
     NoTarget = 0,
     Self = 1,
@@ -28,7 +35,8 @@ export enum SpellType {
     Shield = 2,
     Buff = 3,
     Debuff = 4,
-    Other = 5,
+    Invocation = 5,
+    Other = 6,
 }
 
 export abstract class Spell {
@@ -52,6 +60,8 @@ export abstract class Spell {
      * Can be 0.
      */
     public abstract energyCost: number;
+
+    public targetAlignment: TargetAlignment = TargetAlignment.NotApplicable;
 
     public abstract targetType: TargetType;
 
@@ -86,7 +96,7 @@ export abstract class Spell {
      * @param orig 
      * @param size 
      */
-    public abstract animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void;
+    public abstract animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void;
     
 
     public advanceCooldown() {

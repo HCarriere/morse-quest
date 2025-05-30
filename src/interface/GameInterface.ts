@@ -4,6 +4,7 @@ import { Combat } from "./Combat";
 import { CharacterSheet } from "./CharacterSheet";
 import { Button } from "./components/Button";
 import { GameGraphics } from "@game/system/GameGraphics";
+import { Ally } from "@game/content/Ally";
 
 export class GameInterface extends EngineObject {
 
@@ -168,5 +169,9 @@ export class GameInterface extends EngineObject {
 
     public static onNewCharacterData() {
         GameInterface.characterSheetButton.style.text = '☰ Personnage ❗';
+    }
+
+    public static addAllyToCombat(ally: Ally) {
+        GameInterface.combat.addAlly(ally);
     }
 }

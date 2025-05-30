@@ -1,6 +1,6 @@
 import { GameGraphics } from "@game/system/GameGraphics";
 import { GameStats } from "@game/content/GameStats";
-import { Spell, DamageType, TargetType, SpellType } from "../Spell";
+import { Spell, DamageType, TargetType, SpellType, TargetAlignment } from "../Spell";
 
 export class SpellChainLightning extends Spell {
     public name = "Chaine d'éclairs";
@@ -9,6 +9,7 @@ export class SpellChainLightning extends Spell {
     public cooldown = 2;
     
     public icon = {text: "🜁", color: '#205099'};
+    public targetAlignment = TargetAlignment.Enemies;
     public targetType = TargetType.Multiple;
     public frameAnimationMax = 80;
     public targetMax = 2;
@@ -17,7 +18,7 @@ export class SpellChainLightning extends Spell {
     public plannedDamage = 12;
 
     
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {
