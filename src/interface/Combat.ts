@@ -618,6 +618,12 @@ export class Combat extends EngineObject {
             return;
         }
 
+        for (let i = this.allies.length - 1; i >= 0; i--) {
+            if (this.allies[i].isDead) {
+                console.log(this.allies[i].name + ' is dead')
+                this.allies.splice(i, 1);
+            }
+        }
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             if (this.enemies[i].isDead) {
                 console.log(this.enemies[i].name + ' is dead')

@@ -23,7 +23,7 @@ export class SpellCreateShield extends Spell {
         this.description = [`Absorbe ${this.strengh} dégats.`, `Maintenu un tour.`];
     }
     
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
         if (frameLeft == 1) {
             targets[0].stat.applyBuff(new BuffProtection(), this.strengh);
         }

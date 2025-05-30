@@ -18,7 +18,7 @@ export class SpellChainLightning extends Spell {
     public plannedDamage = 12;
 
     
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
         // effect
         if (frameLeft == 10) {
             for (const t of targets) {

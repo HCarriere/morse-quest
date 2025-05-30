@@ -1,5 +1,6 @@
 import { GameStats } from "@game/content/GameStats";
 import { Buff } from "../Buff";
+import { DamageType } from "@game/content/spells";
 
 export class BuffProtection extends Buff {
     public name = "Protection";
@@ -15,7 +16,7 @@ export class BuffProtection extends Buff {
         stats.flatDamageReductor -= this.stack;
     }
 
-    public onBuffRecipientHit(stats: GameStats, damage: number): void {
+    public onBuffRecipientHit(stats: GameStats, damage: number, type: DamageType): void {
         console.log('protection hit : damage : ', damage);
         const mod = Math.min(this.stack, damage);
         console.log('protection hit : damage mod : ', mod);

@@ -1,7 +1,7 @@
 import { GameStats } from "@game/content/GameStats";
 import { DamageType, Spell, SpellType, TargetAlignment, TargetType } from "../Spell";
 import { GameGraphics } from "@game/system/GameGraphics";
-import { DebufBlind } from "@game/content/buffs/library/Blind";
+import { DebufBlind } from "@game/content/buffs";
 
 export class SpellScrewSplinters extends Spell {
     public name = "Éclats de vis";
@@ -19,7 +19,7 @@ export class SpellScrewSplinters extends Spell {
 
     private screwTargets: {x: number, y: number}[] = [];
 
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
         // effect
         if (frameLeft == 1) {
             for (const t of targets) {

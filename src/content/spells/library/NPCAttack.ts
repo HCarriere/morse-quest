@@ -22,7 +22,7 @@ export class SpellNPCAttack extends Spell {
         this.plannedDamage = damage * number;
     }
 
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
         // effect
         if (frameLeft == 10) {
             for (let i = 0; i < this.number; i++) {

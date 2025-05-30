@@ -113,7 +113,7 @@ export class GameStats {
 
         // notify buffs
         for (const buff of this.buffs) {
-            buff.onBuffRecipientHit(this, amount);
+            buff.onBuffRecipientHit(this, amount, type);
         }
         
         // remove hp

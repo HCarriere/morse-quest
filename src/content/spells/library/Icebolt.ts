@@ -16,7 +16,7 @@ export class SpellIcebolt extends Spell {
     public targetType = TargetType.Single;
     public frameAnimationMax = 80;
 
-    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
 
         // effect
         if (frameLeft == 10) {

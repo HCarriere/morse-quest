@@ -34,6 +34,7 @@ export class BuffIcons extends EngineObject {
         let cx = 0;
         let cy = 0;
         for (const buff of this.stats.buffs) {
+            let duration = buff.debuff ? buff.duration - 1 : buff.duration; // debuffs need +1 duration to account for the turn it is applied
             const x = this.x + cx * (BuffIcons.ICON_SIZE + 3);
             const y = this.y + cy * (BuffIcons.ICON_SIZE + 3);
             GameGraphics.ctx.lineWidth = 1;
@@ -48,7 +49,7 @@ export class BuffIcons extends EngineObject {
             //duration
             GameGraphics.ctx.textAlign = "left";
             GameGraphics.ctx.textBaseline = "top";
-            GameGraphics.ctx.fillText(buff.duration+'', x, y);
+            GameGraphics.ctx.fillText(duration+'', x, y);
 
             if (this.isInbound(GameController.mouseX, GameController.mouseY, x, y, BuffIcons.ICON_SIZE, BuffIcons.ICON_SIZE)) {
                 // mouse on buff

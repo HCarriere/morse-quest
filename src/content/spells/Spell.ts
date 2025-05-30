@@ -96,7 +96,7 @@ export abstract class Spell {
      * @param orig 
      * @param size 
      */
-    public abstract animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number}, size: number): void;
+    public abstract animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void;
     
 
     public advanceCooldown() {
