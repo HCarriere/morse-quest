@@ -18,7 +18,7 @@ export class SpellIronGolemInvocation extends Spell {
     public targetType = TargetType.NoTarget;
     public frameAnimationMax = 1;
 
-    public animate(frameLeft: number, targets: {x: number, y: number}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
+    public animate(frameLeft: number, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}, size: number): void {
         if (frameLeft == 1) {
             GameInterface.addAllyToCombat(new Ally(
                 'Golem de fer',
