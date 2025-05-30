@@ -64,12 +64,12 @@ export class Enemy {
 
         if (this.turnIntent.targetType == TargetType.Self) {
             // buffs, if any
-            combat.playSpellAnimation(this.turnIntent, [this], this, () => {
+            combat.castSpell(this.turnIntent, [this], this, () => {
                 onEnd();
             });
         } else {
             // target offensive spells
-            combat.playSpellAnimation(this.turnIntent, ['player'], this, () => {
+            combat.castSpell(this.turnIntent, ['player'], this, () => {
                 onEnd();
             });
         }

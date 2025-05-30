@@ -5,3 +5,4 @@ export * from './library/Fireball';
 export * from './library/Icebolt';
 export * from './library/IronGolemInvocation';
 export * from './library/NPCAttack';
+export * from './library/ScrewSplinter';

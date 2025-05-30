@@ -340,7 +340,19 @@ export class Combat extends EngineObject {
      * @param origin 
      * @param onEnd 
      */
-    public playSpellAnimation(spell: Spell, targets: CombatEntity[], origin: CombatEntity, onEnd: () => void) {
+    public castSpell(spell: Spell, targets: CombatEntity[], origin: CombatEntity, onEnd: () => void) {
+        const stats = origin == 'player' ? Player.stats : origin.stats;
+        console.log('accuracy : ', stats.accuracy);
+        if (stats.accuracy < 100) {
+            // check if the spell hits its targets
+            const hitChance = Math.random() * 100;
+            console.log('hit chance : ', hitChance);
+            if (hitChance > stats.accuracy) {
+                console.log('Spell missed');
+                onEnd();
+                return;
+            }
+        }
         this.currentSpellPlayedCallback = onEnd;
         this.currentSpellPlayedFrame = spell.frameAnimationMax;
         this.currentSpellPlayed = spell;
@@ -423,7 +435,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [], currentTurn, () => {
+                this.castSpell(spell, [], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -431,7 +443,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [currentTurn], currentTurn, () => {
+                this.castSpell(spell, [currentTurn], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -440,7 +452,7 @@ export class Combat extends EngineObject {
                     // process cooldown & energy
                     spell.currentCooldown = spell.cooldown;
                     stats.energy -= spell.energyCost;
-                    this.playSpellAnimation(spell, targets, currentTurn, () => {
+                    this.castSpell(spell, targets, currentTurn, () => {
                         this.checkCombatState();
                     });
                 });
@@ -449,7 +461,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, this.enemies, currentTurn, () => {
+                this.castSpell(spell, this.enemies, currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -457,7 +469,7 @@ export class Combat extends EngineObject {
                 // process cooldown & energy
                 spell.currentCooldown = spell.cooldown;
                 stats.energy -= spell.energyCost;
-                this.playSpellAnimation(spell, [...this.enemies, "player", ...this.allies], currentTurn, () => {
+                this.castSpell(spell, [...this.enemies, "player", ...this.allies], currentTurn, () => {
                     this.checkCombatState();
                 });
             break;
@@ -466,7 +478,7 @@ export class Combat extends EngineObject {
                     // process cooldown & energy
                     spell.currentCooldown = spell.cooldown;
                     stats.energy -= spell.energyCost;
-                    this.playSpellAnimation(spell, targets, currentTurn, () => {
+                    this.castSpell(spell, targets, currentTurn, () => {
                         this.checkCombatState();
                     });
                 });

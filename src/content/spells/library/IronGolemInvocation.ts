@@ -5,7 +5,7 @@ import { IronGolem } from "@game/content/skins";
 import { GameStats } from "@game/content/GameStats";
 import { SpellFireball } from "./Fireball";
 
-export class IronGolemInvocation extends Spell {
+export class SpellIronGolemInvocation extends Spell {
     public name = "Golem de fer";
     public description = ["Un golem de fer robuste et puissant."];
     public energyCost = 4;

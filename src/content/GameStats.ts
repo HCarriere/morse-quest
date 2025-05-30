@@ -32,6 +32,8 @@ export class GameStats {
     // advanced stats
 
     public flatDamageReductor = 0;
+    public accuracy: number = 100; // 100% accuracy
+    public evasion: number = 0; // 0% evasion
 
     /**
      * all the known spells
