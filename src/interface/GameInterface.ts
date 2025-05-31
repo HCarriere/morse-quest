@@ -5,6 +5,8 @@ import { CharacterSheet } from "./CharacterSheet";
 import { Button } from "./components/Button";
 import { GameGraphics } from "@game/system/GameGraphics";
 import { Ally } from "@game/content/Ally";
+import { Spell } from "@game/content/spells";
+import { GameStats } from "@game/content/GameStats";
 
 export class GameInterface extends EngineObject {
 
@@ -172,6 +174,18 @@ export class GameInterface extends EngineObject {
     }
 
     public static addAllyToCombat(ally: Ally) {
-        GameInterface.combat.addAlly(ally);
+        if (GameInterface.combat) {
+            GameInterface.combat.addAlly(ally);
+        } else {
+            console.warn("Cannot add ally, no combat in progress.");
+        }
+    }
+
+    public static bufferSpellInCombat(spell: Spell, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}) {
+        if (GameInterface.combat) {
+            GameInterface.combat.bufferSpell(spell, targets, orig);
+        } else {
+            console.warn("Cannot buffer spell, no combat in progress.");
+        }
     }
 }

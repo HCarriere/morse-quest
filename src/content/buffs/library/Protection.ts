@@ -7,6 +7,7 @@ export class BuffProtection extends Buff {
     public description = ['Protège de 1 dégat par pile.'];
     public icon = {text: "XX", color: '#666'};
     public stackMax = 100;
+    private hitDamage = 0;
 
     public onBuffed(stats: GameStats) {
         stats.flatDamageReductor += 1;
@@ -17,8 +18,12 @@ export class BuffProtection extends Buff {
     }
 
     public onBuffRecipientHit(stats: GameStats, damage: number, type: DamageType): void {
-        console.log('protection hit : damage : ', damage);
-        const mod = Math.min(this.stack, damage);
+        this.hitDamage = damage;
+    }
+
+    public onBuffRecipientDamaged(stats: GameStats, damage: number, type: DamageType): void {
+        console.log('protection hit : damage : ', this.hitDamage);
+        const mod = Math.min(this.stack, this.hitDamage);
         console.log('protection hit : damage mod : ', mod);
         stats.flatDamageReductor -= mod;
         this.stack -= mod;

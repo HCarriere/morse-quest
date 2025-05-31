@@ -54,6 +54,13 @@ export abstract class Buff {
      * @param damage 
      */
     public onBuffRecipientHit(stats: GameStats, damage: number, type: DamageType) {}
+
+    /**
+     * Triggers when the buff recipient has been damaged by an attack after mitigation.
+     * @param stats 
+     * @param damage 
+     */
+    public onBuffRecipientDamaged(stats: GameStats, damage: number, type: DamageType) {}
     
     /**
      * Happens when buff is *already* applied.
