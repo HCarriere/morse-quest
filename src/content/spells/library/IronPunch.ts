@@ -25,7 +25,9 @@ export class SpellIronPunch extends Spell {
         GameGraphics.ctx.save();
         GameGraphics.ctx.font = `${animationSize}px ${GameGraphics.FONT}`;
         GameGraphics.ctx.fillStyle = this.icon.color;
-        GameGraphics.ctx.fillText(this.icon.text, target.x - animationSize / 2, target.y + animationSize / 2);
+        GameGraphics.ctx.textAlign = "center";
+        GameGraphics.ctx.textBaseline = "middle";
+        GameGraphics.ctx.fillText(this.icon.text, target.x, target.y);
         GameGraphics.ctx.restore();
     }
 }
