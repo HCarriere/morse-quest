@@ -68,6 +68,7 @@ export class Combat extends EngineObject {
     private currentSpellPlayedOrig: {x: number, y: number, stat: GameStats};
     private currentSpellPlayedCallback: ()=>void;
     private spellMissed = false;
+    private spellBuffer: {spell: Spell, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}}[] = [];
 
     // private actionPlayed = false;
     
@@ -240,6 +241,17 @@ export class Combat extends EngineObject {
             b.display();
         }
 
+        if (!this.currentSpellPlayed && this.spellBuffer.length > 0) {
+            let fromSpellBuffer = this.spellBuffer.shift();
+            this.currentSpellPlayed = fromSpellBuffer.spell;
+            this.currentSpellPlayedFrame = this.currentSpellPlayed.frameAnimationMax;
+            this.currentSpellPlayedOrig = fromSpellBuffer.orig;
+            this.currentSpellPlayedTargets = fromSpellBuffer.targets;
+            this.currentSpellPlayedCallback = () => {
+                this.checkCombatState();
+            };
+        }
+
         // display spell
         if (this.currentSpellPlayedFrame > 0) {
             this.displaySpellAnimation();
@@ -350,7 +362,7 @@ export class Combat extends EngineObject {
     public castSpell(spell: Spell, targets: CombatEntity[], origin: CombatEntity, onEnd: () => void) {
         this.currentSpellPlayedCallback = onEnd;
         const stats = origin == 'player' ? Player.stats : origin.stats;
-        if (stats.accuracy < 100 && spell.targetType != TargetType.NoTarget && spell.targetType != TargetType.Self) {
+        if (spell.useAccuracy && stats.accuracy < 100 && spell.targetType != TargetType.NoTarget && spell.targetType != TargetType.Self) {
             // check if the spell hits its targets
             const hitChance = Math.random() * 100;
             if (hitChance > stats.accuracy) {
@@ -788,8 +800,8 @@ export class Combat extends EngineObject {
         for (const e of this.allies) {
             e.stats.clearNecessaryBuffs();
             this.buffIcons.push(new BuffIcons(
-                e.x - e.size/2, 
-                e.y + e.size/2 + 30,  
+                e.x - e.size/2,
+                e.y + e.size/2 + 50,
                 e.stats, (buff) => {
                 // on hover
                 this.tooltip = buff.description;
@@ -801,8 +813,8 @@ export class Combat extends EngineObject {
         for (const e of this.enemies) {
             e.stats.clearNecessaryBuffs();
             this.buffIcons.push(new BuffIcons(
-                e.x - e.size/2, 
-                e.y + e.size/2 + 30,  
+                e.x - e.size/2,
+                e.y + e.size/2 + 30,
                 e.stats, (buff) => {
                 // on hover
                 this.tooltip = buff.description;
@@ -873,7 +885,7 @@ export class Combat extends EngineObject {
         this.height = GameGraphics.canvas.height - Combat.MARGIN*2;
 
         this.enemiesSize = this.height / 5;
-        this.alliesSize = this.height / 5;
+        this.alliesSize = this.height / 6;
         this.playerSize = this.enemiesSize * 1.2;
         
         this.abilitiesY = (this.height / 3) * 2 + Combat.MARGIN;
@@ -881,11 +893,12 @@ export class Combat extends EngineObject {
 
         Player.stats.x = this.x + this.playerSize/2;
         Player.stats.y = this.abilitiesY - this.playerSize/2;
+        Player.stats.size = this.playerSize;
 
         for (let i = 0; i<this.allies.length; i++) {
             // skin
             this.allies[i].stats.x = this.x + Combat.PADDING + this.playerSize + Combat.PADDING + this.width / 6 + Combat.PADDING + i * (this.alliesSize + Combat.PADDING) + this.alliesSize/2;
-            this.allies[i].stats.y = this.abilitiesY - this.alliesSize;
+            this.allies[i].stats.y = this.abilitiesY - this.alliesSize - 2 * Combat.PADDING;
             this.allies[i].stats.size = this.alliesSize;
         }
 
@@ -920,7 +933,7 @@ export class Combat extends EngineObject {
 
     addAlly(ally: Ally) {
         ally.stats.x = this.x + Combat.PADDING + this.playerSize + Combat.PADDING + this.width / 6 + Combat.PADDING + this.allies.length * (this.alliesSize + Combat.PADDING) + this.alliesSize/2;
-        ally.stats.y = this.abilitiesY - this.alliesSize;
+        ally.stats.y = this.abilitiesY - this.alliesSize - 2 * Combat.PADDING;
         ally.stats.size = this.alliesSize;
         ally.stats.healFullEnergy();
         this.allies.push(ally);
@@ -931,5 +944,13 @@ export class Combat extends EngineObject {
                x <= this.x + Combat.PADDING + this.playerSize &&
                y >= this.abilitiesY - Combat.PADDING - this.playerSize &&
                y <= this.abilitiesY - Combat.PADDING;
+    }
+
+    public getPlayerAndAllies(): CombatEntity[] {
+        return ['player', ...this.allies];
+    }
+
+    public bufferSpell(spell: Spell, targets: {x: number, y: number, stat: GameStats}[], orig: {x: number, y: number, stat: GameStats}) {
+        this.spellBuffer.push({ spell, targets, orig });
     }
 }

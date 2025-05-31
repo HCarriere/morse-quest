@@ -1,5 +1,4 @@
 import { GameGraphics } from "@game/system/GameGraphics";
-import { GameInterface } from "@game/interface/GameInterface";
 import { Skin } from "../Skin"
 
 export class IronGolem extends Skin {
@@ -7,14 +6,36 @@ export class IronGolem extends Skin {
         super();
     }
     public display(x: number, y: number, size: number): void {
-        size = size/2; // drones are small
         GameGraphics.ctx.fillStyle = this.primaryColor;
-        GameGraphics.ctx.save();
-        GameGraphics.ctx.translate(x + size , y + size);
-        GameGraphics.ctx.rotate(GameInterface.frame * 0.02);
-        GameGraphics.ctx.fillRect( - size/2 , -size/2, size, size);
-        GameGraphics.ctx.rotate(-GameInterface.frame*2 * 0.015);
-        GameGraphics.ctx.fillRect( - size/2 , -size/2, size, size);
-        GameGraphics.ctx.restore();
+        // Corps
+        GameGraphics.ctx.beginPath();
+        GameGraphics.ctx.arc(x + size / 2, y + size / 2, size / 4, 0, Math.PI * 2);
+        GameGraphics.ctx.closePath();
+        GameGraphics.ctx.fill();
+        // Tête
+        GameGraphics.ctx.beginPath();
+        GameGraphics.ctx.arc(x + size / 2, y + size / 4, size / 8, 0, Math.PI * 2);
+        GameGraphics.ctx.closePath();
+        GameGraphics.ctx.fill();
+        // Epaule gauche et droite
+        GameGraphics.ctx.beginPath();
+        GameGraphics.ctx.arc(x + size / 4, y + 5 * size / 12, size / 6, 0, Math.PI * 2);
+        GameGraphics.ctx.closePath();
+        GameGraphics.ctx.fill();
+        GameGraphics.ctx.beginPath();
+        GameGraphics.ctx.arc(x + 3 * size / 4, y + 5 * size / 12, size / 6, 0, Math.PI * 2);
+        GameGraphics.ctx.closePath();
+        GameGraphics.ctx.fill();
+        // Bassin
+        GameGraphics.ctx.beginPath();
+        GameGraphics.ctx.arc(x + size / 2, y + 3 * size / 4, size / 7, 0, Math.PI * 2);
+        GameGraphics.ctx.closePath();
+        GameGraphics.ctx.fill();
+        // Bras gauche et droit
+        GameGraphics.ctx.fillRect(x + size / 12, y + 5 * size / 12, 3 * size / 24, size / 2);
+        GameGraphics.ctx.fillRect(x + 19 * size / 24, y + 5 * size / 12, 3 * size / 24, size / 2);
+        // Jambes gauche et droite
+        GameGraphics.ctx.fillRect(x + size / 3, y + 3 * size / 4, size / 8, size / 4);
+        GameGraphics.ctx.fillRect(x + 2 * size / 3 - size / 8, y + 3 * size / 4, size / 8, size / 4);
     }
 }

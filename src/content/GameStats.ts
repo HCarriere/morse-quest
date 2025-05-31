@@ -108,12 +108,17 @@ export class GameStats {
     }
 
     public damage(amount: number, type: DamageType) {
+        // notify hit to buffs
+        for (const buff of this.buffs) {
+            buff.onBuffRecipientHit(this, amount, type);
+        }
+
         // apply reduction
         const modAmount = Math.max(0, amount - this.flatDamageReductor);
 
-        // notify buffs
+        // notify damage to buffs
         for (const buff of this.buffs) {
-            buff.onBuffRecipientHit(this, amount, type);
+            buff.onBuffRecipientDamaged(this, modAmount, type);
         }
         
         // remove hp

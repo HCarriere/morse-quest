@@ -79,6 +79,8 @@ export abstract class Spell {
 
     public targetMax: number;
 
+    public useAccuracy = true;
+
     /**
      * Used for turn intent
      */

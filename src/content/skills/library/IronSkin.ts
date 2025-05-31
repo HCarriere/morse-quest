@@ -1,7 +1,7 @@
 import { GameStats } from "@game/content/GameStats";
 import { Skill } from "../Skill";
 
-export class SkillIronSkill extends Skill {
+export class SkillIronSkin extends Skill {
     
 
     public power: number;
