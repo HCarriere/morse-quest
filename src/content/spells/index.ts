@@ -1,5 +1,6 @@
 export * from './Spell';
 export * from './library/AllyShield';
+export * from './library/BoltStorm';
 export * from './library/ChainLightning';
 export * from './library/CreateShield';
 export * from './library/Fireball';

@@ -37,6 +37,13 @@ export interface Particle {
      * Particle will lose this size each frame.
      */
     sizeLosePerFrame?: number;
+    /**
+     * Function to use to update the particle position and speed.
+     * If not defined, the particule speed will be multiplied by its friction,
+     * and the particle position will be updated with its vx and vy.
+     * @param particle The particule itself.
+     */
+    update?: (particle: Particle) => void;
 }
 
 /**
@@ -236,10 +243,16 @@ export class GameGraphics extends Graphics {
             // move
             if (p.sizeLosePerFrame) p.size -= p.sizeLosePerFrame;
             p.life -= 1;
-            p.vx *= p.friction;
-            p.vy *= p.friction;
-            p.x += p.vx;
-            p.y += p.vy;
+            if (p.update) {
+                // custom update
+                p.update(p);
+            } else {
+                // default update
+                p.vx *= p.friction;
+                p.vy *= p.friction;
+                p.x += p.vx;
+                p.y += p.vy;
+            }
             // remove on end
             if (p.life <= 0 || p.size <= 0) {
                 array.splice(i, 1);
